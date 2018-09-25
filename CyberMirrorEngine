@@ -1,0 +1,32 @@
+import POMDPSettings
+import ParseTopologyFile
+import Dijkstra
+import PrintLibrary,Utilities
+
+def initilization():
+    print('Initialize the environment')
+    ParseTopologyFile.parse_aSHIIP_topology(POMDPSettings.TOPOLOGY_FILE_NAME, POMDPSettings.adjacent_matrix)
+    while(True):
+        print("Please enter the target node. Any number between [0-%s]"%(len(POMDPSettings.adjacent_matrix)-1))
+        user_input_target_node = int(input())
+        if user_input_target_node > len(POMDPSettings.adjacent_matrix)-1:
+            print("No Such Node. Please try again")
+            continue
+        POMDPSettings.target_node.append(user_input_target_node) ########### Assuming one target node currently, so index will be 0
+        break
+    print("Target Node : %s"%(POMDPSettings.target_node))
+
+    ############################################# Now we are assuming just one target for each POMDP agent #############################
+    target_resource = POMDPSettings.target_node[0]
+    POMDPSettings.all_pair_shortest_path[target_resource] = Dijkstra.Dijkstra_algorithm_unweighted(target_resource,POMDPSettings.adjacent_matrix)
+    PrintLibrary.all_pair_shortest_path_print(POMDPSettings.all_pair_shortest_path)  ######## Print the shortest path knowledge #############
+
+    ######################################### Get the IDS score of the compromised nodes with non_zero probability ##############################
+    Utilities.get_compromised_nodes(0,POMDPSettings.compromised_nodes_probability)
+    Utilities.calculate_score_compromised_nodes(POMDPSettings.compromised_nodes_probability,
+                                                POMDPSettings.impact_nodes,POMDPSettings.all_pair_shortest_path)
+    PrintLibrary.score_compromised_node(POMDPSettings.impact_nodes)
+
+if __name__=='__main__':
+    print("Start of the CyberMirror Dynamic Planning")
+    initilization()

@@ -1,84 +1,37 @@
 import POMDPSettings
 import random
 
-def generate_inital_probability(i=0):
-    POMDPSettings.initial_belief_position.clear()
-    if POMDPSettings.INITIAL_ADVERSARY_READ_FROM_FILE:
-        read_adversary_position_file()
-    else:
-        random_adversary_position()
+def calculate_node_impact():
+    ###################################### We will calculate the impact of the node here ###################
+    ####################################### Temporary Random Process where impact is randonly considered between [0-5000]#######################################
+    return random.randint(0,5000)
 
-def normalize_dict(dict):
-    total_prob = 0.0
-    for key_current in dict.keys():
-        total_prob += dict[key_current]
-    if total_prob != 1.0:
-        normalized_value = 0.0
-        for key_current in dict.keys():
-            dict[key_current] /= total_prob
-            normalized_value += dict[key_current]
-        total_prob = normalized_value
-
-    if total_prob != 1.0:
-        print("***** (^_^) (^_^) Error in Total Probability %s (^_^) (^_^) ******"%(total_prob))
-        # assign_normalization_error(total_prob,dict)
-
-def assign_normalization_error(total_prob,dict):
-        for keys in dict.keys():
-            value = dict[keys]
-            value -= (total_prob-1.0)
-            if value < 0.0 or value > 1.0:
-                continue
-            dict[keys] = value
-            break
-        current_total_prob = 0.0
-        for keys in dict.keys():
-            current_total_prob += dict[keys]
-        if current_total_prob != 1.0:
-            print("***** (*_*) (*_*) Error Correction Didn't Work %s (*_*) (*_*) ******"%(current_total_prob))
+def get_impact_values(node_id):
+    if node_id not in POMDPSettings.impact_nodes:
+        ########################## Calculate the impact of the node #######################
+        POMDPSettings.impact_nodes[node_id] = calculate_node_impact()
+    return POMDPSettings.impact_nodes[node_id]
 
 
+def calculate_score_compromised_nodes(compromised_nodes_probability,compromised_nodes_ids_score,all_pair_shortest_path):
+    '''Calculate the score of a compromised host based on the IDS score, distance and the impact'''
+    '''Impact depepends on both the centrality and the utility value of the resource'''
+    print('********** Calculating the score of the compromised hosts ************************')
+    for node in compromised_nodes_probability:
+        if node in all_pair_shortest_path[POMDPSettings.target_node[0]]:
+            compromised_nodes_ids_score[node] = compromised_nodes_probability[node]\
+                                                *get_impact_values(node)/all_pair_shortest_path[POMDPSettings.target_node[0]][node]
 
-def random_adversary_position():
-    total_prob = 0.0
-    while (True):
-        if len(POMDPSettings.initial_belief_position) == POMDPSettings.INITIAL_NUMBER_OF_POSITION:
-            break
-        while (True):
-            node = random.randint(0, len(POMDPSettings.adjacent_matrix) - 1)
-            if node in POMDPSettings.initial_belief_position:
-                continue
-            POMDPSettings.initial_belief_position[node] = random.uniform(0.1, 1.0)
-            total_prob += POMDPSettings.initial_belief_position[node]
-            break
+def get_compromised_nodes(time_sequence,compromised_nodes_probability):
+    '''Get the IDS score for the possible compromised nodes where time sequence represents the period'''
+    compromised_nodes_probability.clear()
+    if POMDPSettings.READ_IDS_FROM_FILES:
+        file_pointer = open(POMDPSettings.ADVERSARY_LOGS)
+        for line in file_pointer:
+            line = line.replace('\n','').split(',')
+            compromised_node = int(line[0])
+            compromise_probability = float(line[1])
+            compromised_nodes_probability[compromised_node] = compromise_probability
+        file_pointer.close()
 
-    if total_prob != 1.0:
-        normalize_dict(POMDPSettings.initial_belief_position)
-
-def read_adversary_position_file():
-    file_pointer = open('%s/%s'%(POMDPSettings.CONFIGURATION_DIRECTORY,POMDPSettings.ADVERSARY_LOGS),'r+')
-    total_prob = 0.0
-    for line in file_pointer:
-        line = line.replace('\n','').split(',')
-        node = int(line[0])
-        belief = float(line[1])
-        if belief > 0.0:
-            POMDPSettings.initial_belief_position[node] = belief
-            total_prob += belief
-    file_pointer.close()
-    # print("Tota Prob --> %s"%(total_prob))
-    if total_prob != 1.0:
-        normalize_dict(POMDPSettings.initial_belief_position)
-
-
-def print_Topology(adjacent_matrix):
-    print("***************** Topology Information *********************")
-    for i in range(len(adjacent_matrix)):
-        print("Node ID %s"%(i))
-        print("\t Adjacent Nodes %s"%(adjacent_matrix[i]))
-
-def print_space_properties():
-    print("************************** State Properties ***************************")
-    for state in POMDPSettings.State_space:
-        state.print_properties()
 

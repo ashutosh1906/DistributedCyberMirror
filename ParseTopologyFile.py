@@ -42,3 +42,4 @@ def parse_aSHIIP_topology(topology_file_name, adjacent_matrix):
             for node_index in range(len(adjacent_nodes)):
                 adjacent_nodes[node_index] -= 1
             adjacent_matrix.append(adjacent_nodes)
+    topology_pointer.close()

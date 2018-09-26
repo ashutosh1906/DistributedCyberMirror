@@ -20,3 +20,8 @@ def score_compromised_node(compromised_nodes):
         print('Node ID: %s and Score: %s'%(node,compromised_nodes[node]))
     print(
         '******************************* End of Printing score of compromised nodes ************************************************')
+
+def state_space_print(state_space):
+    print('************************** State Space ***************************************')
+    for state in state_space:
+        state.print_properties()

@@ -88,3 +88,66 @@ def Dijkstra_algorithm_unweighted_pair(source,target,adjacent_matrix,max_distanc
 
     return -1
 
+def shortest_route(source,target,adjacent_matrix,max_distance = 100000):
+    '''Find the shortest distance between a source and a destination'''
+    '''Get the shortest path from the source to destinations'''
+    '''Considering the path has equal weights'''
+    reachable_nodes = {}
+    explored_node = {}
+    min_priority_queue = []
+    parent_node = {}
+    pair_distance = -1
+    if source==target:
+        return [target] #################################### Source and target is same, soo length=0
+    for node_id in adjacent_matrix[source]:
+        if node_id==target:
+            parent_node[node_id] = source
+            return return_path(source,target,parent_node) ############ target is the neighbour of source
+        if node_id not in reachable_nodes:
+            reachable_nodes[node_id] = [1, node_id]
+            parent_node[node_id] = source
+            heapq.heappush(min_priority_queue, reachable_nodes[node_id])
+
+    ############################################### Dijkstra Starts from here #######################################
+    explored_node[source] = 1
+    while (len(min_priority_queue) > 0):
+        current_node = heapq.heappop(min_priority_queue)
+        node_id = current_node[1]
+        node_value = current_node[0]
+        if node_value == max_distance:
+            return None ################### No path between source and destination is short than the max distance
+        explored_node[node_id] = 1
+        # print("Current Node :%s Edge %s Neighbour %s" % (node_id, node_value, adjacent_matrix[node_id]))
+        try:
+            # print('Node %s --> %s'%(node_id,adjacent_matrix[node_id]))
+            for adjacent_node in adjacent_matrix[node_id]:
+                if adjacent_node==target:
+                    parent_node[adjacent_node] = node_id
+                    return return_path(source,target,parent_node)
+                if adjacent_node in explored_node:
+                    continue
+                if adjacent_node not in reachable_nodes:
+                    reachable_nodes[adjacent_node] = [node_value + 1, adjacent_node]
+                    heapq.heappush(min_priority_queue, reachable_nodes[adjacent_node])
+                else:
+                    if node_value + 1 < reachable_nodes[adjacent_node][0]:
+                        reachable_nodes[adjacent_node][0] = node_value + 1
+                        heapq.heapify(min_priority_queue)
+                parent_node[adjacent_node] = node_id
+        except:
+            print("Error ---> Current Node :%s Edge %s" % (node_id, node_value))
+
+    return None
+
+def return_path(source,target,parent_node):
+    # print("******** (%s,%s) and Parents : %s ****"%(source,target,parent_node))
+    path = [target]
+    while(True):
+        if path[-1] not in parent_node:
+            return None
+        parent = parent_node[path[-1]]
+        path.append(parent)
+        if parent == source:
+            return path[::-1]
+
+

@@ -2,18 +2,22 @@ import POMDPSettings
 import ParseTopologyFile
 import Dijkstra
 import PrintLibrary,Utilities
+from POMDPGenerator import POMDPOperations
 
 def initilization():
     print('Initialize the environment')
     ParseTopologyFile.parse_aSHIIP_topology(POMDPSettings.TOPOLOGY_FILE_NAME, POMDPSettings.adjacent_matrix)
-    while(True):
-        print("Please enter the target node. Any number between [0-%s]"%(len(POMDPSettings.adjacent_matrix)-1))
-        user_input_target_node = int(input())
-        if user_input_target_node > len(POMDPSettings.adjacent_matrix)-1:
-            print("No Such Node. Please try again")
-            continue
-        POMDPSettings.target_node.append(user_input_target_node) ########### Assuming one target node currently, so index will be 0
-        break
+    if POMDPSettings.USER_INPUT_TARGET_NODE:
+        while(True):
+            print("Please enter the target node. Any number between [0-%s]"%(len(POMDPSettings.adjacent_matrix)-1))
+            user_input_target_node = int(input())
+            if user_input_target_node > len(POMDPSettings.adjacent_matrix)-1:
+                print("No Such Node. Please try again")
+                continue
+            POMDPSettings.target_node.append(user_input_target_node) ########### Assuming one target node currently, so index will be 0
+            break
+    else:
+        POMDPSettings.target_node = POMDPSettings.STATIC_TARGET_NODE
     print("Target Node : %s"%(POMDPSettings.target_node))
 
     ############################################# Now we are assuming just one target for each POMDP agent #############################
@@ -26,7 +30,20 @@ def initilization():
     Utilities.calculate_score_compromised_nodes(POMDPSettings.compromised_nodes_probability,
                                                 POMDPSettings.impact_nodes,POMDPSettings.all_pair_shortest_path)
     PrintLibrary.score_compromised_node(POMDPSettings.impact_nodes)
+    POMDPSettings.compromised_nodes_current_time = Utilities.select_compromised_nodes(POMDPSettings.impact_nodes)
+    print("***************** Selected Compromised Nodes %s*************************" % (POMDPSettings.compromised_nodes_current_time))
+
+
+def pomdp_engine():
+    ######################################### Create State Space ##############################################
+    POMDPOperations.determine_state_space()
+    # PrintLibrary.state_space_print(POMDPSettings.state_space)
+
+    ######################################## Initial Belief ###################################################
+    POMDPOperations.determine_initial_belief()
+    PrintLibrary.state_space_print(POMDPSettings.state_space)
 
 if __name__=='__main__':
     print("Start of the CyberMirror Dynamic Planning")
     initilization()
+    pomdp_engine()

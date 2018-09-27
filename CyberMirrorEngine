@@ -36,12 +36,17 @@ def initilization():
 
 def pomdp_engine():
     ######################################### Create State Space ##############################################
-    POMDPOperations.determine_state_space()
+    POMDPOperations.determine_State_Space()
     # PrintLibrary.state_space_print(POMDPSettings.state_space)
 
     ######################################## Initial Belief ###################################################
-    POMDPOperations.determine_initial_belief()
-    PrintLibrary.state_space_print(POMDPSettings.state_space)
+    POMDPOperations.determine_Initial_Belief()
+    # PrintLibrary.state_space_print(POMDPSettings.state_space)
+
+    ####################################### Action Space ######################################################
+    POMDPOperations.determine_Action_Space()
+    # PrintLibrary.action_space_type_Print(POMDPSettings.action_space_by_type,POMDPSettings.action_space_group_index)
+
 
 if __name__=='__main__':
     print("Start of the CyberMirror Dynamic Planning")

@@ -25,3 +25,17 @@ def state_space_print(state_space):
     print('************************** State Space ***************************************')
     for state in state_space:
         state.print_properties()
+
+def action_space_type_Print(action_space_by_type,action_space_group_index):
+    print('*************************** Action Space by Type *****************************')
+    print('\t%s'%(action_space_by_type))
+    import POMDPSettings
+    for action_group in action_space_group_index:
+        if action_space_group_index[action_group]==POMDPSettings.SPATIAL_MUTATION_INDEX:
+            print('************* Spatial Mutation Index %s ************'%(action_group))
+        if action_space_group_index[action_group]==POMDPSettings.TEMPORAL_MUTATION_INDEX:
+            print('************* Temporal Mutation Index %s ************'%(action_group))
+        if action_space_group_index[action_group]==POMDPSettings.DIVERSITY_INDEX:
+            print('************* Diversity Index %s ************'%(action_group))
+        if action_space_group_index[action_group]==POMDPSettings.ANONYMIZATION_INDEX:
+            print('************* Anonymization Index %s ************'%(action_group))

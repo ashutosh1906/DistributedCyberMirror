@@ -5,7 +5,7 @@ def Dijkstra_algorithm_unweighted(source, adjacent_matrix):
     Return the output structured as dictionary where the keys are ids of the nodes and
     the value is the shortest distance'''
     # print("Neighbour Node %s"%(adjacent_matrix[source]))
-    all_reachable_shortest_nodes = {}
+    all_reachable_shortest_nodes = {source:0}
     reachable_nodes = {}
     explored_node = {}
     min_priority_queue = []
@@ -99,6 +99,7 @@ def shortest_route(source,target,adjacent_matrix,max_distance = 100000):
     pair_distance = -1
     if source==target:
         return [target] #################################### Source and target is same, soo length=0
+    # print('%s:%s' % (source, adjacent_matrix[source]))
     for node_id in adjacent_matrix[source]:
         if node_id==target:
             parent_node[node_id] = source

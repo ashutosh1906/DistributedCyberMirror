@@ -1,4 +1,4 @@
-from Components import State
+from Components import State,Actions
 import POMDPSettings
 from CommonUtilities import SetOperations
 
@@ -96,7 +96,39 @@ def initialize_action_space():
         POMDPSettings.action_space_by_type.append(POMDPSettings.anonymization)
         index += 1
 
-    SetOperations.combination_possible_values_all_positions(POMDPSettings.action_space_by_type)
+    del POMDPSettings.action_space_all_values[:]
+    POMDPSettings.action_space_all_values = \
+        SetOperations.combination_possible_values_all_positions(POMDPSettings.action_space_by_type)
+
+def generate_action_space():
+    del POMDPSettings.action_space_objects[:]
+    id = 0
+    for node in POMDPSettings.next_adversary_nodes:
+        for action_value in POMDPSettings.action_space_all_values:
+            POMDPSettings.action_space_objects.append(Actions.Actions(id,node,action_value))
+            id += 1
+
+    ############################ Determine the co-efficients (Uniform) ############################
+    __determine_co_efficients_uniform()
+    # print(' Weights: %s, %s, %s' % (POMDPSettings.WEIGHT_CONCEALABILITY_MEASURE,POMDPSettings.WEIGHT_DETECTABILITY_MEASURE,
+    #                                 POMDPSettings.WEIGHT_DETERRENCE_MEASURE))
+    set_effectiveness_over_all_actions(POMDPSettings.action_space_objects)
+
+def set_effectiveness_over_all_actions(action_space_objects):
+    for action in action_space_objects:
+        action.set_effectiveness()
+
+def __determine_co_efficients_uniform():
+    num_parameters = 0
+    if POMDPSettings.CONCEALABILITY_MEASURE_ENABLED:
+        num_parameters += 1
+    if POMDPSettings.DETECTABILITY_MEASURE:
+        num_parameters += 1
+    if POMDPSettings.DETERRENCE_MEASURE:
+        num_parameters += 1
+    POMDPSettings.WEIGHT_CONCEALABILITY_MEASURE = POMDPSettings.WEIGHT_DETECTABILITY_MEASURE = POMDPSettings.WEIGHT_DETERRENCE_MEASURE = 1/num_parameters
+
+
 
 
 

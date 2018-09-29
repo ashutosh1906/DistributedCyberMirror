@@ -31,8 +31,13 @@ def determine_Action_Space():
         possible_next_adv_position |= set(POMDPSettings.possible_nodes_for_state[node][1:])
     print('************ Possible Adversay Next Positions %s********'%(POMDPSettings.possible_nodes_for_state))
     print('************ Possible Nodes for Actions %s********' % (possible_next_adv_position))
+    POMDPSettings.next_adversary_nodes = possible_next_adv_position
 
     ############################################# Create the action space first ###############################
     POMDPComponentGenerator.initialize_action_space()
+    POMDPComponentGenerator.generate_action_space()
+
+
+
 
 

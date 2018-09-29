@@ -39,3 +39,19 @@ def action_space_type_Print(action_space_by_type,action_space_group_index):
             print('************* Diversity Index %s ************'%(action_group))
         if action_space_group_index[action_group]==POMDPSettings.ANONYMIZATION_INDEX:
             print('************* Anonymization Index %s ************'%(action_group))
+
+def action_space_Print(all_possible_action_space,possible_compromised_nodes,next_adversary_nodes,print_each_action):
+    print('****** Printing Possible Action Space of numbers %s ******************'%(len(all_possible_action_space)))
+    if print_each_action:
+        for action in all_possible_action_space:
+            print('\t %s'%(action))
+    print("\t **** Currently Compromised nodes %s"%(possible_compromised_nodes))
+    print("\t **** This action space is applicable to these nodes %s" % (next_adversary_nodes))
+    print('****** End of Printing Possible Action Space of numbers ******************')
+
+def comprehensive_action_space_print(action_space_objects):
+    print("*********** Actions Space by Objects ***********************")
+    for action in action_space_objects:
+        action.printProperties()
+    print("*********** End Printing Actions Space by Objects ***********************")
+

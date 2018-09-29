@@ -6,7 +6,7 @@ from POMDPGenerator import POMDPOperations
 
 def initilization():
     print('Initialize the environment')
-    ParseTopologyFile.parse_aSHIIP_topology(POMDPSettings.TOPOLOGY_FILE_NAME, POMDPSettings.adjacent_matrix)
+    ParseTopologyFile.parse_aSHIIP_topology_bi_directional(POMDPSettings.TOPOLOGY_FILE_NAME, POMDPSettings.adjacent_matrix)
     if POMDPSettings.USER_INPUT_TARGET_NODE:
         while(True):
             print("Please enter the target node. Any number between [0-%s]"%(len(POMDPSettings.adjacent_matrix)-1))
@@ -46,6 +46,9 @@ def pomdp_engine():
     ####################################### Action Space ######################################################
     POMDPOperations.determine_Action_Space()
     # PrintLibrary.action_space_type_Print(POMDPSettings.action_space_by_type,POMDPSettings.action_space_group_index)
+    # PrintLibrary.action_space_Print(POMDPSettings.action_space_all_values,
+    #                                 POMDPSettings.compromised_nodes_current_time,POMDPSettings.next_adversary_nodes,print_each_action=False)
+    # PrintLibrary.comprehensive_action_space_print(POMDPSettings.action_space_objects)
 
 
 if __name__=='__main__':

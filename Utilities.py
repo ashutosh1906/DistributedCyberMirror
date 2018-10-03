@@ -58,6 +58,24 @@ def normalize_state_probability(state_space):
     if non_zero_prob_sum != 1.0:
         print('************** Sum of probabilities is not One (^_^) (^_^) (^_^) (^_^) %s************'%(non_zero_prob_sum))
 
+def reachable_from_other_nodes():
+    POMDPSettings.parent_nodes_of_each_node.clear()
+    # print("Possible Nodes for State %s"%(POMDPSettings.possible_nodes_for_state))
+    for initial_compromised in POMDPSettings.possible_nodes_for_state:
+        for node in POMDPSettings.possible_nodes_for_state[initial_compromised]:
+            if  node not in POMDPSettings.parent_nodes_of_each_node:
+                POMDPSettings.parent_nodes_of_each_node[node] = []
+            try:
+                node_position = POMDPSettings.possible_nodes_for_state[initial_compromised].index(node)
+                for cand_node in POMDPSettings.possible_nodes_for_state[initial_compromised][0:node_position]:
+                    if cand_node not in POMDPSettings.parent_nodes_of_each_node[node]:
+                        POMDPSettings.parent_nodes_of_each_node[node].append(cand_node)
+            except ValueError:
+                continue
+
+
+
+
 
 
 

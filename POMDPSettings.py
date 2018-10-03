@@ -18,6 +18,7 @@ compromised_nodes_probability = {}
 target_node = [] ############### Targets can be a list of probable targets #########################
                  ############### if only one target access with the index 0#######################
 possible_nodes_for_state = {}
+parent_nodes_of_each_node = {}
 
 #################################### SELECTING COMPROMISED NODES ##################################
 COMPROMISED_NODES_SELECTION_ON_THRESHOLD = True
@@ -64,13 +65,33 @@ DISTANCE_FACTOR = 10
 CONCEALABILITY_MEASURE_ENABLED = 1
 WEIGHT_CONCEALABILITY_MEASURE = 1
 
-DETECTABILITY_MEASURE = 1
+DETECTABILITY_MEASURE = 0
 WEIGHT_DETECTABILITY_MEASURE = 1
 IDS_TRUE_POSITIVE_RATE = 0.9
 ROBUSTNESS_DECEPTION = 0.9
 
 DETERRENCE_MEASURE = 0
 WEIGHT_DETERRENCE_MEASURE = 1
+
+############################################## Action COST ##########################################
+SPATIAL_MUTATION_COST = 100
+SPATIAL_MUTATION_DISTANCE_WEIGHT = 1.5 ###### Not Used Right Now
+
+ANONYMIZATION_COST = 100
+DIVERSITY_COST = 100
+
+################################## ACTION SPACE REDUCTION #############################################
+MARGINAL_PRUNNING = True
+MINIMUM_EFFECTIVENESS_WITH_SCAN = 0.50
+MINIMUM_EFFECTIVENESS_WITHOUT_SCAN = 0.70
+
+REDUNDANT_PRUNNING = True
+CLUSTER_DIFFERENCE = 0.025
+
+IRRELEVANT_PRUNNING = True
+
+################################## ADVERSARY PARAMETERS #############################################
+ADVERSARY_SCANNING_PROB = 0.50
 
 ################################## Other Variables ##################################################
 READ_IDS_FROM_FILES = True

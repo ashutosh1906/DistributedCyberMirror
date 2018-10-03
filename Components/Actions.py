@@ -23,6 +23,8 @@ class Actions:
                 self.anonymization = action_component[action_type]
         self.effeciveness_with_scan = None
         self.effeciveness_without_scan = None
+        self.probable_parent_nodes = POMDPSettings.parent_nodes_of_each_node[self.node_id]
+        self.__setCost()
 
     def __distance_from_target(self):
         target_node = POMDPSettings.target_node[0]
@@ -31,10 +33,27 @@ class Actions:
             return
         self.distance_from_target = POMDPSettings.all_pair_shortest_path[target_node][self.node_id]
 
+    def __setCost(self):
+        self.cost = 0.0
+        if self.anonymization is not None:
+            self.cost += (self.anonymization-1)*POMDPSettings.ANONYMIZATION_COST
+        if self.diversity is not None:
+            self.cost += (self.diversity-1)*POMDPSettings.DIVERSITY_COST
+        ########################## Spatial Mutation Number of IP Address ##################
+        ####################### t_i = (1-m)*(n-1) ########################################
+        if self.spatial_mutation is not None:
+            spatial_ip = (1-self.spatial_mutation)*(len(self.probable_parent_nodes)-1)
+            if spatial_ip != int(spatial_ip):
+                spatial_ip = int(spatial_ip)+1
+            self.cost += spatial_ip*POMDPSettings.SPATIAL_MUTATION_COST
+        # print('*** Required Cost is %s for Node %s*******'%(self.cost,self.node_id))
+        # self.printProperties()
+
     def printProperties(self):
         print('\nAction ID : %s'%(self.primary_key))
         print('\t Node ID : %s'%(self.node_id))
         print('\t\t <-----> Distance from the target %s'%(self.distance_from_target))
+        print('\t\t <-----> Probable Parent Nodes %s' % (self.probable_parent_nodes))
         if self.spatial_mutation is not None:
             print('\t Spatial Mutation : %s'%(self.spatial_mutation))
         if self.temporal_mutation is not None:
@@ -45,6 +64,8 @@ class Actions:
             print('\t Anonymization : %s'%(self.anonymization))
         print('\t Effectiveness with Scan %s'%(self.effeciveness_with_scan))
         print('\t Effectiveness "without" Scan %s' % (self.effeciveness_without_scan))
+        if self.cost is not None:
+            print('\t Implementation Cost %s'%(self.cost))
 
 
     def set_effectiveness(self):

@@ -1,6 +1,8 @@
 from Components import State,Actions
 import POMDPSettings
 from CommonUtilities import SetOperations
+from CommonUtilities import DataStructureFunctions
+import Utilities
 
 def generate_initial_state_space(possible_nodes_for_state):
     print('**** Possible Initial Adversary Positions %s'%(possible_nodes_for_state))
@@ -105,8 +107,9 @@ def generate_action_space():
     id = 0
     for node in POMDPSettings.next_adversary_nodes:
         for action_value in POMDPSettings.action_space_all_values:
-            POMDPSettings.action_space_objects.append(Actions.Actions(id,node,action_value))
-            id += 1
+            if any([True for sp_action in action_value if sp_action!=1]):
+                POMDPSettings.action_space_objects.append(Actions.Actions(id,node,action_value))
+                id += 1
 
     ############################ Determine the co-efficients (Uniform) ############################
     __determine_co_efficients_uniform()
@@ -127,6 +130,43 @@ def __determine_co_efficients_uniform():
     if POMDPSettings.DETERRENCE_MEASURE:
         num_parameters += 1
     POMDPSettings.WEIGHT_CONCEALABILITY_MEASURE = POMDPSettings.WEIGHT_DETECTABILITY_MEASURE = POMDPSettings.WEIGHT_DETERRENCE_MEASURE = 1/num_parameters
+
+def marginal_prunning(action_space_objects):
+    print("***** Before Prunning Number of Actions %s ******"%(len(action_space_objects)))
+    list_of_remove = []
+    for index in range(len(action_space_objects)):
+        action = action_space_objects[index]
+        # action.printProperties()
+        if action.effeciveness_with_scan < POMDPSettings.MINIMUM_EFFECTIVENESS_WITH_SCAN:
+            list_of_remove.append(index)
+            # print("Pruned Out : Action Effectiveness with Scan %s"%(action.effeciveness_with_scan))
+            continue
+        if action.effeciveness_without_scan < POMDPSettings.MINIMUM_EFFECTIVENESS_WITHOUT_SCAN:
+            list_of_remove.append(index)
+            # print("Pruned Out : Action Effectiveness without Scan %s" % (action.effeciveness_without_scan))
+            continue
+    DataStructureFunctions.delete_values_by_index_from_list(POMDPSettings.action_space_objects,list_of_remove)
+    print("***** After Prunning Number of Actions %s ******" % (len(action_space_objects)))
+
+def redundant_prunning(action_space_objects):
+    print("****** Before Redundant Prunning %s******"%(len(action_space_objects)))
+    weighted_effectiveness_action = [] ###### Index of a value in this list is also representing the index in the action space
+    weighted_cost_effectiveness_action = []
+    for action in action_space_objects:
+        weighted_effectiveness_action.append(0.0)
+        weighted_effectiveness_action[-1] += POMDPSettings.ADVERSARY_SCANNING_PROB*action.effeciveness_with_scan
+        weighted_effectiveness_action[-1] += (1-POMDPSettings.ADVERSARY_SCANNING_PROB) * action.effeciveness_without_scan
+        weighted_cost_effectiveness_action.append(weighted_effectiveness_action[-1]*100/action.cost)
+    print(weighted_effectiveness_action)
+    print(weighted_cost_effectiveness_action)
+    create_clusters(weighted_effectiveness_action,weighted_cost_effectiveness_action)
+    print("****** After Redundant Prunning %s******" % (len(action_space_objects)))
+
+def create_clusters(weighted_effectiveness_action,weighted_cost_effectiveness_action):
+    DataStructureFunctions.normalization_by_min(weighted_effectiveness_action)
+    DataStructureFunctions.normalization_by_min(weighted_cost_effectiveness_action)
+    print(weighted_effectiveness_action)
+    print(weighted_cost_effectiveness_action)
 
 
 

@@ -31,11 +31,20 @@ def determine_Action_Space():
         possible_next_adv_position |= set(POMDPSettings.possible_nodes_for_state[node][1:])
     print('************ Possible Adversay Next Positions %s********'%(POMDPSettings.possible_nodes_for_state))
     print('************ Possible Nodes for Actions %s********' % (possible_next_adv_position))
-    POMDPSettings.next_adversary_nodes = possible_next_adv_position
+    POMDPSettings.next_adversary_nodes = list(possible_next_adv_position)
 
     ############################################# Create the action space first ###############################
+    Utilities.reachable_from_other_nodes()
     POMDPComponentGenerator.initialize_action_space()
     POMDPComponentGenerator.generate_action_space()
+    prune_action_space()
+
+def prune_action_space():
+    if POMDPSettings.MARGINAL_PRUNNING:
+        POMDPComponentGenerator.marginal_prunning(POMDPSettings.action_space_objects)
+    if POMDPSettings.REDUNDANT_PRUNNING:
+        POMDPComponentGenerator.redundant_prunning(POMDPSettings.action_space_objects)
+
 
 
 

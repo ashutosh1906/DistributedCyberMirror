@@ -2,7 +2,8 @@ from Components import State,Actions
 import POMDPSettings
 from CommonUtilities import SetOperations
 from CommonUtilities import DataStructureFunctions
-import Utilities
+import Utilities,PrintLibrary
+import random
 
 def generate_initial_state_space(possible_nodes_for_state):
     print('**** Possible Initial Adversary Positions %s'%(possible_nodes_for_state))
@@ -105,11 +106,14 @@ def initialize_action_space():
 def generate_action_space():
     del POMDPSettings.action_space_objects[:]
     id = 0
+    node_id = 0
     for node in POMDPSettings.next_adversary_nodes:
+        POMDPSettings.action_space_objects.append([])
         for action_value in POMDPSettings.action_space_all_values:
             if any([True for sp_action in action_value if sp_action!=1]):
-                POMDPSettings.action_space_objects.append(Actions.Actions(id,node,action_value))
+                POMDPSettings.action_space_objects[node_id].append(Actions.Actions(id,node,action_value))
                 id += 1
+        node_id += 1
 
     ############################ Determine the co-efficients (Uniform) ############################
     __determine_co_efficients_uniform()
@@ -118,8 +122,9 @@ def generate_action_space():
     set_effectiveness_over_all_actions(POMDPSettings.action_space_objects)
 
 def set_effectiveness_over_all_actions(action_space_objects):
-    for action in action_space_objects:
-        action.set_effectiveness()
+    for index in range(len(action_space_objects)):
+        for action in action_space_objects[index]:
+            action.set_effectiveness()
 
 def __determine_co_efficients_uniform():
     num_parameters = 0
@@ -132,48 +137,92 @@ def __determine_co_efficients_uniform():
     POMDPSettings.WEIGHT_CONCEALABILITY_MEASURE = POMDPSettings.WEIGHT_DETECTABILITY_MEASURE = POMDPSettings.WEIGHT_DETERRENCE_MEASURE = 1/num_parameters
 
 def marginal_prunning(action_space_objects):
-    print("***** Before Prunning Number of Actions %s ******"%(len(action_space_objects)))
+    print("***** Before Marginal Prunning Number of Actions ******")
+    PrintLibrary.number_action_available_each_node(action_space_objects)
     list_of_remove = []
-    for index in range(len(action_space_objects)):
-        action = action_space_objects[index]
-        # action.printProperties()
-        if action.effeciveness_with_scan < POMDPSettings.MINIMUM_EFFECTIVENESS_WITH_SCAN:
-            list_of_remove.append(index)
-            # print("Pruned Out : Action Effectiveness with Scan %s"%(action.effeciveness_with_scan))
-            continue
-        if action.effeciveness_without_scan < POMDPSettings.MINIMUM_EFFECTIVENESS_WITHOUT_SCAN:
-            list_of_remove.append(index)
-            # print("Pruned Out : Action Effectiveness without Scan %s" % (action.effeciveness_without_scan))
-            continue
-    DataStructureFunctions.delete_values_by_index_from_list(POMDPSettings.action_space_objects,list_of_remove)
-    print("***** After Prunning Number of Actions %s ******" % (len(action_space_objects)))
+    for node_index in range(len(action_space_objects)):
+        for index in range(len(action_space_objects[node_index])):
+            action = action_space_objects[node_index][index]
+            # action.printProperties()
+            if action.effeciveness_with_scan < POMDPSettings.MINIMUM_EFFECTIVENESS_WITH_SCAN:
+                list_of_remove.append(index)
+                # print("Pruned Out : Action Effectiveness with Scan %s"%(action.effeciveness_with_scan))
+                continue
+            if action.effeciveness_without_scan < POMDPSettings.MINIMUM_EFFECTIVENESS_WITHOUT_SCAN:
+                list_of_remove.append(index)
+                # print("Pruned Out : Action Effectiveness without Scan %s" % (action.effeciveness_without_scan))
+                continue
+        DataStructureFunctions.delete_values_by_index_from_list(POMDPSettings.action_space_objects[node_index],list_of_remove)
+    print("***** After Marginal Prunning Number of Actions ******")
+    PrintLibrary.number_action_available_each_node(action_space_objects)
 
 def redundant_prunning(action_space_objects):
-    print("****** Before Redundant Prunning %s******"%(len(action_space_objects)))
+    # print("****** Before Redundant Prunning %s******"%(len(action_space_objects)))
     weighted_effectiveness_action = [] ###### Index of a value in this list is also representing the index in the action space
     weighted_cost_effectiveness_action = []
     for action in action_space_objects:
         weighted_effectiveness_action.append(0.0)
         weighted_effectiveness_action[-1] += POMDPSettings.ADVERSARY_SCANNING_PROB*action.effeciveness_with_scan
         weighted_effectiveness_action[-1] += (1-POMDPSettings.ADVERSARY_SCANNING_PROB) * action.effeciveness_without_scan
-        weighted_cost_effectiveness_action.append(weighted_effectiveness_action[-1]*100/action.cost)
-    print(weighted_effectiveness_action)
-    print(weighted_cost_effectiveness_action)
-    create_clusters(weighted_effectiveness_action,weighted_cost_effectiveness_action)
-    print("****** After Redundant Prunning %s******" % (len(action_space_objects)))
+        action.set_weighted_effectiveness(weighted_effectiveness_action[-1])
+        if POMDPSettings.Y_AXIS_COST_EFFECTIVENESS:
+            weighted_cost_effectiveness_action.append(weighted_effectiveness_action[-1]*100/action.cost)
+            action.set_weighted_cost_effectiveness(weighted_cost_effectiveness_action[-1])
+        else:
+            weighted_cost_effectiveness_action.append(action.cost)
+    # print(weighted_effectiveness_action)
+    # print(weighted_cost_effectiveness_action)
+    number_of_cluster = (max(weighted_effectiveness_action)-min(weighted_effectiveness_action))/POMDPSettings.CLUSTER_DIFFERENCE
+    if number_of_cluster != int(number_of_cluster):
+        number_of_cluster = int(number_of_cluster)+1
 
-def create_clusters(weighted_effectiveness_action,weighted_cost_effectiveness_action):
-    DataStructureFunctions.normalization_by_min(weighted_effectiveness_action)
-    DataStructureFunctions.normalization_by_min(weighted_cost_effectiveness_action)
-    print(weighted_effectiveness_action)
-    print(weighted_cost_effectiveness_action)
+    min_cluster = number_of_cluster
+    max_cluster = min_cluster+POMDPSettings.CLUSTER_ITERATION+1
+    best_selection = None
+    best_selection_distance = None
+    best_cluster_size = None
+    for cluster_size in range(min_cluster,max_cluster):
+        selected_action,distance = Utilities.create_clusters(weighted_effectiveness_action,weighted_cost_effectiveness_action,cluster_size)
+        if best_selection is None \
+                or best_selection_distance > distance:
+            best_selection = selected_action
+            best_selection_distance = distance
+            best_cluster_size = cluster_size
 
+    print('Cluster Size %s\n\tSelected Action : %s with distance %s'%(best_cluster_size,best_selection,best_selection_distance))
 
+    action_space_objects = DataStructureFunctions.keep_value_by_index_in_list(action_space_objects,best_selection)
+    # print("****** After Redundant Prunning %s******" % (len(action_space_objects)))
+    return action_space_objects
 
+def irrelevant_prunning(action_space_objects):
+    print("****** Before Irrelevant Prunning ******")
+    PrintLibrary.number_action_available_each_node(action_space_objects)
+    for node_index in range(len(action_space_objects)):
+        dict_cost_vs_effectiveness = {}
+        index = 0
+        for action in action_space_objects[node_index]:
+            dict_cost_vs_effectiveness[index] = [action.cost,action.weighted_effectiveness]
+            index += 1
+        # print("Irrelevant Prunning %s"%(dict_cost_vs_effectiveness))
+        sorted_list = DataStructureFunctions.sort_dict_by_values(dict_cost_vs_effectiveness,0)
+        # print(sorted_list)
+        seen_effectiveness = []
+        delete_element = []
+        for action_property in sorted_list:
+            if len(seen_effectiveness) == 0:
+                seen_effectiveness.append(action_property[1][1])
+                continue
+            else:
+                current_id = action_property[0]
+                current_effectiveness = action_property[1][1]
+                if current_effectiveness < seen_effectiveness[-1]:
+                    delete_element.append(current_id)
+                else:
+                    seen_effectiveness.append(current_effectiveness)
+        # print(seen_effectiveness)
+        print('Delete %s'%(delete_element))
+        DataStructureFunctions.delete_values_by_index_from_list(action_space_objects[node_index],delete_element)
 
-
-
-
-
-
-
+    print("****** After Irrelevant Prunning ******")
+    PrintLibrary.number_action_available_each_node(action_space_objects)

@@ -51,9 +51,15 @@ def action_space_Print(all_possible_action_space,possible_compromised_nodes,next
 
 def comprehensive_action_space_print(action_space_objects):
     print("*********** Actions Space by Objects ***********************")
-    for action in action_space_objects:
-        action.printProperties()
+    for index in range(len(action_space_objects)):
+        print('Node Index %s : Length is %s'%(index,len(action_space_objects[index])))
+        for action in action_space_objects[index]:
+            action.printProperties()
     print("*********** End Printing Actions Space by Objects ***********************")
 
+def number_action_available_each_node(action_space_objects):
+    for index in range(len(action_space_objects)):
+        print("\t Node Type %s"%(index))
+        print('\t Number of Actions %s'%(len(action_space_objects[index])))
 
 

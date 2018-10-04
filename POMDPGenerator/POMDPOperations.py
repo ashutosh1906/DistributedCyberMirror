@@ -42,8 +42,19 @@ def determine_Action_Space():
 def prune_action_space():
     if POMDPSettings.MARGINAL_PRUNNING:
         POMDPComponentGenerator.marginal_prunning(POMDPSettings.action_space_objects)
+
     if POMDPSettings.REDUNDANT_PRUNNING:
-        POMDPComponentGenerator.redundant_prunning(POMDPSettings.action_space_objects)
+        print("****** Before Redundant Prunning ***************")
+        PrintLibrary.number_action_available_each_node(POMDPSettings.action_space_objects)
+        index = 0
+        for action_type in POMDPSettings.action_space_objects:
+            POMDPSettings.action_space_objects[index] = POMDPComponentGenerator.redundant_prunning(action_type)
+            index += 1
+        print("****** After Redundant Prunning ***************")
+        PrintLibrary.number_action_available_each_node(POMDPSettings.action_space_objects)
+
+    if POMDPSettings.IRRELEVANT_PRUNNING:
+        POMDPComponentGenerator.irrelevant_prunning(POMDPSettings.action_space_objects)
 
 
 

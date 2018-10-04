@@ -12,6 +12,8 @@ class Actions:
         self.anonymization = None
         self.benefit = None
         self.cost = None
+        self.weighted_effectiveness = None
+        self.weighted_cost_effectiveness = None
         for action_type in range(len(action_component)):
             if POMDPSettings.action_space_group_index[action_type]==POMDPSettings.SPATIAL_MUTATION_INDEX:
                 self.spatial_mutation = action_component[action_type]
@@ -50,22 +52,26 @@ class Actions:
         # self.printProperties()
 
     def printProperties(self):
-        print('\nAction ID : %s'%(self.primary_key))
-        print('\t Node ID : %s'%(self.node_id))
-        print('\t\t <-----> Distance from the target %s'%(self.distance_from_target))
-        print('\t\t <-----> Probable Parent Nodes %s' % (self.probable_parent_nodes))
+        print('\n\tAction ID : %s'%(self.primary_key))
+        print('\t\t Node ID : %s'%(self.node_id))
+        print('\t\t\t <-----> Distance from the target %s'%(self.distance_from_target))
+        print('\t\t\t <-----> Probable Parent Nodes %s' % (self.probable_parent_nodes))
         if self.spatial_mutation is not None:
-            print('\t Spatial Mutation : %s'%(self.spatial_mutation))
+            print('\t\t Spatial Mutation : %s'%(self.spatial_mutation))
         if self.temporal_mutation is not None:
-            print('\t Temporal Mutation : %s'%(self.temporal_mutation))
+            print('\t\t Temporal Mutation : %s'%(self.temporal_mutation))
         if self.diversity is not None:
-            print('\t Diversity : %s'%(self.diversity))
+            print('\t\t Diversity : %s'%(self.diversity))
         if self.anonymization is not None:
-            print('\t Anonymization : %s'%(self.anonymization))
-        print('\t Effectiveness with Scan %s'%(self.effeciveness_with_scan))
-        print('\t Effectiveness "without" Scan %s' % (self.effeciveness_without_scan))
+            print('\t\t Anonymization : %s'%(self.anonymization))
+        print('\t\t Effectiveness with Scan %s'%(self.effeciveness_with_scan))
+        print('\t\t Effectiveness "without" Scan %s' % (self.effeciveness_without_scan))
         if self.cost is not None:
-            print('\t Implementation Cost %s'%(self.cost))
+            print('\t\t Implementation Cost %s'%(self.cost))
+        if self.weighted_effectiveness is not None:
+            print('\t\t Weighted Effectiveness %s'%(self.weighted_effectiveness))
+        if self.weighted_cost_effectiveness is not None:
+            print('\t\t Weighted Cost Effectiveness %s'%(self.weighted_cost_effectiveness))
 
 
     def set_effectiveness(self):
@@ -94,7 +100,10 @@ class Actions:
         if self.effeciveness_without_scan > 1:
             print('##### E R R O R : Error in effectiveness without scan %s \n\t\t Action ID : %s'%(self.effeciveness_without_scan,self.primary_key))
 
-    def set_reward(self):
-        pass
+    def set_weighted_effectiveness(self,effectiveness):
+        self.weighted_effectiveness = effectiveness
+
+    def set_weighted_cost_effectiveness(self,cost_effectiveness):
+        self.weighted_cost_effectiveness = cost_effectiveness
 
 

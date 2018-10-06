@@ -73,6 +73,7 @@ def generic_information():
     print('Number of States %s'%(len(POMDPSettings.state_space)))
     number_defense_action = sum([len(i) for i in POMDPSettings.action_space_objects])
     print('Defender Action Space %s'%(number_defense_action))
+    print('Defense Action To Map %s'%(POMDPSettings.defense_action_id_to_position))
     print('Adversary Action Space %s'%(len(POMDPSettings.adversary_action_objects)))
     print('Adversary Action Map %s'%(POMDPSettings.adversary_action_id_to_position))
 

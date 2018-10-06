@@ -88,7 +88,12 @@ def determine_adversary_action_space():
         id += 1
 
 def create_defense_id_map():
-    pass
+    POMDPSettings.defense_action_id_to_position.clear()
+    for i in range(len(POMDPSettings.action_space_objects)):
+        index = 0
+        for action in POMDPSettings.action_space_objects[i]:
+            POMDPSettings.defense_action_id_to_position[action.primary_key] = [i,index]
+            index += 1
 
 
 

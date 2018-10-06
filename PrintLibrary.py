@@ -62,4 +62,17 @@ def number_action_available_each_node(action_space_objects):
         print("\t Node Type %s"%(index))
         print('\t Number of Actions %s'%(len(action_space_objects[index])))
 
+def comprehensive_adversary_action_space(adversary_action_object):
+    print('***************** Adversary Action Space ***********************')
+    for action in adversary_action_object:
+        action.printProperties()
+    print('***************** End of Adversary Action Space ***********************')
+
+def generic_information():
+    import POMDPSettings
+    print('Number of States %s'%(len(POMDPSettings.state_space)))
+    number_defense_action = sum([len(i) for i in POMDPSettings.action_space_objects])
+    print('Defender Action Space %s'%(number_defense_action))
+    print('Adversary Action Space %s'%(len(POMDPSettings.adversary_action_objects)))
+    print('Adversary Action Map %s'%(POMDPSettings.adversary_action_id_to_position))
 

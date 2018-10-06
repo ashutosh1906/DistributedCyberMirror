@@ -115,6 +115,7 @@ def generate_action_space():
                 id += 1
         node_id += 1
 
+    POMDPSettings.DEFENSE_ACTION_TOTAL = id
     ############################ Determine the co-efficients (Uniform) ############################
     __determine_co_efficients_uniform()
     # print(' Weights: %s, %s, %s' % (POMDPSettings.WEIGHT_CONCEALABILITY_MEASURE,POMDPSettings.WEIGHT_DETECTABILITY_MEASURE,
@@ -177,7 +178,7 @@ def redundant_prunning(action_space_objects):
         number_of_cluster = int(number_of_cluster)+1
 
     min_cluster = number_of_cluster
-    max_cluster = min_cluster+POMDPSettings.CLUSTER_ITERATION+1
+    max_cluster = min_cluster + POMDPSettings.MAX_CLUSTER_ITERATION + 1
     best_selection = None
     best_selection_distance = None
     best_cluster_size = None

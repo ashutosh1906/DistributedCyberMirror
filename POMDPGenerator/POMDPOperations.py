@@ -2,6 +2,8 @@ import POMDPSettings
 from POMDPGenerator import POMDPComponentGenerator
 import PrintLibrary,Utilities
 import Dijkstra
+from Components import Actions
+from Components import AdversaryAction
 
 def determine_State_Space():
     del POMDPSettings.state_space[:]
@@ -39,6 +41,16 @@ def determine_Action_Space():
     POMDPComponentGenerator.generate_action_space()
     prune_action_space()
 
+    ####################################### Add Do Nothing #############################
+    # print('Number of defense %s'%(POMDPSettings.DEFENSE_ACTION_TOTAL))
+    index_id = 0
+    for node in POMDPSettings.next_adversary_nodes:
+        POMDPSettings.action_space_objects[index_id].append(
+            Actions.Actions(POMDPSettings.DEFENSE_ACTION_TOTAL,node,POMDPSettings.DEFENSE_DO_NOTHING_ACTION))
+        POMDPSettings.DEFENSE_ACTION_TOTAL += 1
+        index_id += 1
+    create_defense_id_map()
+
 def prune_action_space():
     if POMDPSettings.MARGINAL_PRUNNING:
         POMDPComponentGenerator.marginal_prunning(POMDPSettings.action_space_objects)
@@ -55,6 +67,28 @@ def prune_action_space():
 
     if POMDPSettings.IRRELEVANT_PRUNNING:
         POMDPComponentGenerator.irrelevant_prunning(POMDPSettings.action_space_objects)
+
+def determine_adversary_action_space():
+    id = 0
+    POMDPSettings.adversary_action_id_to_position.clear()
+    for position in range(len(POMDPSettings.compromised_nodes_current_time)):
+        POMDPSettings.adversary_action_objects.append(
+            AdversaryAction.Adversary_Action(id, False, False, POMDPSettings.ADVERSARY_DO_NOTHING,position))
+        POMDPSettings.adversary_action_id_to_position[id] = id
+        id += 1
+        POMDPSettings.adversary_action_objects.append(
+            AdversaryAction.Adversary_Action(id, True, True,
+                                             POMDPSettings.ADVERSARY_ADVANCE * POMDPSettings.ADVERSARY_SCANNING_PROB,position))
+        POMDPSettings.adversary_action_id_to_position[id] = id
+        id += 1
+        POMDPSettings.adversary_action_objects.append(
+            AdversaryAction.Adversary_Action(id, False, True,
+                                             POMDPSettings.ADVERSARY_ADVANCE * (1 - POMDPSettings.ADVERSARY_SCANNING_PROB),position))
+        POMDPSettings.adversary_action_id_to_position[id] = id
+        id += 1
+
+def create_defense_id_map():
+    pass
 
 
 

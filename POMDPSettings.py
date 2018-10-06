@@ -55,6 +55,9 @@ anonymization = [1,2,4,6]
 ANONYMIZATION_ENABLED = True
 ANONYMIZATION_INDEX = 3
 
+DEFENSE_ACTION_TOTAL = 0
+
+DEFENSE_DO_NOTHING_ACTION = [1.0,1,1]
 ############################################ State Value Parameters ###################################
 LOSS_COMPROMISED = -1000
 GAIN_HONEYPOT = 700
@@ -81,6 +84,7 @@ ANONYMIZATION_COST = 100
 DIVERSITY_COST = 100
 
 ################################## ACTION SPACE REDUCTION #############################################
+
 MARGINAL_PRUNNING = True
 MINIMUM_EFFECTIVENESS_WITH_SCAN = 0.50
 MINIMUM_EFFECTIVENESS_WITHOUT_SCAN = 0.70
@@ -91,12 +95,25 @@ REDUNDANT_CLUSTERING_TOLERANCE_LEVEL = 0.001
 REDUNDANT_MAX_ITERATION = 100
 Y_AXIS_COST_EFFECTIVENESS = False
 TRADE_OFF_BENEFIT_COST = 0.7
-CLUSTER_ITERATION = 10
+MAX_CLUSTER_ITERATION = 5
 
 IRRELEVANT_PRUNNING = True
+defense_action_id_to_position = {}
 
 ################################## ADVERSARY PARAMETERS #############################################
 ADVERSARY_SCANNING_PROB = 0.50
+ADVERSARY_SCANNING_COST = 100
+
+ADVERSARY_ADVANCE = 0.7
+ADVERSARY_ADVANCE_COST = 100
+
+ADVERSARY_DO_NOTHING = 1-ADVERSARY_ADVANCE
+adversary_action_objects = []
+adversary_action_id_to_position = {}
+
+############################# State Transition #####################################################
+state_transition = {}
+
 
 ################################## Other Variables ##################################################
 READ_IDS_FROM_FILES = True

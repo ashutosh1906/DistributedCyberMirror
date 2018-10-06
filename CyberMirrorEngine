@@ -4,6 +4,7 @@ import Dijkstra
 import PrintLibrary,Utilities
 from POMDPGenerator import POMDPOperations
 
+
 def initilization():
     print('Initialize the environment')
     ParseTopologyFile.parse_aSHIIP_topology_bi_directional(POMDPSettings.TOPOLOGY_FILE_NAME, POMDPSettings.adjacent_matrix)
@@ -49,6 +50,14 @@ def pomdp_engine():
     # PrintLibrary.action_space_Print(POMDPSettings.action_space_all_values,
     #                                 POMDPSettings.compromised_nodes_current_time,POMDPSettings.next_adversary_nodes,print_each_action=False)
     # PrintLibrary.comprehensive_action_space_print(POMDPSettings.action_space_objects)
+
+    ################################# Adversary Action ######################################################
+    POMDPOperations.determine_adversary_action_space()
+    PrintLibrary.comprehensive_adversary_action_space(POMDPSettings.adversary_action_objects)
+    # PrintLibrary.comprehensive_adversary_action_space(POMDPSettings.adversary_action_objects)
+    PrintLibrary.generic_information()
+
+    ############################### State Transition #########################################################
 
 
 if __name__=='__main__':

@@ -19,6 +19,7 @@ def generate_initial_state_space(possible_nodes_for_state):
 
     print("Adversary Position Nodes %s"%(adv_position_node))
     POMDPSettings.adversary_position_nodes = adv_position_node
+    POMDPSettings.compromised_nodes_current_time = compromised_hosts_by_position
     iterate_over_possible_state(adv_position_node,1,len(compromised_hosts_by_position),[])
 
 def iterate_over_possible_state(adv_position_node,current_depth,max_depth,chosen_node):

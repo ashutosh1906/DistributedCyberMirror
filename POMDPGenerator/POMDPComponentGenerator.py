@@ -14,8 +14,11 @@ def generate_initial_state_space(possible_nodes_for_state):
         adv_position_node.append([])
         for node in possible_nodes_for_state[compromised_hosts_by_position[i]]:
             adv_position_node[i].append(node)
-            adv_position_node[i].append(-node)
+            if node==compromised_hosts_by_position[i] or POMDPSettings.TAKE_MIRROR_COMPROMISED_NODES:
+                adv_position_node[i].append(-node)
+
     print("Adversary Position Nodes %s"%(adv_position_node))
+    POMDPSettings.adversary_position_nodes = adv_position_node
     iterate_over_possible_state(adv_position_node,1,len(compromised_hosts_by_position),[])
 
 def iterate_over_possible_state(adv_position_node,current_depth,max_depth,chosen_node):
@@ -138,8 +141,8 @@ def __determine_co_efficients_uniform():
     POMDPSettings.WEIGHT_CONCEALABILITY_MEASURE = POMDPSettings.WEIGHT_DETECTABILITY_MEASURE = POMDPSettings.WEIGHT_DETERRENCE_MEASURE = 1/num_parameters
 
 def marginal_prunning(action_space_objects):
-    print("***** Before Marginal Prunning Number of Actions ******")
-    PrintLibrary.number_action_available_each_node(action_space_objects)
+    # print("***** Before Marginal Prunning Number of Actions ******")
+    # PrintLibrary.number_action_available_each_node(action_space_objects)
     list_of_remove = []
     for node_index in range(len(action_space_objects)):
         for index in range(len(action_space_objects[node_index])):
@@ -154,8 +157,8 @@ def marginal_prunning(action_space_objects):
                 # print("Pruned Out : Action Effectiveness without Scan %s" % (action.effeciveness_without_scan))
                 continue
         DataStructureFunctions.delete_values_by_index_from_list(POMDPSettings.action_space_objects[node_index],list_of_remove)
-    print("***** After Marginal Prunning Number of Actions ******")
-    PrintLibrary.number_action_available_each_node(action_space_objects)
+    # print("***** After Marginal Prunning Number of Actions ******")
+    # PrintLibrary.number_action_available_each_node(action_space_objects)
 
 def redundant_prunning(action_space_objects):
     # print("****** Before Redundant Prunning %s******"%(len(action_space_objects)))
@@ -190,15 +193,15 @@ def redundant_prunning(action_space_objects):
             best_selection_distance = distance
             best_cluster_size = cluster_size
 
-    print('Cluster Size %s\n\tSelected Action : %s with distance %s'%(best_cluster_size,best_selection,best_selection_distance))
+    # print('Cluster Size %s\n\tSelected Action : %s with distance %s'%(best_cluster_size,best_selection,best_selection_distance))
 
     action_space_objects = DataStructureFunctions.keep_value_by_index_in_list(action_space_objects,best_selection)
     # print("****** After Redundant Prunning %s******" % (len(action_space_objects)))
     return action_space_objects
 
 def irrelevant_prunning(action_space_objects):
-    print("****** Before Irrelevant Prunning ******")
-    PrintLibrary.number_action_available_each_node(action_space_objects)
+    # print("****** Before Irrelevant Prunning ******")
+    # PrintLibrary.number_action_available_each_node(action_space_objects)
     for node_index in range(len(action_space_objects)):
         dict_cost_vs_effectiveness = {}
         index = 0
@@ -222,8 +225,34 @@ def irrelevant_prunning(action_space_objects):
                 else:
                     seen_effectiveness.append(current_effectiveness)
         # print(seen_effectiveness)
-        print('Delete %s'%(delete_element))
+        # print('Delete %s'%(delete_element))
         DataStructureFunctions.delete_values_by_index_from_list(action_space_objects[node_index],delete_element)
 
-    print("****** After Irrelevant Prunning ******")
-    PrintLibrary.number_action_available_each_node(action_space_objects)
+    # print("****** After Irrelevant Prunning ******")
+    # PrintLibrary.number_action_available_each_node(action_space_objects)
+
+################################################# Related to State Transition ##################################################
+def state_transition_from_parent_nodes():
+    ######## Previous State (key)---> Next State (Value) ###########################
+    non_zero_transition = 0
+    for new_state in POMDPSettings.state_space:
+        new_state_id = POMDPSettings.state_space_map[tuple(new_state.adversary_positions)]
+        for i in range(len(new_state.parent_nodes)):
+            for list_parent in new_state.parent_nodes[i]:
+                parent_id = POMDPSettings.state_space_map[tuple(list_parent)]
+                if parent_id not in POMDPSettings.state_transition:
+                    POMDPSettings.state_transition[parent_id] = {}
+                POMDPSettings.state_transition[parent_id][new_state_id] = {}
+                for node in new_state.adversary_positions:
+                    if node in POMDPSettings.action_based_on_nodes:
+                        # print('\t Applicable Actions of Node %s --> %s'%(node,POMDPSettings.action_based_on_nodes[node]))
+                        for action_first_dimension,action_sec_dimension in POMDPSettings.action_based_on_nodes[node]:
+                            id_to_action = POMDPSettings.action_space_objects[action_first_dimension][action_sec_dimension].primary_key
+                            # print('****** Parent ID --> State ID --> Defense ID (%s,%s,%s)' % (parent_id, new_state_id,id_to_action))
+                            non_zero_transition += 1
+    print('*************** Non Zero Transitions %s*****************'%(non_zero_transition))
+
+
+
+
+

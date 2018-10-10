@@ -17,3 +17,4 @@ class Adversary_Action:
             print('\t The adversary will forward')
         print('\t Possibility of the action %s'%(self.attack_probability))
         print('\t Cost of the action %s'%(self.adv_cost))
+        print('\t ID of the adversary %s'%(self.adversary_position))

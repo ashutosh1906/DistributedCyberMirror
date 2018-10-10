@@ -22,7 +22,7 @@ parent_nodes_of_each_node = {}
 
 #################################### SELECTING COMPROMISED NODES ##################################
 COMPROMISED_NODES_SELECTION_ON_THRESHOLD = True
-NODE_SELECTION_THRESHOLD_VALUE = 300
+NODE_SELECTION_THRESHOLD_VALUE = 250
 compromised_nodes_current_time = []
 next_adversary_nodes = []
 MAXIMUM_DEPTH_CHECK = True
@@ -63,6 +63,7 @@ LOSS_COMPROMISED = -1000
 GAIN_HONEYPOT = 700
 BENEFIT_DISTANCE = 100
 DISTANCE_FACTOR = 10
+TAKE_MIRROR_COMPROMISED_NODES = True
 
 ############################################# Action Effectiveness #######################################
 CONCEALABILITY_MEASURE_ENABLED = 1
@@ -99,6 +100,7 @@ MAX_CLUSTER_ITERATION = 5
 
 IRRELEVANT_PRUNNING = True
 defense_action_id_to_position = {}
+action_based_on_nodes = {}
 
 ################################## ADVERSARY PARAMETERS #############################################
 ADVERSARY_SCANNING_PROB = 0.50
@@ -111,8 +113,11 @@ ADVERSARY_DO_NOTHING = 1-ADVERSARY_ADVANCE
 adversary_action_objects = []
 adversary_action_id_to_position = {}
 
+adversary_position_nodes = []
+
 ############################# State Transition #####################################################
 state_transition = {}
+state_transition_to_id = {}
 
 
 ################################## Other Variables ##################################################

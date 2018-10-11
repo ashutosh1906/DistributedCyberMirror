@@ -22,3 +22,41 @@ def __iteration_over_possible_combinations(data_structure,chosen_node,possible_c
         chosen_node.append(value)
         __iteration_over_possible_combinations(data_structure[1:],chosen_node,possible_combinations)
         del chosen_node[-1]
+
+def iteration_over_possible_combinations_no_duplicate(data_structure,chosen_node,possible_combinations):
+    if len(data_structure)==0:
+        create_list = []
+        for num in chosen_node:
+            create_list.append(num)
+        possible_combinations.append(create_list)
+        return
+    current_type = data_structure[0]
+    for value in current_type:
+        if value not in chosen_node:
+            chosen_node.add(value)
+            iteration_over_possible_combinations_no_duplicate(data_structure[1:], chosen_node, possible_combinations)
+            chosen_node.remove(value)
+        else:
+            iteration_over_possible_combinations_no_duplicate(data_structure[1:], chosen_node, possible_combinations)
+
+def iteration_over_possible_combinations_list_based(data_structure,chosen_node,possible_combinations):
+    # print('List based Iterations %s'%(data_structure))
+    if len(data_structure)==0:
+        create_list = []
+        for value in chosen_node:
+            create_list.append(value)
+        possible_combinations.append(create_list)
+        return
+    current_type = data_structure[0]
+    for value in current_type:
+        chosen_node.append(value)
+        iteration_over_possible_combinations_list_based(data_structure[1:],chosen_node,possible_combinations)
+        del chosen_node[-1]
+
+def merge_lists(given_list,elements):
+    # print('Merge %s'%(given_list))
+    for value in given_list:
+        if type(value)==list:
+            merge_lists(value, elements)
+        else:
+            elements.append(value)

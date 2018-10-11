@@ -19,10 +19,11 @@ target_node = [] ############### Targets can be a list of probable targets #####
                  ############### if only one target access with the index 0#######################
 possible_nodes_for_state = {}
 parent_nodes_of_each_node = {}
+possible_node_combinations = {}
 
 #################################### SELECTING COMPROMISED NODES ##################################
 COMPROMISED_NODES_SELECTION_ON_THRESHOLD = True
-NODE_SELECTION_THRESHOLD_VALUE = 250
+NODE_SELECTION_THRESHOLD_VALUE = 300
 compromised_nodes_current_time = []
 next_adversary_nodes = []
 MAXIMUM_DEPTH_CHECK = True

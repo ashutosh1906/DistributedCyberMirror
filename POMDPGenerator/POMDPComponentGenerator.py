@@ -4,6 +4,8 @@ from CommonUtilities import SetOperations
 from CommonUtilities import DataStructureFunctions
 import Utilities,PrintLibrary
 import random
+from CommonUtilities import GraphTraversal
+import PrintLibrary
 
 def generate_initial_state_space(possible_nodes_for_state):
     print('**** Possible Initial Adversary Positions %s'%(possible_nodes_for_state))
@@ -14,36 +16,71 @@ def generate_initial_state_space(possible_nodes_for_state):
         adv_position_node.append([])
         for node in possible_nodes_for_state[compromised_hosts_by_position[i]]:
             adv_position_node[i].append(node)
-            if node==compromised_hosts_by_position[i] or POMDPSettings.TAKE_MIRROR_COMPROMISED_NODES:
-                adv_position_node[i].append(-node)
+            # if node==compromised_hosts_by_position[i] or POMDPSettings.TAKE_MIRROR_COMPROMISED_NODES:
+            #     adv_position_node[i].append(-node)
 
     print("Adversary Position Nodes %s"%(adv_position_node))
     POMDPSettings.adversary_position_nodes = adv_position_node
     POMDPSettings.compromised_nodes_current_time = compromised_hosts_by_position
-    iterate_over_possible_state(adv_position_node,1,len(compromised_hosts_by_position),[])
+    # iterate_over_possible_state(adv_position_node,1,len(compromised_hosts_by_position),[])
+    possible_node_combinations = GraphTraversal.graph_traversal_concurrent(POMDPSettings.adversary_position_nodes)
+    PrintLibrary.possible_combinations_print(possible_node_combinations, 'Nodes Positions')
+    if POMDPSettings.TAKE_MIRROR_COMPROMISED_NODES:
+        POMDPSettings.possible_node_combinations = create_mirror_corresponding_nodes(possible_node_combinations)
+    else:
+        POMDPSettings.possible_node_combinations = possible_node_combinations
+    PrintLibrary.possible_combinations_print(POMDPSettings.possible_node_combinations, 'Nodes Positions')
 
-def iterate_over_possible_state(adv_position_node,current_depth,max_depth,chosen_node):
-    # print('Current Depth %s Chosen Nodes %s'%(current_depth,chosen_node))
-    if current_depth > max_depth:
-        return
-    if current_depth==max_depth:
-        state_id = len(POMDPSettings.state_space)
-        for node in adv_position_node[current_depth-1]:
-            current_state = []
-            for i in chosen_node:
-                current_state.append(i)
-            current_state.append(node)
-            POMDPSettings.state_space.append(State.State(state_id,current_state))
-            POMDPSettings.state_space_map[tuple(current_state)] = state_id
-            state_id += 1
-            # print("\t Current State is %s"%(current_state))
-        return
-    for node in adv_position_node[current_depth-1]:
-        current_state = []
-        for i in chosen_node:
-            current_state.append(i)
-        current_state.append(node)
-        iterate_over_possible_state(adv_position_node,current_depth+1,max_depth,current_state)
+def create_mirror_corresponding_nodes(possible_node_combinations):
+    org_possible_node_combinations = []
+    for positions in possible_node_combinations:
+        if len(positions)==1:
+            org_possible_node_combinations.append([positions[0]])
+            org_possible_node_combinations.append([-positions[0]])
+        if len(positions)>1:
+            start_node = positions[0]
+            iterate_over_mirror_nodes(positions[1:],[start_node],org_possible_node_combinations)
+            iterate_over_mirror_nodes(positions[1:],[-start_node],org_possible_node_combinations)
+    return org_possible_node_combinations
+
+def iterate_over_mirror_nodes(data_structure,chosen_node,possible_node_combinations):
+    if len(data_structure)==1:
+        for i in range(2):
+            current_state_position = []
+            for node in chosen_node:
+                current_state_position.append(node)
+            current_state_position.append(data_structure[0]*pow(-1,i))
+            possible_node_combinations.append(current_state_position)
+    else:
+        start_node = data_structure[0]
+        for i in range(2):
+            chosen_node.append(start_node*pow(-1,i))
+            iterate_over_mirror_nodes(data_structure[1:],chosen_node,possible_node_combinations)
+            del chosen_node[-1]
+
+
+# def iterate_over_possible_state(adv_position_node,current_depth,max_depth,chosen_node):
+#     # print('Current Depth %s Chosen Nodes %s'%(current_depth,chosen_node))
+#     if current_depth > max_depth:
+#         return
+#     if current_depth==max_depth:
+#         state_id = len(POMDPSettings.state_space)
+#         for node in adv_position_node[current_depth-1]:
+#             current_state = []
+#             for i in chosen_node:
+#                 current_state.append(i)
+#             current_state.append(node)
+#             POMDPSettings.state_space.append(State.State(state_id,current_state))
+#             POMDPSettings.state_space_map[tuple(current_state)] = state_id
+#             state_id += 1
+#             # print("\t Current State is %s"%(current_state))
+#         return
+#     for node in adv_position_node[current_depth-1]:
+#         current_state = []
+#         for i in chosen_node:
+#             current_state.append(i)
+#         current_state.append(node)
+#         iterate_over_possible_state(adv_position_node,current_depth+1,max_depth,current_state)
 
 def iterate_over_possible_belief(compromised_nodes_current_time,compromised_nodes_probability,current_depth,
                                  chosen_node,state_space,state_space_map):

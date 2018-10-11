@@ -68,6 +68,7 @@ def comprehensive_adversary_action_space(adversary_action_object):
         action.printProperties()
     print('***************** End of Adversary Action Space ***********************')
 
+
 def generic_information():
     import POMDPSettings
     print('Number of States %s'%(len(POMDPSettings.state_space)))
@@ -76,4 +77,10 @@ def generic_information():
     print('Defense Action To Map %s'%(POMDPSettings.defense_action_id_to_position))
     print('Adversary Action Space %s'%(len(POMDPSettings.adversary_action_objects)))
     print('Adversary Action Map %s'%(POMDPSettings.adversary_action_id_to_position))
+
+def possible_combinations_print(possible_combination,tag):
+    print('***** Possible Combinations for %s ********'%(tag))
+    for each_combination in possible_combination:
+        print(each_combination)
+    print('***** End of Possible Combinations for %s ********' % (tag))
 

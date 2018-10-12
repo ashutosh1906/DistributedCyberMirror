@@ -18,8 +18,10 @@ def determine_State_Space():
     POMDPComponentGenerator.generate_initial_state_space(POMDPSettings.possible_nodes_for_state)
 
     ###################### 1.3 Determine their parent states ###############################################################
+    POMDPComponentGenerator.update_state_value_from_leaves()
     for state in POMDPSettings.state_space:
         state.set_possible_parent_nodes()
+        state.determine_state_value()
 
 
 def determine_Initial_Belief():

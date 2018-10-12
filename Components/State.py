@@ -9,12 +9,11 @@ class State:
         self.state_value = 0.0
         self.belief = 0.0
         self.parent_states = []
-        self.__determine_state_value()
 
     def set_belief(self,prob_value):
         self.belief = prob_value
 
-    def __determine_state_value(self):
+    def determine_state_value(self):
         # print('***** Adversary Positions ****** %s'%(self.adversary_positions))
         target = POMDPSettings.target_node[0]
         self.state_value = 0.0
@@ -25,8 +24,7 @@ class State:
                 self.state_value += POMDPSettings.GAIN_HONEYPOT + pow(distance_from_target,2)*POMDPSettings.BENEFIT_DISTANCE
                 continue
 
-            distance_from_target = POMDPSettings.all_pair_shortest_path[target][node]
-            self.state_value += POMDPSettings.LOSS_COMPROMISED/math.pow(POMDPSettings.DISTANCE_FACTOR,distance_from_target)
+            self.state_value += POMDPSettings.node_values[node]
 
     def set_possible_parent_nodes(self):
         # print('********** Parent Nodes %s ***********' % (POMDPSettings.parent_nodes_considered_paths))

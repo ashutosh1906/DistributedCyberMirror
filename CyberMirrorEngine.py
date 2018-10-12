@@ -38,7 +38,7 @@ def initilization():
 def pomdp_engine():
     ######################################### Create State Space ##############################################
     POMDPOperations.determine_State_Space()
-    PrintLibrary.state_space_print(POMDPSettings.state_space,True)
+    # PrintLibrary.state_space_print(POMDPSettings.state_space,True)
 
     ######################################## Initial Belief ###################################################
     POMDPOperations.determine_Initial_Belief()

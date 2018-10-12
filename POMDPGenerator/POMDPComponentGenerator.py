@@ -3,7 +3,7 @@ import POMDPSettings
 from CommonUtilities import SetOperations
 from CommonUtilities import DataStructureFunctions
 import Utilities,PrintLibrary
-import random
+import random,math
 from CommonUtilities import GraphTraversal
 import PrintLibrary
 
@@ -299,11 +299,37 @@ def state_transition_from_parent_nodes():
         #                     non_zero_transition += 1
     print('*************** Non Zero Transitions %s*****************'%(non_zero_transition))
     print('*************** State Transitions %s*****************' % (POMDPSettings.state_transition_with_adversary))
-    update_state_value_from_leaves()
+
 
 def update_state_value_from_leaves():
     '''Update the state value based on the (Parent,Child) of the tree'''
-    pass
+    POMDPSettings.node_values.clear()
+    print('*** Parent Nodes %s ****'%(POMDPSettings.parent_nodes_considered_paths))
+    for node in POMDPSettings.parent_nodes_considered_paths:
+        this_value = 0
+        for child in POMDPSettings.parent_nodes_considered_paths[node]:
+            if child in POMDPSettings.node_values:
+                this_value += POMDPSettings.node_values[child]
+            else:
+                this_value += recursive_child_value_upated(child,POMDPSettings.node_values)
+        target = POMDPSettings.target_node[0]
+        distance_from_target = POMDPSettings.all_pair_shortest_path[target][node]
+        POMDPSettings.node_values[node] = this_value+POMDPSettings.LOSS_COMPROMISED / math.pow(POMDPSettings.DISTANCE_FACTOR,
+                                                                      distance_from_target)
+    print('Node Values %s'%(POMDPSettings.node_values))
+
+def recursive_child_value_upated(node,explored_node):
+    this_value = 0
+    for child in POMDPSettings.parent_nodes_considered_paths[node]:
+            if child in explored_node:
+                this_value += explored_node[child]
+            else:
+                this_value += recursive_child_value_upated(child,explored_node)
+    target = POMDPSettings.target_node[0]
+    distance_from_target = POMDPSettings.all_pair_shortest_path[target][node]
+    explored_node[node] = this_value + POMDPSettings.LOSS_COMPROMISED / math.pow(POMDPSettings.DISTANCE_FACTOR,
+                                                                                 distance_from_target)
+    return explored_node[node]
 
 
 

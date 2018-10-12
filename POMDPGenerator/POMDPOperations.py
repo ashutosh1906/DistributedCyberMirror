@@ -16,7 +16,9 @@ def determine_State_Space():
               "********************"%(com_node,POMDPSettings.target_node[0],POMDPSettings.possible_nodes_for_state[com_node]))
     ############## 1.2 Determine Possible State Space ##################################################################
     POMDPComponentGenerator.generate_initial_state_space(POMDPSettings.possible_nodes_for_state)
-
+    ###################### Determine their parent states ###############################################################
+    for state in POMDPSettings.state_space:
+        state.set_possible_parent_nodes()
 
 def determine_Initial_Belief():
     # print('************* Compromised Nodes :%s'%(POMDPSettings.compromised_nodes_current_time))
@@ -32,8 +34,11 @@ def determine_Action_Space():
     for node in POMDPSettings.possible_nodes_for_state:
         possible_next_adv_position |= set(POMDPSettings.possible_nodes_for_state[node][1:])
     # print('************ Possible Adversay Next Positions %s********'%(POMDPSettings.possible_nodes_for_state))
-    # print('************ Possible Nodes for Actions %s********' % (possible_next_adv_position))
+
     POMDPSettings.next_adversary_nodes = list(possible_next_adv_position)
+    if POMDPSettings.SORT_ADVERSARY_POSITION:
+        POMDPSettings.next_adversary_nodes = sorted(POMDPSettings.next_adversary_nodes)
+    print('************ Possible Nodes for Actions %s********' % (POMDPSettings.next_adversary_nodes))
 
     ############################################# Create the action space first ###############################
     Utilities.reachable_from_other_nodes()
@@ -42,7 +47,7 @@ def determine_Action_Space():
     prune_action_space()
 
     ####################################### Add Do Nothing #############################
-    # print('Number of defense %s'%(POMDPSettings.DEFENSE_ACTION_TOTAL))
+    print('Number of defense After Prunning %s'%(sum([len(POMDPSettings.action_space_objects[i]) for i in range(len(POMDPSettings.action_space_objects))])))
     index_id = 0
     for node in POMDPSettings.next_adversary_nodes:
         POMDPSettings.action_space_objects[index_id].append(
@@ -63,7 +68,7 @@ def prune_action_space():
             POMDPSettings.action_space_objects[index] = POMDPComponentGenerator.redundant_prunning(action_type)
             index += 1
         # print("****** After Redundant Prunning ***************")
-        PrintLibrary.number_action_available_each_node(POMDPSettings.action_space_objects)
+        # PrintLibrary.number_action_available_each_node(POMDPSettings.action_space_objects)
 
     if POMDPSettings.IRRELEVANT_PRUNNING:
         POMDPComponentGenerator.irrelevant_prunning(POMDPSettings.action_space_objects)

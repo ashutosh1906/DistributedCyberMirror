@@ -30,6 +30,16 @@ def generate_initial_state_space(possible_nodes_for_state):
     else:
         POMDPSettings.possible_node_combinations = possible_node_combinations
     PrintLibrary.possible_combinations_print(POMDPSettings.possible_node_combinations, 'Nodes Positions')
+    ######################### Generate States ####################################
+    determine_parent_nodes()
+    state_id = 0
+    del POMDPSettings.state_space[:]
+    for adv_positions in POMDPSettings.possible_node_combinations:
+        if POMDPSettings.SORT_ADVERSARY_POSITION:
+            adv_positions = sorted(adv_positions)
+        POMDPSettings.state_space.append(State.State(state_id,adv_positions))
+        POMDPSettings.state_space_map[tuple(adv_positions)] = state_id
+        state_id += 1
 
 def create_mirror_corresponding_nodes(possible_node_combinations):
     org_possible_node_combinations = []
@@ -58,6 +68,20 @@ def iterate_over_mirror_nodes(data_structure,chosen_node,possible_node_combinati
             iterate_over_mirror_nodes(data_structure[1:],chosen_node,possible_node_combinations)
             del chosen_node[-1]
 
+def determine_parent_nodes():
+    POMDPSettings.parent_nodes_considered_paths.clear()
+    print('Possible Nodes for State %s'%(POMDPSettings.possible_nodes_for_state))
+    for compromised_node in POMDPSettings.possible_nodes_for_state:
+        node_index = 0
+        for node in POMDPSettings.possible_nodes_for_state[compromised_node]:
+            if node not in POMDPSettings.parent_nodes_considered_paths:
+                POMDPSettings.parent_nodes_considered_paths[node] = []
+            if node_index > 0:
+                parent_node = POMDPSettings.possible_nodes_for_state[compromised_node][node_index-1]
+                if parent_node not in POMDPSettings.parent_nodes_considered_paths[node]:
+                    POMDPSettings.parent_nodes_considered_paths[node].append(parent_node)
+            node_index += 1
+    print('Parent %s'%(POMDPSettings.parent_nodes_considered_paths))
 
 # def iterate_over_possible_state(adv_position_node,current_depth,max_depth,chosen_node):
 #     # print('Current Depth %s Chosen Nodes %s'%(current_depth,chosen_node))
@@ -92,7 +116,8 @@ def iterate_over_possible_belief(compromised_nodes_current_time,compromised_node
                 prob *= compromised_nodes_probability[node]
             if -node in compromised_nodes_probability:
                 prob *= (1-compromised_nodes_probability[-node])
-        state_id = state_space_map[tuple(chosen_node)]
+        if POMDPSettings.SORT_ADVERSARY_POSITION:
+            state_id = state_space_map[tuple(sorted(chosen_node))]
         # print(
         #     '*** Assign and Update Belief of the States %s :: %s --> %s' % (chosen_node,state_id,prob))
         state_space[state_id].set_belief(prob)

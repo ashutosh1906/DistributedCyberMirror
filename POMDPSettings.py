@@ -20,10 +20,12 @@ target_node = [] ############### Targets can be a list of probable targets #####
 possible_nodes_for_state = {}
 parent_nodes_of_each_node = {}
 possible_node_combinations = {}
+parent_nodes_considered_paths = {}
+SORT_ADVERSARY_POSITION = True
 
 #################################### SELECTING COMPROMISED NODES ##################################
 COMPROMISED_NODES_SELECTION_ON_THRESHOLD = True
-NODE_SELECTION_THRESHOLD_VALUE = 300
+NODE_SELECTION_THRESHOLD_VALUE = 250
 compromised_nodes_current_time = []
 next_adversary_nodes = []
 MAXIMUM_DEPTH_CHECK = True

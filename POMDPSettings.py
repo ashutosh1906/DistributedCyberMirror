@@ -25,7 +25,7 @@ SORT_ADVERSARY_POSITION = True
 
 #################################### SELECTING COMPROMISED NODES ##################################
 COMPROMISED_NODES_SELECTION_ON_THRESHOLD = True
-NODE_SELECTION_THRESHOLD_VALUE = 250
+NODE_SELECTION_THRESHOLD_VALUE = 300
 compromised_nodes_current_time = []
 next_adversary_nodes = []
 MAXIMUM_DEPTH_CHECK = True
@@ -119,7 +119,7 @@ adversary_action_id_to_position = {}
 adversary_position_nodes = []
 
 ############################# State Transition #####################################################
-state_transition = {}
+state_transition_with_adversary = {}
 state_transition_to_id = {}
 
 

@@ -21,10 +21,10 @@ def score_compromised_node(compromised_nodes):
     print(
         '******************************* End of Printing score of compromised nodes ************************************************')
 
-def state_space_print(state_space):
+def state_space_print(state_space,print_parent=False):
     print('************************** State Space ***************************************')
     for state in state_space:
-        state.print_properties()
+        state.print_properties(print_parent)
 
 def action_space_type_Print(action_space_by_type,action_space_group_index):
     print('*************************** Action Space by Type *****************************')

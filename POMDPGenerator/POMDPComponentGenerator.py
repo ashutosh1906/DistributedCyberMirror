@@ -22,14 +22,15 @@ def generate_initial_state_space(possible_nodes_for_state):
     print("Adversary Position Nodes %s"%(adv_position_node))
     POMDPSettings.adversary_position_nodes = adv_position_node
     POMDPSettings.compromised_nodes_current_time = compromised_hosts_by_position
+
     # iterate_over_possible_state(adv_position_node,1,len(compromised_hosts_by_position),[])
     possible_node_combinations = GraphTraversal.graph_traversal_concurrent(POMDPSettings.adversary_position_nodes)
-    PrintLibrary.possible_combinations_print(possible_node_combinations, 'Nodes Positions')
+    # PrintLibrary.possible_combinations_print(possible_node_combinations, 'Nodes Positions')
     if POMDPSettings.TAKE_MIRROR_COMPROMISED_NODES:
         POMDPSettings.possible_node_combinations = create_mirror_corresponding_nodes(possible_node_combinations)
     else:
         POMDPSettings.possible_node_combinations = possible_node_combinations
-    PrintLibrary.possible_combinations_print(POMDPSettings.possible_node_combinations, 'Nodes Positions')
+    # PrintLibrary.possible_combinations_print(POMDPSettings.possible_node_combinations, 'Nodes Positions')
     ######################### Generate States ####################################
     determine_parent_nodes()
     state_id = 0
@@ -82,29 +83,6 @@ def determine_parent_nodes():
                     POMDPSettings.parent_nodes_considered_paths[node].append(parent_node)
             node_index += 1
     print('Parent %s'%(POMDPSettings.parent_nodes_considered_paths))
-
-# def iterate_over_possible_state(adv_position_node,current_depth,max_depth,chosen_node):
-#     # print('Current Depth %s Chosen Nodes %s'%(current_depth,chosen_node))
-#     if current_depth > max_depth:
-#         return
-#     if current_depth==max_depth:
-#         state_id = len(POMDPSettings.state_space)
-#         for node in adv_position_node[current_depth-1]:
-#             current_state = []
-#             for i in chosen_node:
-#                 current_state.append(i)
-#             current_state.append(node)
-#             POMDPSettings.state_space.append(State.State(state_id,current_state))
-#             POMDPSettings.state_space_map[tuple(current_state)] = state_id
-#             state_id += 1
-#             # print("\t Current State is %s"%(current_state))
-#         return
-#     for node in adv_position_node[current_depth-1]:
-#         current_state = []
-#         for i in chosen_node:
-#             current_state.append(i)
-#         current_state.append(node)
-#         iterate_over_possible_state(adv_position_node,current_depth+1,max_depth,current_state)
 
 def iterate_over_possible_belief(compromised_nodes_current_time,compromised_nodes_probability,current_depth,
                                  chosen_node,state_space,state_space_map):
@@ -300,20 +278,33 @@ def state_transition_from_parent_nodes():
     non_zero_transition = 0
     for new_state in POMDPSettings.state_space:
         new_state_id = POMDPSettings.state_space_map[tuple(new_state.adversary_positions)]
-        for i in range(len(new_state.parent_nodes)):
-            for list_parent in new_state.parent_nodes[i]:
-                parent_id = POMDPSettings.state_space_map[tuple(list_parent)]
-                if parent_id not in POMDPSettings.state_transition:
-                    POMDPSettings.state_transition[parent_id] = {}
-                POMDPSettings.state_transition[parent_id][new_state_id] = {}
-                for node in new_state.adversary_positions:
-                    if node in POMDPSettings.action_based_on_nodes:
-                        # print('\t Applicable Actions of Node %s --> %s'%(node,POMDPSettings.action_based_on_nodes[node]))
-                        for action_first_dimension,action_sec_dimension in POMDPSettings.action_based_on_nodes[node]:
-                            id_to_action = POMDPSettings.action_space_objects[action_first_dimension][action_sec_dimension].primary_key
-                            # print('****** Parent ID --> State ID --> Defense ID (%s,%s,%s)' % (parent_id, new_state_id,id_to_action))
-                            non_zero_transition += 1
+        for old_state_id in new_state.parent_states:
+            if old_state_id not in POMDPSettings.state_transition_with_adversary:
+                POMDPSettings.state_transition_with_adversary[old_state_id]={new_state_id:{}}
+            elif new_state_id not in POMDPSettings.state_transition_with_adversary[old_state_id]:
+                POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id] = {}
+
+        # for i in range(len(new_state.parent_nodes)):
+        #     for list_parent in new_state.parent_nodes[i]:
+        #         parent_id = POMDPSettings.state_space_map[tuple(list_parent)]
+        #         if parent_id not in POMDPSettings.state_transition:
+        #             POMDPSettings.state_transition[parent_id] = {}
+        #         POMDPSettings.state_transition[parent_id][new_state_id] = {}
+        #         for node in new_state.adversary_positions:
+        #             if node in POMDPSettings.action_based_on_nodes:
+        #                 # print('\t Applicable Actions of Node %s --> %s'%(node,POMDPSettings.action_based_on_nodes[node]))
+        #                 for action_first_dimension,action_sec_dimension in POMDPSettings.action_based_on_nodes[node]:
+        #                     id_to_action = POMDPSettings.action_space_objects[action_first_dimension][action_sec_dimension].primary_key
+        #                     # print('****** Parent ID --> State ID --> Defense ID (%s,%s,%s)' % (parent_id, new_state_id,id_to_action))
+        #                     non_zero_transition += 1
     print('*************** Non Zero Transitions %s*****************'%(non_zero_transition))
+    print('*************** State Transitions %s*****************' % (POMDPSettings.state_transition_with_adversary))
+    update_state_value_from_leaves()
+
+def update_state_value_from_leaves():
+    '''Update the state value based on the (Parent,Child) of the tree'''
+    pass
+
 
 
 

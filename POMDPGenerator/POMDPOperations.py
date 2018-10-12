@@ -16,9 +16,11 @@ def determine_State_Space():
               "********************"%(com_node,POMDPSettings.target_node[0],POMDPSettings.possible_nodes_for_state[com_node]))
     ############## 1.2 Determine Possible State Space ##################################################################
     POMDPComponentGenerator.generate_initial_state_space(POMDPSettings.possible_nodes_for_state)
-    ###################### Determine their parent states ###############################################################
+
+    ###################### 1.3 Determine their parent states ###############################################################
     for state in POMDPSettings.state_space:
         state.set_possible_parent_nodes()
+
 
 def determine_Initial_Belief():
     # print('************* Compromised Nodes :%s'%(POMDPSettings.compromised_nodes_current_time))

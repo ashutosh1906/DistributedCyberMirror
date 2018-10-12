@@ -22,7 +22,7 @@ class State:
             if node < 0:
                 ######################### It's a honeypot ########################################
                 distance_from_target = POMDPSettings.all_pair_shortest_path[target][-node]
-                self.state_value += POMDPSettings.GAIN_HONEYPOT + distance_from_target*POMDPSettings.BENEFIT_DISTANCE
+                self.state_value += POMDPSettings.GAIN_HONEYPOT + pow(distance_from_target,2)*POMDPSettings.BENEFIT_DISTANCE
                 continue
 
             distance_from_target = POMDPSettings.all_pair_shortest_path[target][node]

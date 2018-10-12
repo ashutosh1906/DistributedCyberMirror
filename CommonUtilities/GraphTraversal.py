@@ -22,7 +22,7 @@ def graph_traversal_concurrent(data_structure):
     return original_combinations
 
 def path_traversal_from_root(data_structure):
-    print('DS %s'%(data_structure))
+    # print('DS %s'%(data_structure))
     if len(data_structure)==1:
         child_combination = []
         if len(data_structure[0]) > 0:
@@ -40,7 +40,7 @@ def path_traversal_from_root(data_structure):
             subtree_data_structure[path[-1]].append(path_index)
         path_index += 1
 
-    print('Subtree %s --> %s' % ('T', subtree_data_structure))
+    # print('Subtree %s --> %s' % ('T', subtree_data_structure))
     if len(subtree_data_structure)==1:
         sent_data_structure = []
         for data in data_structure:
@@ -48,7 +48,7 @@ def path_traversal_from_root(data_structure):
         child_combination = path_traversal_from_root(sent_data_structure)
         for key in subtree_data_structure:
             child_combination.append([key])
-        print('Combinations %s --> %s' % ('C',child_combination))
+        # print('Combinations %s --> %s' % ('C',child_combination))
         return child_combination
 
     elif len(data_structure)==len(subtree_data_structure):
@@ -67,9 +67,9 @@ def path_traversal_from_root(data_structure):
             print('Sent Data Structure %s'%(sent_data_structure))
             child_tree_combinations.append(path_traversal_from_root(sent_data_structure))
             child_tree_combinations[key_index].append([key])
-            print("CTC %s of key:%s --> %s" % ('CTC',key,child_tree_combinations[key_index]))
+            # print("CTC %s of key:%s --> %s" % ('CTC',key,child_tree_combinations[key_index]))
             key_index += 1
-        print('Create Data Structure %s'%(child_tree_combinations))
+        # print('Create Data Structure %s'%(child_tree_combinations))
         child_combination = []
         SetOperations.iteration_over_possible_combinations_list_based(child_tree_combinations,[],child_combination)
         return child_combination
@@ -87,73 +87,3 @@ def determine_descendents(data_structure):
             else:
                 descendant_nodes[element] |= set(path[0:element_index])
     print(descendant_nodes)
-
-
-# #def path_traversal_from_root(data_structure):
-#     print('DS %s'%(data_structure))
-#     if len(data_structure)==1:
-#         child_combination = []
-#         if len(data_structure[0]) > 0:
-#             child_combination.append(data_structure[0])
-#         return child_combination
-#
-#         if last_index_to_read==0:
-#             child_list = []
-#             for element in data_structure[0]:
-#                 child_list.append(element)
-#             child_combination.append(child_list)
-#             return child_combination
-#         else:
-#             if last_index_to_read > len(data_structure[0]):
-#                 return child_combination
-#             child_list = []
-#             for element in data_structure[0:-last_index_to_read]:
-#                 child_list.append(element)
-#             child_combination = [].append(child_list)
-#             return child_combination
-#
-#     subtree_data_structure = {}
-#     path_index = 0
-#     last_index_to_read +=1
-#     for path in data_structure:
-#         if last_index_to_read > len(path):
-#             continue
-#         # print(' %s'%(path[-last_index_to_read])),
-#         if path[-last_index_to_read] not in subtree_data_structure:
-#             subtree_data_structure[path[-last_index_to_read]] = [path_index]
-#         else:
-#             subtree_data_structure[path[-last_index_to_read]].append(path_index)
-#         path_index += 1
-#
-#     print('Subtree %s --> %s' % (last_index_to_read, subtree_data_structure))
-#     if len(subtree_data_structure)==1:
-#         child_combination = path_traversal_from_root(data_structure,last_index_to_read)
-#         for key in subtree_data_structure:
-#             child_combination.append([key])
-#         print('Combinations %s --> %s' % (last_index_to_read,child_combination))
-#         return child_combination
-#
-#     elif len(data_structure)==len(subtree_data_structure):
-#         child_combination = []
-#         SetOperations.iteration_over_possible_combinations_no_duplicate(data_structure,set({}),child_combination)
-#         # print("CTC %s --> %s"%(last_index_to_read,possible_combinations))
-#         return child_combination
-#
-#     else:
-#         key_index = 0
-#         child_tree_combinations = []
-#         for key in subtree_data_structure:
-#             sent_data_structure = []
-#             for path_index in subtree_data_structure[key]:
-#                 sent_data_structure.append(data_structure[path_index][0:-last_index_to_read])
-#             print('Sent Data Structure %s'%(sent_data_structure))
-#             child_tree_combinations.append(path_traversal_from_root(sent_data_structure,0))
-#             child_tree_combinations[key_index].append([key])
-#             print("CTC %s of key:%s --> %s" % (last_index_to_read,key,child_tree_combinations[key_index]))
-#             key_index += 1
-#         print('Create Data Structure %s'%(child_tree_combinations))
-#         child_combination = []
-#         SetOperations.iteration_over_possible_combinations_list_based(child_tree_combinations,[],child_combination)
-#         return child_combination#
-#
-#

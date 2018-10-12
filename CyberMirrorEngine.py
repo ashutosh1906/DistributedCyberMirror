@@ -55,7 +55,7 @@ def pomdp_engine():
     POMDPOperations.determine_adversary_action_space()
     # PrintLibrary.comprehensive_adversary_action_space(POMDPSettings.adversary_action_objects)
     # PrintLibrary.comprehensive_adversary_action_space(POMDPSettings.adversary_action_objects)
-    # PrintLibrary.generic_information()
+    PrintLibrary.generic_information()
 
     ############################### State Transition #########################################################
     POMDPOperations.generate_state_transition()

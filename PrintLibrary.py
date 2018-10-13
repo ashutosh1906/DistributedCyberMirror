@@ -104,6 +104,24 @@ def check_the_probability_transition(adversary_print = True):
                         print('\t\t\t Probability %s'%(POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id][defense_action.primary_key][adversary_action_id]))
     print('********* End of Probability Transition with Adversary *****************')
 
+def pomdp_expected_probability_transition():
+    import POMDPSettings
+    print('********* Expected Defender Probability Transition for POMDP *****************')
+    for defense_action_id in POMDPSettings.state_transition_pomdp:
+        did = POMDPSettings.defense_action_id_to_position[defense_action_id][0]
+        dposition = POMDPSettings.defense_action_id_to_position[defense_action_id][1]
+        defense_action = POMDPSettings.action_space_objects[did][dposition]
+        for old_state_id in POMDPSettings.state_transition_pomdp[defense_action_id]:
+            old_state = POMDPSettings.state_space[old_state_id]
+            for new_state_id in POMDPSettings.state_transition_pomdp[defense_action_id][old_state_id]:
+                new_state = POMDPSettings.state_space[new_state_id]
+                print('From %s:%s (V = %s) '%(old_state_id,old_state.adversary_positions,old_state.state_value),end='')
+                print('To %s:%s (V = %s) ' % (new_state_id, new_state.adversary_positions,new_state.state_value), end='')
+                print('Action %s:%s '%(defense_action_id,defense_action.node_id),end='')
+                print('Probability %s'%(POMDPSettings.state_transition_pomdp[defense_action_id][old_state_id][new_state_id]))
+
+    print('********* End Expected Defender Probability Transition for POMDP *****************')
+
 def probability_forward_from_old_to_new():
     import POMDPSettings
     print('********* Probability of Forwarding from one state to another *****************')

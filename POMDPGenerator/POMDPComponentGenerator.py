@@ -321,6 +321,11 @@ def assign_state_transition_probability_with_adversary():
                 for adversary_action_id in POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id][defense_action_id]:
                     adversary_action = POMDPSettings.adversary_action_objects[adversary_action_id]
 
+                    #################### All possible positions are mirrors or the adversary already reached target ################################
+                    if len(old_state.adversary_positions)==old_state.number_mirror_node or old_state.adversary_positions==POMDPSettings.target_node:
+                        POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id][defense_action_id][
+                            adversary_action_id] = 1.0
+                        continue
                     ########################################### If the adversary forwards #############################################
                     if not adversary_action.forward:
                         if old_state.adversary_positions == new_state.adversary_positions:

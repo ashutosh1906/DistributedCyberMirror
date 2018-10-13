@@ -121,12 +121,36 @@ def __generate_game_transition():
     # PrintLibrary.comprehensive_adversary_action_space(POMDPSettings.adversary_action_objects)
     # print('************* State Space Map %s **********'%(POMDPSettings.state_space_map))
     ###################### First consider the state transition ##################################
+    ###################### 1.1 Determine State Transition with Adversary ##################################
     POMDPComponentGenerator.state_transition_initializations()
-    PrintLibrary.probability_forward_from_old_to_new()
+    # PrintLibrary.probability_forward_from_old_to_new()
     POMDPComponentGenerator.assign_state_transition_probability_with_adversary()
-    PrintLibrary.check_the_probability_transition(True)
+    # PrintLibrary.check_the_probability_transition(True)
 
+    ###################### 1.2 Determine Expected State Transition for POMDP ##################################
+    __generate_expected_behavior()
+    PrintLibrary.pomdp_expected_probability_transition()
 
-
-
-
+def __generate_expected_behavior():
+    ''' Generate the state transition for the POMDP Model'''
+    POMDPSettings.state_transition_pomdp.clear()
+    for old_state_id in POMDPSettings.state_transition_with_adversary:
+        old_state = POMDPSettings.state_space[old_state_id]
+        #################################### New States ###################################
+        for new_state_id in POMDPSettings.state_transition_with_adversary[old_state_id]:
+            new_state = POMDPSettings.state_space[new_state_id]
+            #################################### Defense Action ###################################
+            for defense_action_id in POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id]:
+                ################################ Initialize such condition if does not exist #################
+                if defense_action_id not in POMDPSettings.state_transition_pomdp:
+                    POMDPSettings.state_transition_pomdp[defense_action_id] = {}
+                if old_state_id not in POMDPSettings.state_transition_pomdp[defense_action_id]:
+                    POMDPSettings.state_transition_pomdp[defense_action_id][old_state_id] = {}
+                if new_state_id not in POMDPSettings.state_transition_pomdp[defense_action_id][old_state_id]:
+                    POMDPSettings.state_transition_pomdp[defense_action_id][old_state_id][new_state_id] = 0.0
+                ################################ Adversary Actions #####################################
+                for adversary_action_id in POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id][defense_action_id]:
+                    adversary = POMDPSettings.adversary_action_objects[adversary_action_id]
+                    POMDPSettings.state_transition_pomdp[defense_action_id][old_state_id][new_state_id] += \
+                        POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id][defense_action_id][adversary_action_id]\
+                        *adversary.attack_probability

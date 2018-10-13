@@ -63,7 +63,7 @@ DEFENSE_ACTION_TOTAL = 0
 
 DEFENSE_DO_NOTHING_ACTION = [1.0,1,1]
 ############################################ State Value Parameters ###################################
-LOSS_COMPROMISED = -1000
+LOSS_COMPROMISED = -100000
 GAIN_HONEYPOT = 700
 BENEFIT_DISTANCE = 100
 DISTANCE_FACTOR = 10
@@ -125,6 +125,7 @@ adversary_state_to_state_probability = {}
 state_transition_with_adversary = {}
 state_transition_to_id = {}
 
+state_transition_pomdp = {}
 
 ################################## Other Variables ##################################################
 READ_IDS_FROM_FILES = True

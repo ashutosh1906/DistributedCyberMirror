@@ -151,7 +151,9 @@ def generate_action_space():
     del POMDPSettings.action_space_objects[:]
     id = 0
     node_id = 0
+    # print('Next Adversary Nodes %s'%(POMDPSettings.next_adversary_nodes))
     for node in POMDPSettings.next_adversary_nodes:
+        # print('Check Node %s'%(node))
         POMDPSettings.action_space_objects.append([])
         for action_value in POMDPSettings.action_space_all_values:
             if any([True for sp_action in action_value if sp_action!=1]):
@@ -273,7 +275,7 @@ def irrelevant_prunning(action_space_objects):
     # PrintLibrary.number_action_available_each_node(action_space_objects)
 
 ################################################# Related to State Transition ##################################################
-def state_transition_from_parent_nodes():
+def state_transition_initializations():
     ######## Previous State (key)---> Next State (Value) ###########################
     non_zero_transition = 0
     for new_state in POMDPSettings.state_space:
@@ -284,22 +286,89 @@ def state_transition_from_parent_nodes():
             elif new_state_id not in POMDPSettings.state_transition_with_adversary[old_state_id]:
                 POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id] = {}
 
-        # for i in range(len(new_state.parent_nodes)):
-        #     for list_parent in new_state.parent_nodes[i]:
-        #         parent_id = POMDPSettings.state_space_map[tuple(list_parent)]
-        #         if parent_id not in POMDPSettings.state_transition:
-        #             POMDPSettings.state_transition[parent_id] = {}
-        #         POMDPSettings.state_transition[parent_id][new_state_id] = {}
-        #         for node in new_state.adversary_positions:
-        #             if node in POMDPSettings.action_based_on_nodes:
-        #                 # print('\t Applicable Actions of Node %s --> %s'%(node,POMDPSettings.action_based_on_nodes[node]))
-        #                 for action_first_dimension,action_sec_dimension in POMDPSettings.action_based_on_nodes[node]:
-        #                     id_to_action = POMDPSettings.action_space_objects[action_first_dimension][action_sec_dimension].primary_key
-        #                     # print('****** Parent ID --> State ID --> Defense ID (%s,%s,%s)' % (parent_id, new_state_id,id_to_action))
-        #                     non_zero_transition += 1
+    ########################### Add the state transition when the state is not changed #########################
+    for new_state in POMDPSettings.state_space:
+        new_state_id = POMDPSettings.state_space_map[tuple(new_state.adversary_positions)]
+        if new_state_id not in POMDPSettings.state_transition_with_adversary:
+            POMDPSettings.state_transition_with_adversary[new_state_id] = {}
+        POMDPSettings.state_transition_with_adversary[new_state_id][new_state_id] = {}
+
     print('*************** Non Zero Transitions %s*****************'%(non_zero_transition))
     print('*************** State Transitions %s*****************' % (POMDPSettings.state_transition_with_adversary))
+    adversary_probability_update()
 
+    ###################################### Initialize the probability for state transition ######################################
+    for old_state_id in POMDPSettings.state_transition_with_adversary:
+        for new_state_id in POMDPSettings.state_transition_with_adversary[old_state_id]:
+            for node_actions in POMDPSettings.action_space_objects:
+                for defense_action in node_actions:
+                    POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id][defense_action.primary_key] = {}
+                    for adversary_action in POMDPSettings.adversary_action_objects:
+                        POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id][defense_action.primary_key][adversary_action.primary_key] = 0.0
+
+def assign_state_transition_probability_with_adversary():
+    for old_state_id in POMDPSettings.state_transition_with_adversary:
+        old_state = POMDPSettings.state_space[old_state_id]
+        for new_state_id in POMDPSettings.state_transition_with_adversary[old_state_id]:
+            new_state = POMDPSettings.state_space[new_state_id]
+            for defense_action_id in POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id]:
+                defense_action_node_roll = POMDPSettings.defense_action_id_to_position[defense_action_id][0]
+                defense_action_position = POMDPSettings.defense_action_id_to_position[defense_action_id][1]
+                defense_action = POMDPSettings.action_space_objects[defense_action_node_roll][defense_action_position]
+                if (defense_action_id != defense_action.primary_key) or False:
+                    print('New State %s Old State %s Defense Action %s==%s' %
+                          (new_state.adversary_positions,old_state.adversary_positions,defense_action_id,defense_action.primary_key))
+                for adversary_action_id in POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id][defense_action_id]:
+                    adversary_action = POMDPSettings.adversary_action_objects[adversary_action_id]
+
+                    ########################################### If the adversary forwards #############################################
+                    if not adversary_action.forward:
+                        if old_state.adversary_positions == new_state.adversary_positions:
+                            POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id][defense_action_id][adversary_action_id] = 1.0
+                        else:
+                            POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id][
+                                defense_action_id][adversary_action_id] = 0.0
+
+                    ########################################### If the adversary does not forward ##########################
+                    elif adversary_action.forward:
+                        if old_state.adversary_positions == new_state.adversary_positions:
+                            POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id][
+                                defense_action_id][adversary_action_id] = 0.0
+                            continue
+
+                        defense_node = defense_action.node_id
+                        forward_probability = POMDPSettings.adversary_state_to_state_probability[old_state_id][new_state_id]
+                        # print("F %s"%(forward_probability))
+                        ####################################### If the adversary scans ##########################
+                        if adversary_action.perform_scan:
+                            if defense_node in new_state.adversary_positions:
+                                POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id][
+                                    defense_action_id][adversary_action_id] = (1-defense_action.effeciveness_with_scan)*forward_probability
+                            elif -defense_node in new_state.adversary_positions:
+                                POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id][
+                                    defense_action_id][adversary_action_id] = defense_action.effeciveness_with_scan*forward_probability
+                            else:
+                                if old_state.number_mirror_node == new_state.number_mirror_node:
+                                    POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id][
+                                        defense_action_id][adversary_action_id] = forward_probability
+                                else:
+                                    POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id][
+                                        defense_action_id][adversary_action_id] = 0
+                        ##################################### If the adversary does not scan #####################
+                        else:
+                            if defense_node in new_state.adversary_positions:
+                                POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id][
+                                    defense_action_id][adversary_action_id] = (1-defense_action.effeciveness_without_scan)*forward_probability
+                            elif -defense_node in new_state.adversary_positions:
+                                POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id][
+                                    defense_action_id][adversary_action_id] = defense_action.effeciveness_without_scan*forward_probability
+                            else:
+                                if old_state.number_mirror_node == new_state.number_mirror_node:
+                                    POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id][
+                                        defense_action_id][adversary_action_id] = forward_probability
+                                else:
+                                    POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id][
+                                        defense_action_id][adversary_action_id] = 0
 
 def update_state_value_from_leaves():
     '''Update the state value based on the (Parent,Child) of the tree'''
@@ -330,6 +399,33 @@ def recursive_child_value_upated(node,explored_node):
     explored_node[node] = this_value + POMDPSettings.LOSS_COMPROMISED / math.pow(POMDPSettings.DISTANCE_FACTOR,
                                                                                  distance_from_target)
     return explored_node[node]
+
+def adversary_probability_update():
+    '''Calculate the probability of forwarding from the nodes of the old states'''
+    POMDPSettings.adversary_state_to_state_probability.clear()
+
+    for old_state_id in POMDPSettings.state_transition_with_adversary:
+        old_state = POMDPSettings.state_space[old_state_id]
+        number_available_positions = len(old_state.adversary_positions)
+        POMDPSettings.adversary_state_to_state_probability[old_state_id] = {}
+        for new_state_id in POMDPSettings.state_transition_with_adversary[old_state_id]:
+            new_state=POMDPSettings.state_space[new_state_id]
+            POMDPSettings.adversary_state_to_state_probability[old_state_id][new_state_id] = 0.0
+            for node in new_state.adversary_positions:
+                if node <0:
+                    node = -node
+                number_ancestor = len(set(POMDPSettings.parent_nodes_considered_paths[node]) & set(old_state.adversary_positions)) # Check how may parent matches
+                if number_ancestor > 0:
+                    mirror_node = len([1 for parent in old_state.adversary_positions if parent < 0])
+                    if mirror_node > 0: # Adversary will not forward from mirror Nodes
+                        each_node_propagation_prob = 1.0/(number_available_positions-mirror_node)
+                    else:
+                        each_node_propagation_prob = 1.0 / number_available_positions
+                    POMDPSettings.adversary_state_to_state_probability[old_state_id][new_state_id] += each_node_propagation_prob*number_ancestor
+
+    print('******** Probability of Forwarding from a state %s ******' % (POMDPSettings.adversary_state_to_state_probability))
+
+
 
 
 

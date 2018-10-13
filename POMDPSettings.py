@@ -26,7 +26,7 @@ SORT_ADVERSARY_POSITION = True
 
 #################################### SELECTING COMPROMISED NODES ##################################
 COMPROMISED_NODES_SELECTION_ON_THRESHOLD = True
-NODE_SELECTION_THRESHOLD_VALUE = 300
+NODE_SELECTION_THRESHOLD_VALUE = 250
 compromised_nodes_current_time = []
 next_adversary_nodes = []
 MAXIMUM_DEPTH_CHECK = True
@@ -118,6 +118,8 @@ adversary_action_objects = []
 adversary_action_id_to_position = {}
 
 adversary_position_nodes = []
+ONE_ADVERSARY_UNIFORM_MOVEMENT = True # If there are three nodes to forward, the probability of forwarding to each node is uniformly distributed.
+adversary_state_to_state_probability = {}
 
 ############################# State Transition #####################################################
 state_transition_with_adversary = {}

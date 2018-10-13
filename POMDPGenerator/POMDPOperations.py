@@ -56,6 +56,7 @@ def determine_Action_Space():
     for node in POMDPSettings.next_adversary_nodes:
         POMDPSettings.action_space_objects[index_id].append(
             Actions.Actions(POMDPSettings.DEFENSE_ACTION_TOTAL,node,POMDPSettings.DEFENSE_DO_NOTHING_ACTION))
+        POMDPSettings.action_space_objects[index_id][-1].set_effectiveness()
         POMDPSettings.DEFENSE_ACTION_TOTAL += 1
         index_id += 1
     create_defense_id_map()
@@ -95,6 +96,8 @@ def determine_adversary_action_space():
                                              POMDPSettings.ADVERSARY_ADVANCE * (1 - POMDPSettings.ADVERSARY_SCANNING_PROB),position))
         POMDPSettings.adversary_action_id_to_position[id] = id
         id += 1
+        if POMDPSettings.ONE_ADVERSARY_UNIFORM_MOVEMENT:
+            break
 
 def create_defense_id_map():
     POMDPSettings.defense_action_id_to_position.clear()
@@ -118,7 +121,11 @@ def __generate_game_transition():
     # PrintLibrary.comprehensive_adversary_action_space(POMDPSettings.adversary_action_objects)
     # print('************* State Space Map %s **********'%(POMDPSettings.state_space_map))
     ###################### First consider the state transition ##################################
-    POMDPComponentGenerator.state_transition_from_parent_nodes()
+    POMDPComponentGenerator.state_transition_initializations()
+    PrintLibrary.probability_forward_from_old_to_new()
+    POMDPComponentGenerator.assign_state_transition_probability_with_adversary()
+    PrintLibrary.check_the_probability_transition(True)
+
 
 
 

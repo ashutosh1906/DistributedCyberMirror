@@ -9,6 +9,8 @@ class State:
         self.state_value = 0.0
         self.belief = 0.0
         self.parent_states = []
+        self.current_propagation_probability = [1.0 for i in range(len(adversary_positions))]
+        self.number_mirror_node = len([1 for i in adversary_positions if i < 0])
 
     def set_belief(self,prob_value):
         self.belief = prob_value
@@ -38,7 +40,13 @@ class State:
                 if state.primary_key == self.primary_key:
                     continue
                 if len(set(parent_node) & set(state.adversary_positions)) > 0:
-                    self.parent_states.append(POMDPSettings.state_space_map[tuple(state.adversary_positions)])
+                    mirror_node_exists = False
+                    for node in state.adversary_positions:
+                        if -node in self.adversary_positions:
+                            mirror_node_exists = True
+                            break
+                    if not mirror_node_exists:
+                        self.parent_states.append(POMDPSettings.state_space_map[tuple(state.adversary_positions)])
 
     def print_properties(self,parent_print=False):
         print("\t ------> Primary Key %s"%(self.primary_key))
@@ -49,3 +57,5 @@ class State:
                 print('\t \t States %s : %s'%(each_state,POMDPSettings.state_space[each_state].adversary_positions))
         print("\t State Value :%s"%(self.state_value))
         print("\t State Belief :%s" % (self.belief))
+        print('\t Current Propagation probability from pervious state %s'%(self.current_propagation_probability))
+        print('\t Number of Mirror Nodes in the state %s'%(self.number_mirror_node))

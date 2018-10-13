@@ -84,3 +84,36 @@ def possible_combinations_print(possible_combination,tag):
         print(each_combination)
     print('***** End of Possible Combinations for %s ********' % (tag))
 
+def check_the_probability_transition(adversary_print = True):
+    import POMDPSettings
+    print('********* Probability Transition with Adversary *****************')
+    for old_state_id in POMDPSettings.state_transition_with_adversary:
+        old_state = POMDPSettings.state_space[old_state_id]
+        print('Old State %s : %s'%(old_state.primary_key,old_state.adversary_positions))
+        for new_state_id in POMDPSettings.state_transition_with_adversary[old_state_id]:
+            new_state = POMDPSettings.state_space[new_state_id]
+            print('\t Old %s to New State %s : %s' % (old_state_id,new_state.primary_key, new_state.adversary_positions))
+            for node_actions in POMDPSettings.action_space_objects:
+                for defense_action in node_actions:
+                    print('\t\t Defense Action %s on Node %s'%(defense_action.primary_key,defense_action.node_id))
+                    for adversary_action_id in POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id][defense_action.primary_key]:
+                        adversary_action = POMDPSettings.adversary_action_objects[adversary_action_id]
+                        if adversary_print:
+                            print('\t\t\t Adversary Action %s : (Scan :: %s, Forward :: %s)' %
+                                  (adversary_action.primary_key, adversary_action.perform_scan,adversary_action.forward))
+                        print('\t\t\t Probability %s'%(POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id][defense_action.primary_key][adversary_action_id]))
+    print('********* End of Probability Transition with Adversary *****************')
+
+def probability_forward_from_old_to_new():
+    import POMDPSettings
+    print('********* Probability of Forwarding from one state to another *****************')
+    for old_state_id in POMDPSettings.adversary_state_to_state_probability:
+        old_state = POMDPSettings.state_space[old_state_id]
+        for new_state_id in POMDPSettings.adversary_state_to_state_probability[old_state_id]:
+            new_state = POMDPSettings.state_space[new_state_id]
+            print('\t From State : %s to State : %s with Prob : %s'%(old_state.adversary_positions,new_state.adversary_positions,
+                                                                     POMDPSettings.adversary_state_to_state_probability[old_state_id][new_state_id]))
+
+    print('********* End of Probability of Forwarding from one state to another *****************')
+
+

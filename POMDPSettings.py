@@ -127,6 +127,9 @@ state_transition_to_id = {}
 
 state_transition_pomdp = {}
 
+############################### Rewards #############################################################
+rewards_pomdp = {}
+
 ################################## Other Variables ##################################################
 READ_IDS_FROM_FILES = True
 USER_INPUT_TARGET_NODE = False

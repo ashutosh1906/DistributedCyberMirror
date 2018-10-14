@@ -42,14 +42,14 @@ def pomdp_engine():
 
     ######################################## Initial Belief ###################################################
     POMDPOperations.determine_Initial_Belief()
-    PrintLibrary.state_space_print(POMDPSettings.state_space)
+    # PrintLibrary.state_space_print(POMDPSettings.state_space)
 
     ####################################### Action Space ######################################################
     POMDPOperations.determine_Action_Space()
     # PrintLibrary.action_space_type_Print(POMDPSettings.action_space_by_type,POMDPSettings.action_space_group_index)
     # PrintLibrary.action_space_Print(POMDPSettings.action_space_all_values,
     #                                 POMDPSettings.compromised_nodes_current_time,POMDPSettings.next_adversary_nodes,print_each_action=False)
-    PrintLibrary.comprehensive_action_space_print(POMDPSettings.action_space_objects)
+    # PrintLibrary.comprehensive_action_space_print(POMDPSettings.action_space_objects)
 
     ################################# Adversary Action ######################################################
     POMDPOperations.determine_adversary_action_space()
@@ -59,6 +59,9 @@ def pomdp_engine():
 
     ############################### State Transition #########################################################
     POMDPOperations.generate_state_transition()
+
+    ################################ Rewards ##############################################################
+
 
 if __name__=='__main__':
     print("Start of the CyberMirror Dynamic Planning")

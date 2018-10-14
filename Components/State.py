@@ -41,12 +41,20 @@ class State:
                     continue
                 if len(set(parent_node) & set(state.adversary_positions)) > 0:
                     mirror_node_exists = False
-                    for node in state.adversary_positions:
-                        if -node in self.adversary_positions:
+                    for node_parent in state.adversary_positions:
+                        if -node_parent in self.adversary_positions:
                             mirror_node_exists = True
                             break
                     if not mirror_node_exists:
-                        self.parent_states.append(POMDPSettings.state_space_map[tuple(state.adversary_positions)])
+                        ############## Check if the considered node is the only difference node from the old state ####################
+                        difference_exists = False
+                        for check_if_difference_node in self.adversary_positions:
+                            if check_if_difference_node == node or check_if_difference_node == -node:
+                                continue
+                            if check_if_difference_node not in state.adversary_positions:
+                                difference_exists = True
+                        if not difference_exists:
+                            self.parent_states.append(POMDPSettings.state_space_map[tuple(state.adversary_positions)])
 
     def print_properties(self,parent_print=False):
         print("\t ------> Primary Key %s"%(self.primary_key))

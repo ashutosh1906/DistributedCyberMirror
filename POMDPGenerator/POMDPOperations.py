@@ -148,9 +148,44 @@ def __generate_expected_behavior():
                     POMDPSettings.state_transition_pomdp[defense_action_id][old_state_id] = {}
                 if new_state_id not in POMDPSettings.state_transition_pomdp[defense_action_id][old_state_id]:
                     POMDPSettings.state_transition_pomdp[defense_action_id][old_state_id][new_state_id] = 0.0
+
                 ################################ Adversary Actions #####################################
                 for adversary_action_id in POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id][defense_action_id]:
                     adversary = POMDPSettings.adversary_action_objects[adversary_action_id]
+                    ######## Expected State Transition #################
                     POMDPSettings.state_transition_pomdp[defense_action_id][old_state_id][new_state_id] += \
                         POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id][defense_action_id][adversary_action_id]\
                         *adversary.attack_probability
+
+
+def generate_reward():
+    ''' Generate the rewards for the POMDP Model'''
+    POMDPSettings.rewards_pomdp.clear()  ############### Generate Rewards POMDP #####################
+    for old_state_id in POMDPSettings.state_transition_with_adversary:
+        old_state = POMDPSettings.state_space[old_state_id]
+        if old_state_id not in POMDPSettings.rewards_pomdp:
+            POMDPSettings.rewards_pomdp[old_state_id] = {}
+        #################################### New States ###################################
+        for new_state_id in POMDPSettings.state_transition_with_adversary[old_state_id]:
+            new_state = POMDPSettings.state_space[new_state_id]
+            if new_state_id not in POMDPSettings.rewards_pomdp[old_state_id]:
+                POMDPSettings.rewards_pomdp[old_state_id][new_state_id] = {}
+            #################################### Defense Action ###################################
+            for defense_action_id in POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id]:
+                ################################ Initialize such condition if does not exist #################
+                dnode = POMDPSettings.defense_action_id_to_position[defense_action_id][0]
+                dpos = POMDPSettings.defense_action_id_to_position[defense_action_id][1]
+                defense_action = POMDPSettings.action_space_objects[dnode][dpos]
+                reward_without_adversary_cost = new_state.state_value - old_state.state_value - defense_action.cost
+                if defense_action_id not in POMDPSettings.rewards_pomdp[old_state_id][new_state_id][defense_action_id]:
+                    POMDPSettings.rewards_pomdp[old_state_id][new_state_id][defense_action_id] = 0.0
+                ################################ Adversary Actions #####################################
+                for adversary_action_id in POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id][
+                    defense_action_id]:
+                    adversary = POMDPSettings.adversary_action_objects[adversary_action_id]
+                    ############# Generated Rewards ###############
+                    POMDPSettings.rewards_pomdp[old_state_id][new_state_id][
+                        defense_action_id] += reward_without_adversary_cost*adversary.attack_probability
+
+
+

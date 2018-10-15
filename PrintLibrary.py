@@ -151,4 +151,26 @@ def check_invalid_state_transition():
                 print(" Error in %s:%s Value %s"%(old_state_id,old_state.adversary_positions,sum_prob))
     print(" ****** End of Invalid Transition Probability ************")
 
+def observation_matrix():
+    print("**** Printing Observation Matrix ******")
+    import POMDPSettings
+    for action in POMDPSettings.observation_probability:
+        if action==POMDPSettings.WILDCARD_SYMBOL:
+            print(" ***** Observation is Action Irrespective ****************")
+        else:
+            print("***** Defense Action : %s"%(action))
+        for old_state_id in POMDPSettings.observation_probability[action]:
+            old_state = POMDPSettings.state_space[old_state_id]
+            print('***\t True State: %s --> %s'%(old_state_id,old_state.adversary_positions))
+            sum_prob = 0.0
+            for new_state_id in POMDPSettings.observation_probability[action][old_state_id]:
+                new_state = POMDPSettings.state_space[new_state_id]
+                print('***\t Observed State: %s --> %s with Prob : %s' % (new_state_id,
+                                                                          new_state.adversary_positions,
+                                                                          POMDPSettings.observation_probability[action][old_state_id][new_state_id]))
+                sum_prob += POMDPSettings.observation_probability[action][old_state_id][new_state_id]
+            print(" \t \t (^_^) Sum of Probability %s"%(sum_prob))
+    print("**** End Printing Observation Matrix ******")
+
+
 

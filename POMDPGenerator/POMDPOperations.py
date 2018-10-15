@@ -4,6 +4,7 @@ import PrintLibrary,Utilities
 import Dijkstra
 from Components import Actions
 from Components import AdversaryAction
+from CommonUtilities import DataStructureFunctions
 
 def determine_State_Space():
     del POMDPSettings.state_space[:]
@@ -129,7 +130,7 @@ def __generate_game_transition():
 
     ###################### 1.2 Determine Expected State Transition for POMDP ##################################
     __generate_expected_behavior()
-    PrintLibrary.pomdp_expected_probability_transition()
+    # PrintLibrary.pomdp_expected_probability_transition()
 
 def __generate_expected_behavior():
     ''' Generate the state transition for the POMDP Model'''
@@ -157,6 +158,67 @@ def __generate_expected_behavior():
                         POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id][defense_action_id][adversary_action_id]\
                         *adversary.attack_probability
 
+def generate_observation_matrix():
+    ''' Give the observation Matrix'''
+    POMDPSettings.observation_probability.clear()
+    if POMDPSettings.OBSERVATION_ACTION_IRRESPECTIVE:
+        POMDPSettings.observation_probability[POMDPSettings.WILDCARD_SYMBOL] = {}
+        for old_state in POMDPSettings.state_space:
+            if old_state.primary_key not in POMDPSettings.observation_probability[POMDPSettings.WILDCARD_SYMBOL]:
+                POMDPSettings.observation_probability[POMDPSettings.WILDCARD_SYMBOL][old_state.primary_key] = {}
+            for new_state in POMDPSettings.state_space:
+                if new_state.primary_key == old_state.primary_key:
+                    POMDPSettings.observation_probability[POMDPSettings.WILDCARD_SYMBOL][old_state.primary_key][new_state.primary_key] \
+                        = new_state.get_observation_probability()[0]
+                else:
+                    POMDPSettings.observation_probability[POMDPSettings.WILDCARD_SYMBOL][old_state.primary_key][
+                        new_state.primary_key] \
+                        = new_state.get_observation_probability()[1]
+                    difference = set(old_state.adversary_positions) & set(new_state.adversary_positions)
+                    for node in difference:
+                        if node < 0:
+                            POMDPSettings.observation_probability[POMDPSettings.WILDCARD_SYMBOL][old_state.primary_key][
+                                new_state.primary_key] /= POMDPSettings.MIRROR_NODE_FALSE_POSITIVE
+                            POMDPSettings.observation_probability[POMDPSettings.WILDCARD_SYMBOL][old_state.primary_key][
+                                new_state.primary_key] *= POMDPSettings.MIRROR_NODE_TRUE_POSITIVE
+                        else:
+                            POMDPSettings.observation_probability[POMDPSettings.WILDCARD_SYMBOL][old_state.primary_key][
+                                new_state.primary_key] /= POMDPSettings.IDS_FALSE_POSITIVE
+                            POMDPSettings.observation_probability[POMDPSettings.WILDCARD_SYMBOL][old_state.primary_key][
+                                new_state.primary_key] *= POMDPSettings.IDS_TRUE_POSITIVE_RATE
+    else:
+        for defense_type in POMDPSettings.action_space_objects:
+            for defense in defense_type:
+                if defense.primary_key not in POMDPSettings.observation_probability:
+                    POMDPSettings.observation_probability[defense.primary_key] = {}
+                for old_state in POMDPSettings.state_space:
+                    if old_state.primary_key not in POMDPSettings.observation_probability[defense.primary_key]:
+                        POMDPSettings.observation_probability[defense.primary_key][old_state.primary_key] = {}
+                    for new_state in POMDPSettings.state_space: ###### This is actually for observation ################
+                        if new_state.primary_key == old_state.primary_key:
+                            POMDPSettings.observation_probability[defense.primary_key][old_state.primary_key][new_state.primary_key] \
+                                = new_state.get_observation_probability()[0]
+                        else:
+                            POMDPSettings.observation_probability[defense.primary_key][old_state.primary_key][
+                                new_state.primary_key] \
+                                = new_state.get_observation_probability()[1]
+                            difference = set(old_state.adversary_positions) & set(new_state.adversary_positions)
+                            for node in difference:
+                                if node < 0:
+                                    POMDPSettings.observation_probability[POMDPSettings.WILDCARD_SYMBOL][
+                                        old_state.primary_key][
+                                        new_state.primary_key] /= POMDPSettings.MIRROR_NODE_FALSE_POSITIVE
+                                    POMDPSettings.observation_probability[POMDPSettings.WILDCARD_SYMBOL][
+                                        old_state.primary_key][
+                                        new_state.primary_key] *= POMDPSettings.MIRROR_NODE_TRUE_POSITIVE
+                                else:
+                                    POMDPSettings.observation_probability[POMDPSettings.WILDCARD_SYMBOL][
+                                        old_state.primary_key][
+                                        new_state.primary_key] /= POMDPSettings.IDS_FALSE_POSITIVE
+                                    POMDPSettings.observation_probability[POMDPSettings.WILDCARD_SYMBOL][
+                                        old_state.primary_key][
+                                        new_state.primary_key] *= POMDPSettings.IDS_TRUE_POSITIVE_RATE
+    DataStructureFunctions.normalize_probability_by_keys(POMDPSettings.observation_probability)
 
 def generate_reward():
     ''' Generate the rewards for the POMDP Model'''

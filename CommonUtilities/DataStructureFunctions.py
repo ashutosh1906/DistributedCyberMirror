@@ -20,11 +20,28 @@ def delete_element_with_specific_value(data_structure_as_list,specific_value):
     delete_values_by_index_from_list(data_structure_as_list,delete_index)
 
 def normalization_by_min(data_structure):
-    '''Normalize each value by in the minimum element to get the ratio'''
+    '''Normalize each value by the minimum element to get the ratio'''
     min_value = min(data_structure)
     length_list = len(data_structure)
     for index in range(len(data_structure)):
         data_structure[index] /= min_value
+
+def normalize_probability_by_keys(data_structure):
+    ''' It will normalize the probability so that the summation of all values of data_structure will be added to 1
+    The sent data structure is a dictionary'''
+    __iterative_normalization_keys(data_structure)
+
+def __iterative_normalization_keys(data_structure):
+    for key in data_structure:
+        if type(data_structure[key])==dict:
+            __iterative_normalization_keys(data_structure[key])
+        else:
+            sum_prob = sum([data_structure[value_key] for value_key in data_structure])
+            # print(sum_prob)
+            if round(sum_prob,5) != 1.0:
+                for value_key in data_structure:
+                    data_structure[value_key] /= sum_prob
+            break
 
 def sort_dict_by_values(dict,value_index):
     return sorted(dict.items(), key=itemgetter(value_index+1))

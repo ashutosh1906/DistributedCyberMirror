@@ -60,6 +60,10 @@ def pomdp_engine():
     ############################### State Transition #########################################################
     POMDPOperations.generate_state_transition()
     PrintLibrary.check_invalid_state_transition()
+
+    #################################### Observation Matrix ############################################
+    POMDPOperations.generate_observation_matrix()
+    PrintLibrary.observation_matrix()
     ################################ Rewards ##############################################################
 
 

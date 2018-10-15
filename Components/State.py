@@ -11,6 +11,7 @@ class State:
         self.parent_states = []
         self.current_propagation_probability = [1.0 for i in range(len(adversary_positions))]
         self.number_mirror_node = len([1 for i in adversary_positions if i < 0])
+        self.observation_prob = None
 
     def set_belief(self,prob_value):
         self.belief = prob_value
@@ -55,6 +56,18 @@ class State:
                                 difference_exists = True
                         if not difference_exists:
                             self.parent_states.append(POMDPSettings.state_space_map[tuple(state.adversary_positions)])
+
+    def get_observation_probability(self):
+        if self.observation_prob is None:
+            self.observation_prob = [1.0 for i in range(2)]
+            for node in self.adversary_positions:
+                if node >= 0:
+                    self.observation_prob[0] *= POMDPSettings.IDS_TRUE_POSITIVE_RATE
+                    self.observation_prob[1] *= POMDPSettings.IDS_FALSE_POSITIVE
+                else:
+                    self.observation_prob[0] *= POMDPSettings.MIRROR_NODE_TRUE_POSITIVE
+                    self.observation_prob[1] *= POMDPSettings.MIRROR_NODE_FALSE_POSITIVE
+        return self.observation_prob
 
     def print_properties(self,parent_print=False):
         print("\t ------> Primary Key %s"%(self.primary_key))

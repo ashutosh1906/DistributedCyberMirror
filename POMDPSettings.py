@@ -26,7 +26,7 @@ SORT_ADVERSARY_POSITION = True
 
 #################################### SELECTING COMPROMISED NODES ##################################
 COMPROMISED_NODES_SELECTION_ON_THRESHOLD = True
-NODE_SELECTION_THRESHOLD_VALUE = 250
+NODE_SELECTION_THRESHOLD_VALUE = 300
 compromised_nodes_current_time = []
 next_adversary_nodes = []
 MAXIMUM_DEPTH_CHECK = True
@@ -75,7 +75,6 @@ WEIGHT_CONCEALABILITY_MEASURE = 1
 
 DETECTABILITY_MEASURE = 0
 WEIGHT_DETECTABILITY_MEASURE = 1
-IDS_TRUE_POSITIVE_RATE = 0.9
 ROBUSTNESS_DECEPTION = 0.9
 
 DETERRENCE_MEASURE = 0
@@ -126,6 +125,16 @@ state_transition_with_adversary = {}
 state_transition_to_id = {}
 
 state_transition_pomdp = {}
+
+################################### Observations Probability ##################################
+
+IDS_TRUE_POSITIVE_RATE = 0.93
+IDS_FALSE_POSITIVE = 0.05
+MIRROR_NODE_TRUE_POSITIVE = 0.96
+MIRROR_NODE_FALSE_POSITIVE = 0.05
+observation_probability = {}
+WILDCARD_SYMBOL = 'wWw'
+OBSERVATION_ACTION_IRRESPECTIVE = True
 
 ############################### Rewards #############################################################
 rewards_pomdp = {}

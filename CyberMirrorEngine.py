@@ -59,7 +59,7 @@ def pomdp_engine():
 
     ############################### State Transition #########################################################
     POMDPOperations.generate_state_transition()
-
+    PrintLibrary.check_invalid_state_transition()
     ################################ Rewards ##############################################################
 
 

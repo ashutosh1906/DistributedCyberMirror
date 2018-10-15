@@ -134,4 +134,21 @@ def probability_forward_from_old_to_new():
 
     print('********* End of Probability of Forwarding from one state to another *****************')
 
+def check_invalid_state_transition():
+    print("\n ****** Invalid Transition Probability ************")
+    import POMDPSettings
+    for defense_id in POMDPSettings.state_transition_pomdp:
+        dnode = POMDPSettings.defense_action_id_to_position[defense_id][0]
+        dindex = POMDPSettings.defense_action_id_to_position[defense_id][1]
+        defense = POMDPSettings.action_space_objects[dnode][dindex]
+        for old_state_id in POMDPSettings.state_transition_pomdp[defense_id]:
+            old_state = POMDPSettings.state_space[old_state_id]
+            sum_prob = 0.0
+            for new_state_id in POMDPSettings.state_transition_pomdp[defense_id][old_state_id]:
+                new_state = POMDPSettings.state_space[new_state_id]
+                sum_prob += POMDPSettings.state_transition_pomdp[defense_id][old_state_id][new_state_id]
+            if round(sum_prob,3) != 1:
+                print(" Error in %s:%s Value %s"%(old_state_id,old_state.adversary_positions,sum_prob))
+    print(" ****** End of Invalid Transition Probability ************")
+
 

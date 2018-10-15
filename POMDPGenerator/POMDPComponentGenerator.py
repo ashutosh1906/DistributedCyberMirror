@@ -353,9 +353,22 @@ def assign_state_transition_probability_with_adversary():
                                 POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id][
                                     defense_action_id][adversary_action_id] = defense_action.effeciveness_with_scan*forward_probability
                             else:
-                                if old_state.number_mirror_node == new_state.number_mirror_node:
-                                    POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id][
-                                        defense_action_id][adversary_action_id] = forward_probability
+                                # if old_state.number_mirror_node == new_state.number_mirror_node:
+                                #     POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id][
+                                #         defense_action_id][adversary_action_id] = forward_probability
+                                if old_state.number_mirror_node >= new_state.number_mirror_node:
+                                    unexpected_mirror_exist = False
+                                    for mirror_node in new_state.adversary_positions:
+                                        if mirror_node >= 0:
+                                            continue
+                                        if mirror_node not in old_state.adversary_positions:
+                                            unexpected_mirror_exist = True
+                                    if unexpected_mirror_exist:
+                                        POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id][
+                                            defense_action_id][adversary_action_id] = 0
+                                    else:
+                                        POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id][
+                                            defense_action_id][adversary_action_id] = forward_probability
                                 else:
                                     POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id][
                                         defense_action_id][adversary_action_id] = 0
@@ -368,9 +381,22 @@ def assign_state_transition_probability_with_adversary():
                                 POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id][
                                     defense_action_id][adversary_action_id] = defense_action.effeciveness_without_scan*forward_probability
                             else:
-                                if old_state.number_mirror_node == new_state.number_mirror_node:
-                                    POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id][
-                                        defense_action_id][adversary_action_id] = forward_probability
+                                # if old_state.number_mirror_node == new_state.number_mirror_node:
+                                #     POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id][
+                                #         defense_action_id][adversary_action_id] = forward_probability
+                                if old_state.number_mirror_node >= new_state.number_mirror_node:
+                                    unexpected_mirror_exist = False
+                                    for mirror_node in new_state.adversary_positions:
+                                        if mirror_node >= 0:
+                                            continue
+                                        if mirror_node not in old_state.adversary_positions:
+                                            unexpected_mirror_exist = True
+                                    if unexpected_mirror_exist:
+                                        POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id][
+                                            defense_action_id][adversary_action_id] = 0
+                                    else:
+                                        POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id][
+                                            defense_action_id][adversary_action_id] = forward_probability
                                 else:
                                     POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id][
                                         defense_action_id][adversary_action_id] = 0

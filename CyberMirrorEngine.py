@@ -3,7 +3,7 @@ import ParseTopologyFile
 import Dijkstra
 import PrintLibrary,Utilities
 from POMDPGenerator import POMDPOperations
-
+from POMDPGenerator import POMDPModelGenerator
 
 def initilization():
     print('Initialize the environment')
@@ -49,7 +49,7 @@ def pomdp_engine():
     # PrintLibrary.action_space_type_Print(POMDPSettings.action_space_by_type,POMDPSettings.action_space_group_index)
     # PrintLibrary.action_space_Print(POMDPSettings.action_space_all_values,
     #                                 POMDPSettings.compromised_nodes_current_time,POMDPSettings.next_adversary_nodes,print_each_action=False)
-    # PrintLibrary.comprehensive_action_space_print(POMDPSettings.action_space_objects)
+    PrintLibrary.comprehensive_action_space_print(POMDPSettings.action_space_objects)
 
     ################################# Adversary Action ######################################################
     POMDPOperations.determine_adversary_action_space()
@@ -63,9 +63,14 @@ def pomdp_engine():
 
     #################################### Observation Matrix ############################################
     POMDPOperations.generate_observation_matrix()
-    PrintLibrary.observation_matrix()
+    # PrintLibrary.observation_matrix()
     ################################ Rewards ##############################################################
+    POMDPOperations.generate_reward()
+    # PrintLibrary.rewards()
 
+    ################################ Generate Final Output Model ################################
+    out_file = '%s/%s.pomdp'%(POMDPSettings.DIR_NAME,POMDPSettings.POMDP_MODEL_FILE_NAME)
+    POMDPModelGenerator.generate_mode(out_file)
 
 if __name__=='__main__':
     print("Start of the CyberMirror Dynamic Planning")

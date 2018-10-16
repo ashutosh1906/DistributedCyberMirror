@@ -99,7 +99,7 @@ REDUNDANT_CLUSTERING_TOLERANCE_LEVEL = 0.001
 REDUNDANT_MAX_ITERATION = 100
 Y_AXIS_COST_EFFECTIVENESS = False
 TRADE_OFF_BENEFIT_COST = 0.7
-MAX_CLUSTER_ITERATION = 5
+MAX_CLUSTER_ITERATION = 2
 
 IRRELEVANT_PRUNNING = True
 defense_action_id_to_position = {}
@@ -135,9 +135,14 @@ MIRROR_NODE_FALSE_POSITIVE = 0.05
 observation_probability = {}
 WILDCARD_SYMBOL = 'wWw'
 OBSERVATION_ACTION_IRRESPECTIVE = True
+PENALTY_WRONG_OBSERVATION = False
 
 ############################### Rewards #############################################################
 rewards_pomdp = {}
+
+################################ POMDP MODEL FILE##################################
+DIR_NAME = 'CyberMirrorPOMDPModels'
+POMDP_MODEL_FILE_NAME = 'CyberMirror'
 
 ################################## Other Variables ##################################################
 READ_IDS_FROM_FILES = True

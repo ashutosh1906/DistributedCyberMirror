@@ -173,4 +173,19 @@ def observation_matrix():
     print("**** End Printing Observation Matrix ******")
 
 
+def rewards():
+    print(" ****************** Print Rewards ********************")
+    import POMDPSettings
+    for old_state_id in POMDPSettings.rewards_pomdp:
+        old_state = POMDPSettings.state_space[old_state_id]
+        print('***\t Start State: %s --> %s ' % (old_state_id, old_state.adversary_positions))
+        for new_state_id in POMDPSettings.rewards_pomdp[old_state_id]:
+            new_state = POMDPSettings.state_space[new_state_id]
+            print('End State: %s --> %s' % (new_state_id,new_state.adversary_positions),end='')
+            for action_id in POMDPSettings.rewards_pomdp[old_state_id][new_state_id]:
+                print('Defense Action: %s ' % (action_id),end='')
+                if not POMDPSettings.PENALTY_WRONG_OBSERVATION:
+                    print('Observations %s --> Values %s'%
+                          (POMDPSettings.WILDCARD_SYMBOL,POMDPSettings.rewards_pomdp[old_state_id][new_state_id][action_id][POMDPSettings.WILDCARD_SYMBOL]))
+    print(" ****************** End Printing Rewards ********************")
 

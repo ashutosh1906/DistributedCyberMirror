@@ -5,6 +5,8 @@ def generate_mode(output_file_name):
     write_initial_informations(file_pointer)
     write_initial_belief(file_pointer)
     write_state_transition(file_pointer)
+    write_observation_matrix(file_pointer)
+    write_rewards(file_pointer)
     file_pointer.close()
 
 def write_initial_informations(file_pointer):
@@ -41,7 +43,7 @@ def write_state_transition(file_pointer):
     for defense_action_type in POMDPSettings.action_space_objects:
         for defense_action in defense_action_type:
             defense_id = defense_action.primary_key
-            defense_line = 'T:a%s\n'%(defense_id)
+            defense_line = 'T:d%s\n'%(defense_id)
             # print(POMDPSettings.state_transition_pomdp[defense_action.primary_key])
             for old_state in POMDPSettings.state_space:
                 old_state_id = old_state.primary_key
@@ -54,3 +56,31 @@ def write_state_transition(file_pointer):
                         each_old_state_to_new_state = '%s%s ' % (each_old_state_to_new_state,POMDPSettings.state_transition_pomdp[defense_id][old_state_id][new_state_id])
                 defense_line = '%s%s\n'%(defense_line,each_old_state_to_new_state)
             file_pointer.write('%s\n'%(defense_line))
+
+def write_observation_matrix(file_pointer):
+    for action in POMDPSettings.observation_probability:
+        # print(POMDPSettings.observation_probability[action])
+        if action==POMDPSettings.WILDCARD_SYMBOL:
+            observation_line = 'O:*\n'
+        else:
+            observation_line = 'O:%s\n'%(action)
+        for old_state_id in POMDPSettings.observation_probability[action]:
+            each_state_to_observation = ''
+            for observation in POMDPSettings.observation_probability[action][old_state_id]:
+                each_state_to_observation = '%s%s '%(each_state_to_observation,
+                                                     POMDPSettings.observation_probability[action][old_state_id][observation])
+            observation_line = '%s%s\n'%(observation_line,each_state_to_observation)
+        file_pointer.write('%s\n'%(observation_line))
+
+def write_rewards(file_pointer):
+    for old_state_id in POMDPSettings.rewards_pomdp:
+        for new_state_id in POMDPSettings.rewards_pomdp[old_state_id]:
+            for defense_id in POMDPSettings.rewards_pomdp[old_state_id][new_state_id]:
+                for observation in POMDPSettings.rewards_pomdp[old_state_id][new_state_id][defense_id]:
+                    if observation==POMDPSettings.WILDCARD_SYMBOL:
+                        reward_line = 'R: d%s : s%s : s%s : * '%(defense_id,old_state_id,new_state_id)
+                    else:
+                        reward_line = 'R: d%s : s%s : s%s : o%s '%(defense_id,old_state_id,new_state_id,observation)
+                    reward_line = '%s%s\n'%(reward_line,
+                                          POMDPSettings.rewards_pomdp[old_state_id][new_state_id][defense_id][POMDPSettings.WILDCARD_SYMBOL])
+                    file_pointer.write('%s'%(reward_line))

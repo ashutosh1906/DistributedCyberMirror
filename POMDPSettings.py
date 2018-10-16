@@ -32,9 +32,11 @@ next_adversary_nodes = []
 MAXIMUM_DEPTH_CHECK = True
 
 ############################################# POMDP Components ####################################
+MINIMUM_FUTURE_WEIGHT = .01
 DISCOUNT_FACTOR = 0.6
-MAXIMUM_DEPTH = int(math.log(0.01)/math.log(DISCOUNT_FACTOR)+1) ###### (Dis. Fact)^n >= 0.01
+# MAXIMUM_DEPTH = int(math.log(0.01)/math.log(DISCOUNT_FACTOR)+1) ###### (Dis. Fact)^n >= 0.01
                                                          ###### n is the meximum depth
+MAXIMUM_DEPTH = 5
 state_space = []
 state_space_map = {}
 

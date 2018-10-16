@@ -1,3 +1,4 @@
+import math
 import POMDPSettings
 from POMDPGenerator import POMDPComponentGenerator
 import PrintLibrary,Utilities
@@ -5,6 +6,19 @@ import Dijkstra
 from Components import Actions
 from Components import AdversaryAction
 from CommonUtilities import DataStructureFunctions
+
+def determine_discount_factor():
+    # print(' *** All exploitable paths to target %s ***'%(POMDPSettings.possible_nodes_for_state))
+    min_path = POMDPSettings.MAXIMUM_DEPTH
+    for path in POMDPSettings.possible_nodes_for_state:
+        path_length = len(POMDPSettings.possible_nodes_for_state[path])
+        if min_path > path_length:
+            min_path = path_length
+    ##### log10(M) = N ==> M = 10^N ##########################
+    N = math.log2(POMDPSettings.MINIMUM_FUTURE_WEIGHT)/min_path
+    POMDPSettings.DISCOUNT_FACTOR = math.pow(2,N)
+    print("**** Discount Factor %s ****"%(POMDPSettings.DISCOUNT_FACTOR))
+
 
 def determine_State_Space():
     del POMDPSettings.state_space[:]
@@ -224,36 +238,33 @@ def generate_observation_matrix():
 def generate_reward():
     ''' Generate the rewards for the POMDP Model'''
     POMDPSettings.rewards_pomdp.clear()  ############### Generate Rewards POMDP #####################
-    for old_state_id in POMDPSettings.state_transition_with_adversary:
-        old_state = POMDPSettings.state_space[old_state_id]
+    for old_state in POMDPSettings.state_space:
+        old_state_id = old_state.primary_key
         if old_state_id not in POMDPSettings.rewards_pomdp:
             POMDPSettings.rewards_pomdp[old_state_id] = {}
         #################################### New States ###################################
-        for new_state_id in POMDPSettings.state_transition_with_adversary[old_state_id]:
-            new_state = POMDPSettings.state_space[new_state_id]
+        for new_state in POMDPSettings.state_space:
+            new_state_id = new_state.primary_key
             if new_state_id not in POMDPSettings.rewards_pomdp[old_state_id]:
                 POMDPSettings.rewards_pomdp[old_state_id][new_state_id] = {}
             #################################### Defense Action ###################################
-            for defense_action_id in POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id]:
-                ################################ Initialize such condition if does not exist #################
-                dnode = POMDPSettings.defense_action_id_to_position[defense_action_id][0]
-                dpos = POMDPSettings.defense_action_id_to_position[defense_action_id][1]
-                defense_action = POMDPSettings.action_space_objects[dnode][dpos]
-                reward_without_adversary_cost = new_state.state_value - old_state.state_value - defense_action.cost
-                if defense_action_id not in POMDPSettings.rewards_pomdp[old_state_id][new_state_id]:
-                    POMDPSettings.rewards_pomdp[old_state_id][new_state_id][defense_action_id] = {}
-                ################################ Observation Probability ##############################
-                if POMDPSettings.PENALTY_WRONG_OBSERVATION:
-                    pass
-                else:
-                    POMDPSettings.rewards_pomdp[old_state_id][new_state_id][defense_action_id][POMDPSettings.WILDCARD_SYMBOL] = 0.0
-                    ################################ Adversary Actions #####################################
-                    for adversary_action_id in POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id][
-                        defense_action_id]:
-                        adversary = POMDPSettings.adversary_action_objects[adversary_action_id]
-                        ############# Generated Rewards ###############
-                        POMDPSettings.rewards_pomdp[old_state_id][new_state_id][
-                            defense_action_id][POMDPSettings.WILDCARD_SYMBOL] += (reward_without_adversary_cost-adversary.adv_cost)*adversary.attack_probability
+            for defense_type in POMDPSettings.action_space_objects:
+                for defense_action in defense_type:
+                    ################################ Initialize such condition if does not exist #################
+                    reward_without_adversary_cost = new_state.state_value - old_state.state_value - defense_action.cost
+                    defense_action_id = defense_action.primary_key
+                    if defense_action_id not in POMDPSettings.rewards_pomdp[old_state_id][new_state_id]:
+                        POMDPSettings.rewards_pomdp[old_state_id][new_state_id][defense_action_id] = {}
+                    ################################ Observation Probability ##############################
+                    if POMDPSettings.PENALTY_WRONG_OBSERVATION:
+                        pass
+                    else:
+                        POMDPSettings.rewards_pomdp[old_state_id][new_state_id][defense_action_id][POMDPSettings.WILDCARD_SYMBOL] = 0.0
+                        ################################ Adversary Actions #####################################
+                        for adversary in POMDPSettings.adversary_action_objects:
+                            ############# Generated Rewards ###############
+                            POMDPSettings.rewards_pomdp[old_state_id][new_state_id][
+                                defense_action_id][POMDPSettings.WILDCARD_SYMBOL] += (reward_without_adversary_cost-adversary.adv_cost)*adversary.attack_probability
 
 
 

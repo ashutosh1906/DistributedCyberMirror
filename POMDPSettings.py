@@ -26,7 +26,7 @@ SORT_ADVERSARY_POSITION = True
 
 #################################### SELECTING COMPROMISED NODES ##################################
 COMPROMISED_NODES_SELECTION_ON_THRESHOLD = True
-NODE_SELECTION_THRESHOLD_VALUE = 250
+NODE_SELECTION_THRESHOLD_VALUE = 300
 compromised_nodes_current_time = []
 next_adversary_nodes = []
 MAXIMUM_DEPTH_CHECK = True
@@ -144,7 +144,7 @@ rewards_pomdp = {}
 
 ################################ POMDP MODEL FILE##################################
 DIR_NAME = 'CyberMirrorPOMDPModels'
-POMDP_MODEL_FILE_NAME = 'CyberMirror'
+POMDP_MODEL_FILE_NAME = 'CyberMirror_4'
 
 ################################## Other Variables ##################################################
 READ_IDS_FROM_FILES = True

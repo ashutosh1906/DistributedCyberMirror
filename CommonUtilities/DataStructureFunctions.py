@@ -45,3 +45,42 @@ def __iterative_normalization_keys(data_structure):
 
 def sort_dict_by_values(dict,value_index):
     return sorted(dict.items(), key=itemgetter(value_index+1))
+
+def normalize_probability_by_max_or_min(data_structure, abs_value = True, by_max=True):
+    max_value = __iterative_find_maximum(data_structure, abs_value, by_max)
+    __iterative_division_of_all_elements(data_structure,max_value)
+
+def __iterative_find_maximum(data_structure, abs_value, by_max):
+    index = 0
+    maxx = -1
+    for key in data_structure:
+        if type(data_structure[key])==dict:
+            current_max = __iterative_find_maximum(data_structure[key], abs_value, by_max)
+            if by_max:
+                if index==0 or maxx < current_max:
+                    maxx = current_max
+                index += 1
+            else:
+                if index==0 or maxx > current_max:
+                    maxx = current_max
+                index += 1
+        else:
+            if abs_value and by_max:
+                maxx = max([abs(data_structure[value_key]) for value_key in data_structure])
+            elif abs_value:
+                minn = min([abs(data_structure[value_key]) for value_key in data_structure])
+            elif not by_max:
+                minn = min([data_structure[value_key] for value_key in data_structure])
+            else:
+                maxx = max([data_structure[value_key] for value_key in data_structure])
+            return maxx
+    return maxx
+
+def __iterative_division_of_all_elements(data_structure,divider):
+    for key in data_structure:
+        if type(data_structure[key])==dict:
+            __iterative_division_of_all_elements(data_structure[key],divider)
+        else:
+            for keys in data_structure:
+                data_structure[keys] /= divider
+            break

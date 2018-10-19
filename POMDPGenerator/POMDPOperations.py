@@ -266,6 +266,8 @@ def generate_reward():
                             POMDPSettings.rewards_pomdp[old_state_id][new_state_id][
                                 defense_action_id][POMDPSettings.WILDCARD_SYMBOL] += (reward_without_adversary_cost-adversary.adv_cost)*adversary.attack_probability
 
+    DataStructureFunctions.normalize_probability_by_max_or_min(data_structure=POMDPSettings.rewards_pomdp,abs_value=True,by_max=True)
+
 
 
 

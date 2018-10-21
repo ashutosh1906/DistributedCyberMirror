@@ -150,3 +150,5 @@ POMDP_MODEL_FILE_NAME = 'CyberMirror_4'
 READ_IDS_FROM_FILES = True
 USER_INPUT_TARGET_NODE = False
 STATIC_TARGET_NODE = [3]
+
+################################ Parse Policy #########################

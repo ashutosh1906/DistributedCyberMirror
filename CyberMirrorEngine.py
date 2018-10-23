@@ -74,7 +74,30 @@ def pomdp_engine():
     PrintLibrary.generic_information()
     ################################ Generate Final Output Model ################################
     out_file = '%s/%s.pomdp'%(POMDPSettings.DIR_NAME,POMDPSettings.POMDP_MODEL_FILE_NAME)
-    POMDPModelGenerator.generate_mode(out_file)
+    POMDPModelGenerator.generate_model(out_file)
+
+    ############################ Calculate the precision ################################
+    POMDPOperations.calculate_precision()
+
+    ################################ Execute Action ##############################
+    from POMDPActionExecutor import POMDPActionPlanner
+    file_name = input("Enter the policy file location")
+    file_name = 'InputFiles/Policies/mirror_4_final.policy'
+    # print(file_name)
+    POMDPActionPlanner.get_policy_functions(file_name)
+
+    ###################### Recommended Actions ##############
+    previous_action = POMDPActionPlanner.execute_action(POMDPSettings.current_belief)
+    print('************* Execute Actions ********************')
+    print(' Previous Actions :: %s' % (POMDPSettings.pomdp_policy_action_index[previous_action]))
+    did = POMDPSettings.defense_action_id_to_position[POMDPSettings.pomdp_policy_action_index[previous_action]][0]
+    dpos = POMDPSettings.defense_action_id_to_position[POMDPSettings.pomdp_policy_action_index[previous_action]][1]
+    POMDPSettings.action_space_objects[did][dpos].printProperties()
+    # while(True):
+    #     print(' Previous Actions :: %s'%(previous_action))
+    #     observations = input('Enter valid observations ')
+    #     if observations==-1:
+    #         break
 
 if __name__=='__main__':
     print("Start of the CyberMirror Dynamic Planning")

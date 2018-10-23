@@ -50,6 +50,9 @@ def normalize_probability_by_max_or_min(data_structure, abs_value = True, by_max
     max_value = __iterative_find_maximum(data_structure, abs_value, by_max)
     __iterative_division_of_all_elements(data_structure,max_value)
 
+def find_max_or_min_of_dictionary(data_structure,max_flag=True):
+    return  __iterative_find_maximum(data_structure,False,max_flag)
+
 def __iterative_find_maximum(data_structure, abs_value, by_max):
     index = 0
     maxx = -1

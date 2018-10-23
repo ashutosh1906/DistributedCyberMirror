@@ -15,6 +15,7 @@ def determine_discount_factor():
         if min_path > path_length:
             min_path = path_length
     ##### log10(M) = N ==> M = 10^N ##########################
+    POMDPSettings.MAXIMUM_DEPTH = min_path
     N = math.log2(POMDPSettings.MINIMUM_FUTURE_WEIGHT)/min_path
     POMDPSettings.DISCOUNT_FACTOR = math.pow(2,N)
     print("**** Discount Factor %s ****"%(POMDPSettings.DISCOUNT_FACTOR))
@@ -266,8 +267,14 @@ def generate_reward():
                             POMDPSettings.rewards_pomdp[old_state_id][new_state_id][
                                 defense_action_id][POMDPSettings.WILDCARD_SYMBOL] += (reward_without_adversary_cost-adversary.adv_cost)*adversary.attack_probability
 
-    DataStructureFunctions.normalize_probability_by_max_or_min(data_structure=POMDPSettings.rewards_pomdp,abs_value=True,by_max=True)
+    # DataStructureFunctions.normalize_probability_by_max_or_min(data_structure=POMDPSettings.rewards_pomdp,abs_value=True,by_max=True)
 
+def calculate_precision():
+    ########################### Find the action with maximum reward ################################
+    max_reward = DataStructureFunctions.find_max_or_min_of_dictionary(POMDPSettings.rewards_pomdp,max_flag=True)
+    print('Max Number of Steps %s'%(POMDPSettings.MAXIMUM_DEPTH))
+    POMDPSettings.POMDP_PRECISION = POMDPSettings.MAXIMUM_DEPTH*max_reward*POMDPSettings.REGRET_PERCENTAGE
+    print('********* Precision %s'%(POMDPSettings.POMDP_PRECISION))
 
 
 

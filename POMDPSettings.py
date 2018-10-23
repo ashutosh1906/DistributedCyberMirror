@@ -37,6 +37,8 @@ DISCOUNT_FACTOR = 0.6
 # MAXIMUM_DEPTH = int(math.log(0.01)/math.log(DISCOUNT_FACTOR)+1) ###### (Dis. Fact)^n >= 0.01
                                                          ###### n is the meximum depth
 MAXIMUM_DEPTH = 5
+
+current_belief = {}
 state_space = []
 state_space_map = {}
 
@@ -145,6 +147,8 @@ rewards_pomdp = {}
 ################################ POMDP MODEL FILE##################################
 DIR_NAME = 'CyberMirrorPOMDPModels'
 POMDP_MODEL_FILE_NAME = 'CyberMirror_4'
+POMDP_PRECISION = 1
+REGRET_PERCENTAGE = 0.0001
 
 ################################## Other Variables ##################################################
 READ_IDS_FROM_FILES = True
@@ -152,3 +156,4 @@ USER_INPUT_TARGET_NODE = False
 STATIC_TARGET_NODE = [3]
 
 ################################ Parse Policy #########################
+pomdp_policy_action_index = []

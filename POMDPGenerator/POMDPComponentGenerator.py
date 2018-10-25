@@ -35,6 +35,7 @@ def generate_initial_state_space(possible_nodes_for_state):
     determine_parent_nodes()
     state_id = 0
     del POMDPSettings.state_space[:]
+    POMDPSettings.state_space_map.clear()
     for adv_positions in POMDPSettings.possible_node_combinations:
         if POMDPSettings.SORT_ADVERSARY_POSITION:
             adv_positions = sorted(adv_positions)
@@ -119,10 +120,8 @@ def generate_initial_belief(compromised_nodes_current_time,compromised_nodes_pro
     iterate_over_possible_belief(compromised_nodes_current_time,compromised_nodes_probability,
                                  1,[],state_space,state_space_map)
 
-
 def initialize_action_space():
     index = 0
-    del POMDPSettings.action_space_by_type[:]
     if POMDPSettings.SPATIAL_MUTATION_ENABLED:
         POMDPSettings.action_space_group_index[index] = POMDPSettings.SPATIAL_MUTATION_INDEX
         POMDPSettings.action_space_by_type.append(POMDPSettings.spatial_mutation)
@@ -143,12 +142,10 @@ def initialize_action_space():
         POMDPSettings.action_space_by_type.append(POMDPSettings.anonymization)
         index += 1
 
-    del POMDPSettings.action_space_all_values[:]
     POMDPSettings.action_space_all_values = \
         SetOperations.combination_possible_values_all_positions(POMDPSettings.action_space_by_type)
 
 def generate_action_space():
-    del POMDPSettings.action_space_objects[:]
     id = 0
     node_id = 0
     # print('Next Adversary Nodes %s'%(POMDPSettings.next_adversary_nodes))
@@ -183,6 +180,19 @@ def __determine_co_efficients_uniform():
         num_parameters += 1
     POMDPSettings.WEIGHT_CONCEALABILITY_MEASURE = POMDPSettings.WEIGHT_DETECTABILITY_MEASURE = POMDPSettings.WEIGHT_DETERRENCE_MEASURE = 1/num_parameters
 
+def set_weighted_cost_effectiveness_action_space():
+    for action_type in POMDPSettings.action_space_objects:
+        for action in action_type:
+            weighted_effectiveness_action = 0.0
+            weighted_effectiveness_action += POMDPSettings.ADVERSARY_SCANNING_PROB * action.effeciveness_with_scan
+            weighted_effectiveness_action += (1 - POMDPSettings.ADVERSARY_SCANNING_PROB) * action.effeciveness_without_scan
+            action.set_weighted_effectiveness(weighted_effectiveness_action)
+            if action.cost==0:
+                action.set_weighted_cost_effectiveness(0.0)
+            else:
+                weighted_cost_effectiveness_action = weighted_effectiveness_action*100/action.cost
+                action.set_weighted_cost_effectiveness(weighted_cost_effectiveness_action)
+
 def marginal_prunning(action_space_objects):
     # print("***** Before Marginal Prunning Number of Actions ******")
     # PrintLibrary.number_action_available_each_node(action_space_objects)
@@ -208,13 +218,9 @@ def redundant_prunning(action_space_objects):
     weighted_effectiveness_action = [] ###### Index of a value in this list is also representing the index in the action space
     weighted_cost_effectiveness_action = []
     for action in action_space_objects:
-        weighted_effectiveness_action.append(0.0)
-        weighted_effectiveness_action[-1] += POMDPSettings.ADVERSARY_SCANNING_PROB*action.effeciveness_with_scan
-        weighted_effectiveness_action[-1] += (1-POMDPSettings.ADVERSARY_SCANNING_PROB) * action.effeciveness_without_scan
-        action.set_weighted_effectiveness(weighted_effectiveness_action[-1])
+        weighted_effectiveness_action.append(action.weighted_effectiveness)
         if POMDPSettings.Y_AXIS_COST_EFFECTIVENESS:
-            weighted_cost_effectiveness_action.append(weighted_effectiveness_action[-1]*100/action.cost)
-            action.set_weighted_cost_effectiveness(weighted_cost_effectiveness_action[-1])
+            weighted_cost_effectiveness_action.append(action.weighted_cost_effectiveness)
         else:
             weighted_cost_effectiveness_action.append(action.cost)
     # print(weighted_effectiveness_action)

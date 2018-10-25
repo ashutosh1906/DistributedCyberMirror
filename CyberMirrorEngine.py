@@ -5,6 +5,17 @@ import PrintLibrary,Utilities
 from POMDPGenerator import POMDPOperations
 from POMDPGenerator import POMDPModelGenerator
 
+def dynamic_planning_initialization(time_sequence):
+    print('\n\n************************** Start Planning for time %s *********************************'%(time_sequence))
+    ######################################### Get the IDS score of the compromised nodes with non_zero probability ##############################
+    Utilities.get_compromised_nodes(time_sequence, POMDPSettings.compromised_nodes_probability)
+    Utilities.calculate_score_compromised_nodes(POMDPSettings.compromised_nodes_probability,
+                                                POMDPSettings.impact_nodes, POMDPSettings.all_pair_shortest_path)
+    PrintLibrary.score_compromised_node(POMDPSettings.impact_nodes)
+    POMDPSettings.compromised_nodes_current_time = Utilities.select_compromised_nodes(POMDPSettings.impact_nodes)
+    print("***************** Selected Compromised Nodes %s*************************" % (
+        POMDPSettings.compromised_nodes_current_time))
+
 def initilization():
     print('Initialize the environment')
     ParseTopologyFile.parse_aSHIIP_topology_bi_directional(POMDPSettings.TOPOLOGY_FILE_NAME, POMDPSettings.adjacent_matrix)
@@ -25,15 +36,7 @@ def initilization():
     target_resource = POMDPSettings.target_node[0]
     POMDPSettings.all_pair_shortest_path[target_resource] = Dijkstra.Dijkstra_algorithm_unweighted(target_resource,POMDPSettings.adjacent_matrix)
     PrintLibrary.all_pair_shortest_path_print(POMDPSettings.all_pair_shortest_path)  ######## Print the shortest path knowledge #############
-
-    ######################################### Get the IDS score of the compromised nodes with non_zero probability ##############################
-    Utilities.get_compromised_nodes(0,POMDPSettings.compromised_nodes_probability)
-    Utilities.calculate_score_compromised_nodes(POMDPSettings.compromised_nodes_probability,
-                                                POMDPSettings.impact_nodes,POMDPSettings.all_pair_shortest_path)
-    PrintLibrary.score_compromised_node(POMDPSettings.impact_nodes)
-    POMDPSettings.compromised_nodes_current_time = Utilities.select_compromised_nodes(POMDPSettings.impact_nodes)
-    print("***************** Selected Compromised Nodes %s*************************" % (POMDPSettings.compromised_nodes_current_time))
-
+    print('******* End of static environment initialization ***************')
 
 def pomdp_engine():
     ######################################### Create State Space ##############################################
@@ -63,10 +66,11 @@ def pomdp_engine():
     ############################### State Transition #########################################################
     POMDPOperations.generate_state_transition()
     PrintLibrary.check_invalid_state_transition()
-
+    # PrintLibrary.generic_information()
     #################################### Observation Matrix ############################################
     POMDPOperations.generate_observation_matrix()
     # PrintLibrary.observation_matrix()
+    # PrintLibrary.generic_information()
     ################################ Rewards ##############################################################
     POMDPOperations.generate_reward()
     # PrintLibrary.rewards()
@@ -81,8 +85,8 @@ def pomdp_engine():
 
     ################################ Execute Action ##############################
     from POMDPActionExecutor import POMDPActionPlanner
-    file_name = input("Enter the policy file location")
-    file_name = 'InputFiles/Policies/mirror_4_final.policy'
+    file_name = input("Enter the policy file location ")
+    file_name = '%s/%s.policy'%(POMDPSettings.POLICY_FILE_GENERATED,file_name)
     # print(file_name)
     POMDPActionPlanner.get_policy_functions(file_name)
 
@@ -102,4 +106,9 @@ def pomdp_engine():
 if __name__=='__main__':
     print("Start of the CyberMirror Dynamic Planning")
     initilization()
-    pomdp_engine()
+    time_sequence = 0
+    while(True):
+        dynamic_planning_initialization(time_sequence)
+        pomdp_engine()
+        time_sequence += 1
+

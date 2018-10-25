@@ -26,7 +26,7 @@ SORT_ADVERSARY_POSITION = True
 
 #################################### SELECTING COMPROMISED NODES ##################################
 COMPROMISED_NODES_SELECTION_ON_THRESHOLD = True
-NODE_SELECTION_THRESHOLD_VALUE = 300
+NODE_SELECTION_THRESHOLD_VALUE = 250
 compromised_nodes_current_time = []
 next_adversary_nodes = []
 MAXIMUM_DEPTH_CHECK = True
@@ -37,6 +37,7 @@ DISCOUNT_FACTOR = 0.6
 # MAXIMUM_DEPTH = int(math.log(0.01)/math.log(DISCOUNT_FACTOR)+1) ###### (Dis. Fact)^n >= 0.01
                                                          ###### n is the meximum depth
 MAXIMUM_DEPTH = 5
+MAX_STEPS_TOPOLOGY = 0
 
 current_belief = {}
 state_space = []
@@ -146,9 +147,11 @@ rewards_pomdp = {}
 
 ################################ POMDP MODEL FILE##################################
 DIR_NAME = 'CyberMirrorPOMDPModels'
-POMDP_MODEL_FILE_NAME = 'CyberMirror_4'
+POMDP_MODEL_FILE_NAME = 'CyberMirror_5'
 POMDP_PRECISION = 1
-REGRET_PERCENTAGE = 0.0001
+REGRET_PERCENTAGE = 0.00001
+
+POLICY_FILE_GENERATED = 'InputFiles/Policies/'
 
 ################################## Other Variables ##################################################
 READ_IDS_FROM_FILES = True

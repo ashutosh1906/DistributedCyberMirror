@@ -189,3 +189,21 @@ def rewards():
                           (POMDPSettings.WILDCARD_SYMBOL,POMDPSettings.rewards_pomdp[old_state_id][new_state_id][action_id][POMDPSettings.WILDCARD_SYMBOL]))
     print(" ****************** End Printing Rewards ********************")
 
+def defense_planning(time_sequence,defense_plan):
+    print('\n At the end of time %s, Defense planning looks like this '%(time_sequence))
+    import POMDPSettings
+    for node in defense_plan:
+        print('\t Node ID : %s'%(node))
+        for defense_type in defense_plan[node]:
+            if defense_type== POMDPSettings.SPATIAL_MUTATION_INDEX:
+                print('\t\t Spatial Mutation %s'%(defense_plan[node][defense_type]))
+            if defense_type== POMDPSettings.TEMPORAL_MUTATION_INDEX:
+                print('\t\t Temporal Mutation %s'%(defense_plan[node][defense_type]))
+            if defense_type== POMDPSettings.DIVERSITY_INDEX:
+                print('\t\t Diversity %s'%(defense_plan[node][defense_type]))
+            if defense_type== POMDPSettings.ANONYMIZATION_INDEX:
+                print('\t\t Anonymization %s'%(defense_plan[node][defense_type]))
+    print('******** Finished Planning *************')
+
+
+

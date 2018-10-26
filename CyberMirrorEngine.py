@@ -42,7 +42,7 @@ def pomdp_engine():
     ######################################### Create State Space ##############################################
     POMDPOperations.determine_State_Space()
     # PrintLibrary.state_space_print(POMDPSettings.state_space,True)
-
+    print('State Space Map %s'%(POMDPSettings.state_space_map))
     ######################################## Determine Discount factor #######################################
     POMDPOperations.determine_discount_factor()
 
@@ -87,7 +87,6 @@ def pomdp_engine():
     from POMDPActionExecutor import POMDPActionPlanner
     file_name = input("Enter the policy file location ")
     file_name = '%s/%s.policy'%(POMDPSettings.POLICY_FILE_GENERATED,file_name)
-    # print(file_name)
     POMDPActionPlanner.get_policy_functions(file_name)
 
     ###################### Recommended Actions ##############
@@ -97,11 +96,10 @@ def pomdp_engine():
     did = POMDPSettings.defense_action_id_to_position[POMDPSettings.pomdp_policy_action_index[previous_action]][0]
     dpos = POMDPSettings.defense_action_id_to_position[POMDPSettings.pomdp_policy_action_index[previous_action]][1]
     POMDPSettings.action_space_objects[did][dpos].printProperties()
-    # while(True):
-    #     print(' Previous Actions :: %s'%(previous_action))
-    #     observations = input('Enter valid observations ')
-    #     if observations==-1:
-    #         break
+    POMDPOperations.implement_executed_action(POMDPSettings.action_space_objects[did][dpos])
+    # PrintLibrary.defense_planning(time_sequence,POMDPSettings.deployed_defense_nodes)
+    Utilities.write_defense_planning_in_file(time_sequence,POMDPSettings.deployed_defense_nodes,
+                                             file_name='%s/%s'%(POMDPSettings.OUT_DIR_CONCEAL,POMDPSettings.OUT_DEFENSE_PLAN_FILE))
 
 if __name__=='__main__':
     print("Start of the CyberMirror Dynamic Planning")

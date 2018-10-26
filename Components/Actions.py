@@ -77,7 +77,16 @@ class Actions:
     def set_effectiveness(self):
         self.effeciveness_with_scan = 0.0
         self.effeciveness_without_scan = 0.0
-        effectiveness_anony_diversity = (1-1/(self.anonymization*self.diversity))
+        prev_anonymity = 0
+        prev_diversity = 0
+        if self.node_id in POMDPSettings.deployed_defense_nodes:
+            if POMDPSettings.ANONYMIZATION_ENABLED:
+                prev_anonymity += POMDPSettings.deployed_defense_nodes[self.node_id][POMDPSettings.ANONYMIZATION_INDEX]
+        if self.node_id in POMDPSettings.deployed_defense_nodes:
+            if POMDPSettings.DIVERSITY_ENABLED:
+                prev_diversity += POMDPSettings.deployed_defense_nodes[self.node_id][POMDPSettings.DIVERSITY_INDEX]
+
+        effectiveness_anony_diversity = (1-1/((self.anonymization+prev_anonymity)*(self.diversity+prev_diversity)))
 
         if POMDPSettings.CONCEALABILITY_MEASURE_ENABLED:
             concealability_measure = math.exp(-1)+(1-math.exp(-1))*effectiveness_anony_diversity

@@ -34,8 +34,8 @@ def generate_initial_state_space(possible_nodes_for_state):
     ######################### Generate States ####################################
     determine_parent_nodes()
     state_id = 0
-    del POMDPSettings.state_space[:]
-    POMDPSettings.state_space_map.clear()
+    # del POMDPSettings.state_space[:]
+    # POMDPSettings.state_space_map.clear()
     for adv_positions in POMDPSettings.possible_node_combinations:
         if POMDPSettings.SORT_ADVERSARY_POSITION:
             adv_positions = sorted(adv_positions)

@@ -106,6 +106,16 @@ def prune_action_space():
         # print("****** After Redundant Prunning ***************")
         # PrintLibrary.number_action_available_each_node(POMDPSettings.action_space_objects)
 
+def create_defense_id_map():
+    for i in range(len(POMDPSettings.action_space_objects)):
+        index = 0
+        for action in POMDPSettings.action_space_objects[i]:
+            if action.node_id not in POMDPSettings.action_based_on_nodes:
+                POMDPSettings.action_based_on_nodes[action.node_id] = []
+            POMDPSettings.defense_action_id_to_position[action.primary_key] = [i,index]
+            POMDPSettings.action_based_on_nodes[action.node_id].append([i,index])
+            index += 1
+
 def initialize_adversary_action_space_data_structure():
     del POMDPSettings.adversary_action_objects[:]
     POMDPSettings.adversary_action_id_to_position.clear()
@@ -132,15 +142,6 @@ def determine_adversary_action_space():
             break
     # print("Adversarry : %s == %s"%(len(POMDPSettings.adversary_action_objects),POMDPSettings.adversary_action_id_to_position))
 
-def create_defense_id_map():
-    for i in range(len(POMDPSettings.action_space_objects)):
-        index = 0
-        for action in POMDPSettings.action_space_objects[i]:
-            if action.node_id not in POMDPSettings.action_based_on_nodes:
-                POMDPSettings.action_based_on_nodes[action.node_id] = []
-            POMDPSettings.defense_action_id_to_position[action.primary_key] = [i,index]
-            POMDPSettings.action_based_on_nodes[action.node_id].append([i,index])
-            index += 1
 
 def initialize_state_transition_data_structure():
     POMDPSettings.state_transition_with_adversary.clear()
@@ -297,6 +298,31 @@ def calculate_precision():
     print('Max Number of Steps %s'%(POMDPSettings.MAX_STEPS_TOPOLOGY))
     POMDPSettings.POMDP_PRECISION = POMDPSettings.MAX_STEPS_TOPOLOGY*max_reward*POMDPSettings.REGRET_PERCENTAGE
     print('********* Precision %s'%(POMDPSettings.POMDP_PRECISION))
+
+def implement_executed_action(recommended_action):
+    '''Implement the recommended executed action'''
+    node_id = recommended_action.node_id
+    ###### Initialize the defense plan for the node #############
+    if node_id not in POMDPSettings.deployed_defense_nodes:
+        POMDPSettings.deployed_defense_nodes[node_id] = {}
+        if POMDPSettings.SPATIAL_MUTATION_ENABLED:
+            POMDPSettings.deployed_defense_nodes[node_id][POMDPSettings.SPATIAL_MUTATION_INDEX] = 1.0
+        if POMDPSettings.TEMPORAL_MUTATION_ENABLED:
+            POMDPSettings.deployed_defense_nodes[node_id][POMDPSettings.TEMPORAL_MUTATION_INDEX] = 0.0
+        if POMDPSettings.DIVERSITY_ENABLED:
+            POMDPSettings.deployed_defense_nodes[node_id][POMDPSettings.DIVERSITY_INDEX] = 0
+        if POMDPSettings.ANONYMIZATION_ENABLED:
+            POMDPSettings.deployed_defense_nodes[node_id][POMDPSettings.ANONYMIZATION_INDEX] = 0
+
+    ####################### Insert the values ##########################################
+    if POMDPSettings.SPATIAL_MUTATION_ENABLED:
+        POMDPSettings.deployed_defense_nodes[node_id][POMDPSettings.SPATIAL_MUTATION_INDEX] = recommended_action.spatial_mutation
+    if POMDPSettings.TEMPORAL_MUTATION_ENABLED:
+        POMDPSettings.deployed_defense_nodes[node_id][POMDPSettings.TEMPORAL_MUTATION_INDEX] = recommended_action.temporal_mutation
+    if POMDPSettings.DIVERSITY_ENABLED:
+        POMDPSettings.deployed_defense_nodes[node_id][POMDPSettings.DIVERSITY_INDEX] += recommended_action.diversity
+    if POMDPSettings.ANONYMIZATION_ENABLED:
+        POMDPSettings.deployed_defense_nodes[node_id][POMDPSettings.ANONYMIZATION_INDEX] += recommended_action.anonymization
 
 
 

@@ -223,6 +223,24 @@ def error_distance(mean_cluster,k_means_cluster,weighted_effectiveness_action,we
             distance += current_distance
     return distance
 
+def write_defense_planning_in_file(time_sequence,defense_plan,file_name):
+    file_pointer = open(file_name,'a+')
+    file_pointer.write('\n At the end of time %s, Defense planning looks like this\n'%(time_sequence))
+    import POMDPSettings
+    for node in defense_plan:
+        file_pointer.write('\t Node ID : %s\n'%(node))
+        for defense_type in defense_plan[node]:
+            if defense_type== POMDPSettings.SPATIAL_MUTATION_INDEX:
+                file_pointer.write('\t\t Spatial Mutation %s\n'%(defense_plan[node][defense_type]))
+            if defense_type== POMDPSettings.TEMPORAL_MUTATION_INDEX:
+                file_pointer.write('\t\t Temporal Mutation %s\n'%(defense_plan[node][defense_type]))
+            if defense_type== POMDPSettings.DIVERSITY_INDEX:
+                file_pointer.write('\t\t Diversity %s\n'%(defense_plan[node][defense_type]))
+            if defense_type== POMDPSettings.ANONYMIZATION_INDEX:
+                file_pointer.write('\t\t Anonymization %s\n'%(defense_plan[node][defense_type]))
+        file_pointer.write('******** Finished Planning *************\n')
+    file_pointer.close()
+
 
 
 

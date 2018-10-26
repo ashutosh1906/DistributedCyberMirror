@@ -1,18 +1,23 @@
 from CommonUtilities import SetOperations
 
 def graph_traversal_concurrent(data_structure):
-    '''Start the journey from one or more points towards a destination. List the concurrent possible nodes
-    at a time. For example, [1,2,4] means the possible nodes are 1,2,4 and [3] means that this is the only possible node.
-    arg:data_structure contains a path (represented as list) from the start points to destination.
-    Output: return the list of possible nodes'''
+    '''Start the journey from one or more points towards a destination. Each content of the data structure is path where
+    path[0]=start_node and path[-1]=destination. This functions computes all the possible combinations of concurrent nodes
+    when the agent can move one step at each time. For example, [1,2,4] means the possible nodes are 1,2,4 and [3] means that this is the only possible node.
+    arg:data_structure is a list which contains paths (represented as list) from the start point to destination.
+    Output: return the list of all combinations of possible nodes
+    For Example, if data_structure is [[2,1],[3,1]], then the output is [[2,3],[1]] (We ignore a node if its ancestor is present in the combination. Root is
+    ancestor of all the nodes except itself)'''
     print('***** Given Data Structure %s **********'%(data_structure))
 
     sent_data_structure = []
     for data in data_structure:
         sent_data_structure.append(data[:-1])
     possible_combinations = path_traversal_from_root(sent_data_structure)
+    # print('Possible Combinations %s'%(possible_combinations))
     #### Add Root ##############
     possible_combinations.append([data_structure[0][-1]])
+    # print('Possible Combinations %s' % (possible_combinations))
 
     original_combinations = []
     for value in possible_combinations:
@@ -25,8 +30,9 @@ def path_traversal_from_root(data_structure):
     # print('DS %s'%(data_structure))
     if len(data_structure)==1:
         child_combination = []
-        if len(data_structure[0]) > 0:
-            child_combination.append(data_structure[0])
+        for data in data_structure[0]:
+            child_combination.append([data])
+        # print('Child %s'%(child_combination))
         return child_combination
 
     subtree_data_structure = {}

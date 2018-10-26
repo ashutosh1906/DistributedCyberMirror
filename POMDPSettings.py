@@ -9,7 +9,7 @@ adjacent_matrix = []
 all_pair_shortest_path = {}
 
 #################################### Configurations ###################################
-ADVERSARY_LOGS = '%s/adv_initial_position'%(CONFIGURATION_FILES_DIRECTORY)
+ADVERSARY_LOGS = '%s/adv_initial_position_1'%(CONFIGURATION_FILES_DIRECTORY)
 READ_IMPACT_FROM_FILE = True
 
 ###################################### Environment ###################################
@@ -36,7 +36,7 @@ MINIMUM_FUTURE_WEIGHT = .01
 DISCOUNT_FACTOR = 0.6
 # MAXIMUM_DEPTH = int(math.log(0.01)/math.log(DISCOUNT_FACTOR)+1) ###### (Dis. Fact)^n >= 0.01
                                                          ###### n is the meximum depth
-MAXIMUM_DEPTH = 5
+MAXIMUM_DEPTH = 8
 MAX_STEPS_TOPOLOGY = 0
 
 current_belief = {}
@@ -160,3 +160,8 @@ STATIC_TARGET_NODE = [3]
 
 ################################ Parse Policy #########################
 pomdp_policy_action_index = []
+
+############################ Final Output ###########################
+deployed_defense_nodes = {}
+OUT_DIR_CONCEAL = 'ConcealConf'
+OUT_DEFENSE_PLAN_FILE = 'defense_configuration'

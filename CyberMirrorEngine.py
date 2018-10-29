@@ -94,9 +94,9 @@ def pomdp_engine():
 
     ################################ Execute Action ##############################
     from POMDPActionExecutor import POMDPActionPlanner
-    file_name = input("Enter the policy file location ")
-    file_name = '%s/%s.policy'%(POMDPSettings.POLICY_FILE_GENERATED,file_name)
-    POMDPActionPlanner.get_policy_functions(file_name)
+    # file_name = input("Enter the policy file location ")
+    # file_name = '%s/%s.policy'%(POMDPSettings.POLICY_FILE_GENERATED,file_name)
+    POMDPActionPlanner.get_policy_functions(POMDPSettings.POMDP_POLICY_FILE_NAME)
 
     ###################### Recommended Actions ##############
     previous_action = POMDPActionPlanner.execute_action(POMDPSettings.current_belief)

@@ -8,7 +8,7 @@ from POMDPGenerator import POMDPModelGenerator
 def dynamic_planning_initialization(time_sequence):
     print('\n\n************************** Start Planning for time %s *********************************'%(time_sequence))
     ######################################### Get the IDS score of the compromised nodes with non_zero probability ##############################
-    Utilities.get_compromised_nodes(time_sequence, POMDPSettings.compromised_nodes_probability)
+    Utilities.get_compromised_nodes(time_sequence,POMDPSettings.compromised_nodes_probability)
     Utilities.calculate_score_compromised_nodes(POMDPSettings.compromised_nodes_probability,
                                                 POMDPSettings.impact_nodes, POMDPSettings.all_pair_shortest_path)
     PrintLibrary.score_compromised_node(POMDPSettings.impact_nodes)
@@ -83,6 +83,15 @@ def pomdp_engine():
     ############################ Calculate the precision ################################
     POMDPOperations.calculate_precision()
 
+    ################## Solve the POMDP Model ##############################
+    print("POMDP Model %s" % (out_file))
+    print("Policy File Name %s"%(POMDPSettings.POMDP_POLICY_FILE_NAME))
+    generate_policy_cmd = '%s solve -o %s -p %s %s'%(POMDPSettings.ZMDP_EXECUTOR,
+                                                    POMDPSettings.POMDP_POLICY_FILE_NAME,POMDPSettings.POMDP_PRECISION,out_file)
+    print(generate_policy_cmd)
+    import os
+    os.system(generate_policy_cmd)
+
     ################################ Execute Action ##############################
     from POMDPActionExecutor import POMDPActionPlanner
     file_name = input("Enter the policy file location ")
@@ -101,6 +110,7 @@ def pomdp_engine():
     Utilities.write_defense_planning_in_file(time_sequence,POMDPSettings.deployed_defense_nodes,
                                              file_name='%s/%s'%(POMDPSettings.OUT_DIR_CONCEAL,POMDPSettings.OUT_DEFENSE_PLAN_FILE))
 
+
 if __name__=='__main__':
     print("Start of the CyberMirror Dynamic Planning")
     initilization()
@@ -109,4 +119,5 @@ if __name__=='__main__':
         dynamic_planning_initialization(time_sequence)
         pomdp_engine()
         time_sequence += 1
+
 

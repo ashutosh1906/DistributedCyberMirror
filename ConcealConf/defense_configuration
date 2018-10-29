@@ -11,3 +11,30 @@
 		 Diversity 2
 		 Anonymization 2
 ******** Finished Planning *************
+ At the end of time 0, Defense planning looks like this
+	 Node ID : 3
+		 Spatial Mutation 0.75
+		 Diversity 1
+		 Anonymization 6
+******** Finished Planning *************
+
+ At the end of time 0, Defense planning looks like this
+	 Node ID : 3
+		 Spatial Mutation 1.0
+		 Diversity 1
+		 Anonymization 1
+******** Finished Planning *************
+
+ At the end of time 0, Defense planning looks like this
+	 Node ID : 3
+		 Spatial Mutation 0.25
+		 Diversity 6
+		 Anonymization 6
+******** Finished Planning *************
+
+ At the end of time 0, Defense planning looks like this
+	 Node ID : 3
+		 Spatial Mutation 0.75
+		 Diversity 2
+		 Anonymization 6
+******** Finished Planning *************

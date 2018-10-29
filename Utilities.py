@@ -40,6 +40,19 @@ def get_compromised_nodes(time_sequence,compromised_nodes_probability):
             if POMDPSettings.READ_IMPACT_FROM_FILE:
                 POMDPSettings.impact_nodes[compromised_node] = float(line[2])
         file_pointer.close()
+    else:
+        print('Enter The IDS Observations')
+        while True:
+            line = input()
+            if line=='-1':
+                break
+            line = line.replace('\n', '').split(',')
+            # print(line)
+            compromised_node = int(line[0])
+            compromise_probability = float(line[1])
+            compromised_nodes_probability[compromised_node] = compromise_probability
+            if POMDPSettings.READ_IMPACT_FROM_FILE:
+                POMDPSettings.impact_nodes[compromised_node] = float(line[2])
 
 def select_compromised_nodes(impact_nodes):
     compromised_nodes = None

@@ -143,10 +143,10 @@ def evaluation(time_sequence):
         pomdp_engine()
         time_sequence += 1
         print('\n ****** Deployed Defense \n\t%s\n\t%s'%(POMDPSettings.deployed_defense_nodes,POMDPSettings.deployed_defense_assessment))
+        next_compromised_nodes()
         continue_evaluation = input('\nDo you wish to continue? Press 1 if yes and 0 otherwise ')
         if continue_evaluation == '0':
             break
-        next_compromised_nodes()
 
 if __name__=='__main__':
     print("Start of the CyberMirror Dynamic Planning")

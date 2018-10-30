@@ -54,6 +54,10 @@ def get_compromised_nodes(time_sequence,compromised_nodes_probability):
             compromised_nodes_probability[compromised_node] = compromise_probability
             if POMDPSettings.READ_IMPACT_FROM_FILE:
                 POMDPSettings.impact_nodes[compromised_node] = float(line[2])
+    if POMDPSettings.target_node[0] in compromised_nodes_probability:
+        print(' Target is already compromised. Nothing to defend')
+        import sys
+        sys.exit()
 
 def select_compromised_nodes(impact_nodes):
     compromised_nodes = None

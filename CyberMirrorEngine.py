@@ -142,8 +142,8 @@ def evaluation(time_sequence):
         dynamic_planning_initialization(time_sequence, calculate_compromised_nodes=True)
         pomdp_engine()
         time_sequence += 1
-        print('Deployed Defense %s\n\t%s'%(POMDPSettings.deployed_defense_nodes,POMDPSettings.deployed_defense_assessment))
-        continue_evaluation = input('Do you wish to continue? Press 1 if yes and 0 otherwise ')
+        print('\n ****** Deployed Defense \n\t%s\n\t%s'%(POMDPSettings.deployed_defense_nodes,POMDPSettings.deployed_defense_assessment))
+        continue_evaluation = input('\nDo you wish to continue? Press 1 if yes and 0 otherwise ')
         if continue_evaluation == '0':
             break
         next_compromised_nodes()
@@ -159,6 +159,8 @@ if __name__=='__main__':
             dynamic_planning_initialization(time_sequence,calculate_compromised_nodes=True)
             pomdp_engine()
             time_sequence += 1
+            print('Deployed Defense %s\n\t%s' % (
+            POMDPSettings.deployed_defense_nodes, POMDPSettings.deployed_defense_assessment))
             continue_evaluation = input('Do you wish to continue? Press 1 if yes and 0 otherwise ')
             if continue_evaluation == '0':
                 break

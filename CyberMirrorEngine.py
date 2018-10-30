@@ -147,6 +147,9 @@ def evaluation(time_sequence):
         continue_evaluation = input('\nDo you wish to continue? Press 1 if yes and 0 otherwise ')
         if continue_evaluation == '0':
             break
+    if POMDPSettings.target_node[0] in POMDPSettings.compromised_nodes_probability:
+        print(' Success Probability to compromise Target=%s is %s'%(POMDPSettings.target_node[0],
+                                                                    POMDPSettings.compromised_nodes_probability[POMDPSettings.target_node[0]]*POMDPSettings.ADVERSARY_ADVANCE))
 
 if __name__=='__main__':
     print("Start of the CyberMirror Dynamic Planning")

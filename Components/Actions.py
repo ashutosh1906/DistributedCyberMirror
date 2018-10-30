@@ -82,7 +82,7 @@ class Actions:
         if self.node_id in POMDPSettings.deployed_defense_nodes:
             if POMDPSettings.ANONYMIZATION_ENABLED:
                 prev_anonymity += POMDPSettings.deployed_defense_nodes[self.node_id][POMDPSettings.ANONYMIZATION_INDEX]
-        if self.node_id in POMDPSettings.deployed_defense_nodes:
+        #if self.node_id in POMDPSettings.deployed_defense_nodes:
             if POMDPSettings.DIVERSITY_ENABLED:
                 prev_diversity += POMDPSettings.deployed_defense_nodes[self.node_id][POMDPSettings.DIVERSITY_INDEX]
 

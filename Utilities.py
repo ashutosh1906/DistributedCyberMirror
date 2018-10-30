@@ -17,7 +17,7 @@ def get_impact_values(node_id):
 def calculate_score_compromised_nodes(compromised_nodes_probability,compromised_nodes_ids_score,all_pair_shortest_path):
     '''Calculate the score of a compromised host based on the IDS score, distance and the impact'''
     '''Impact depepends on both the centrality and the utility value of the resource'''
-    print('********** Calculating the score of the compromised hosts ************************')
+    print('********** Calculating the score of the compromised hosts %s ************************'%(compromised_nodes_probability))
     print('\t Selected nodes are less than the depth : %s'%(POMDPSettings.MAXIMUM_DEPTH))
     for node in compromised_nodes_probability:
         if node in all_pair_shortest_path[POMDPSettings.target_node[0]]:
@@ -30,6 +30,7 @@ def calculate_score_compromised_nodes(compromised_nodes_probability,compromised_
 def get_compromised_nodes(time_sequence,compromised_nodes_probability):
     '''Get the IDS score for the possible compromised nodes where time sequence represents the period'''
     compromised_nodes_probability.clear()
+    POMDPSettings.impact_nodes.clear()
     if POMDPSettings.READ_IDS_FROM_FILES:
         file_pointer = open(POMDPSettings.ADVERSARY_LOGS)
         for line in file_pointer:

@@ -23,6 +23,7 @@ def determine_discount_factor():
 def initialize_state_space_data_structure():
     del POMDPSettings.state_space[:]
     POMDPSettings.state_space_map.clear()
+    POMDPSettings.possible_nodes_for_state.clear()
 
 def determine_State_Space():
     initialize_state_space_data_structure()
@@ -299,6 +300,12 @@ def calculate_precision():
     POMDPSettings.POMDP_PRECISION = POMDPSettings.MAX_STEPS_TOPOLOGY*max_reward*POMDPSettings.REGRET_PERCENTAGE
     print('********* Precision %s'%(POMDPSettings.POMDP_PRECISION))
 
+def __update_defense_assessment(node_id,recommended_action):
+    if node_id not in POMDPSettings.deployed_defense_assessment:
+        POMDPSettings.deployed_defense_assessment[node_id] = [0.0,0.0]
+    POMDPSettings.deployed_defense_assessment[node_id][0] = recommended_action.effeciveness_with_scan
+    POMDPSettings.deployed_defense_assessment[node_id][1] = recommended_action.effeciveness_without_scan
+
 def implement_executed_action(recommended_action):
     '''Implement the recommended executed action'''
     node_id = recommended_action.node_id
@@ -323,6 +330,8 @@ def implement_executed_action(recommended_action):
         POMDPSettings.deployed_defense_nodes[node_id][POMDPSettings.DIVERSITY_INDEX] += recommended_action.diversity
     if POMDPSettings.ANONYMIZATION_ENABLED:
         POMDPSettings.deployed_defense_nodes[node_id][POMDPSettings.ANONYMIZATION_INDEX] += recommended_action.anonymization
+
+    __update_defense_assessment(node_id,recommended_action)
 
 
 

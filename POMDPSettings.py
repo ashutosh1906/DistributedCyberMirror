@@ -26,7 +26,7 @@ SORT_ADVERSARY_POSITION = True
 
 #################################### SELECTING COMPROMISED NODES ##################################
 COMPROMISED_NODES_SELECTION_ON_THRESHOLD = True
-NODE_SELECTION_THRESHOLD_VALUE = 300
+NODE_SELECTION_THRESHOLD_VALUE = 0.0
 compromised_nodes_current_time = []
 next_adversary_nodes = []
 MAXIMUM_DEPTH_CHECK = True
@@ -163,7 +163,9 @@ pomdp_policy_action_index = []
 
 ############################ Final Output ###########################
 deployed_defense_nodes = {}
+deployed_defense_assessment = {}
 OUT_DIR_CONCEAL = 'ConcealConf'
 OUT_DEFENSE_PLAN_FILE = 'defense_configuration'
 POMDP_POLICY_FILE_NAME = '%s/mirror_automated.policy'%(POLICY_FILE_GENERATED)
 ZMDP_EXECUTOR = '../../zmdp/bin/linux3/zmdp'
+EVALUATION_PROCESS = True

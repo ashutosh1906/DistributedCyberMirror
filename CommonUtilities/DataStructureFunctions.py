@@ -3,6 +3,7 @@ from operator import itemgetter, attrgetter
 def delete_values_by_index_from_list(data_structure,delete_index):
     ''' This fundtion will remove the values of the corresponding indexs of "delete_index" list'''
     '''data structure is the original list'''
+    delete_index = sorted(delete_index)
     number_values_removed = 0
     for i in delete_index:
         del data_structure[i - number_values_removed]
@@ -21,9 +22,18 @@ def delete_element_with_specific_value(data_structure_as_list,specific_value):
 
 def normalization_by_min(data_structure):
     '''Normalize each value by the minimum element to get the ratio'''
-    min_value = min(data_structure)
+    if len(data_structure)==0:
+        return
+    min_value = data_structure[0]
     length_list = len(data_structure)
-    for index in range(len(data_structure)):
+    for i in range(1,length_list):
+        if data_structure[i] == 0:
+            continue
+        if min_value > data_structure[i]:
+            min_value = data_structure[i]
+    if min_value==0:
+        return
+    for index in range(length_list):
         data_structure[index] /= min_value
 
 def normalize_probability_by_keys(data_structure):

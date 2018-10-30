@@ -5,14 +5,16 @@ import PrintLibrary,Utilities
 from POMDPGenerator import POMDPOperations
 from POMDPGenerator import POMDPModelGenerator
 
-def dynamic_planning_initialization(time_sequence):
+def dynamic_planning_initialization(time_sequence,calculate_compromised_nodes=True):
     print('\n\n************************** Start Planning for time %s *********************************'%(time_sequence))
     ######################################### Get the IDS score of the compromised nodes with non_zero probability ##############################
-    Utilities.get_compromised_nodes(time_sequence,POMDPSettings.compromised_nodes_probability)
+    if calculate_compromised_nodes:
+        Utilities.get_compromised_nodes(time_sequence,POMDPSettings.compromised_nodes_probability)
     Utilities.calculate_score_compromised_nodes(POMDPSettings.compromised_nodes_probability,
                                                 POMDPSettings.impact_nodes, POMDPSettings.all_pair_shortest_path)
     PrintLibrary.score_compromised_node(POMDPSettings.impact_nodes)
     POMDPSettings.compromised_nodes_current_time = Utilities.select_compromised_nodes(POMDPSettings.impact_nodes)
+    POMDPSettings.compromised_nodes_current_time = sorted(POMDPSettings.compromised_nodes_current_time)
     print("***************** Selected Compromised Nodes %s*************************" % (
         POMDPSettings.compromised_nodes_current_time))
 
@@ -111,13 +113,55 @@ def pomdp_engine():
                                              file_name='%s/%s'%(POMDPSettings.OUT_DIR_CONCEAL,POMDPSettings.OUT_DEFENSE_PLAN_FILE))
 
 
+def next_compromised_nodes():
+    print('Check(2) :: Current Compromised %s'%(POMDPSettings.compromised_nodes_current_time))
+    print('Next Possible Nodes %s'%(POMDPSettings.possible_nodes_for_state))
+    print('Possible States %s'%(POMDPSettings.state_space_map))
+    current_state = POMDPSettings.state_space_map[tuple(POMDPSettings.compromised_nodes_current_time)]
+    # print('Defense at Nodes %s'%(POMDPSettings.deployed_defense_assessment))
+    # print('Parent Nodes %s'%(POMDPSettings.parent_nodes_of_each_node))
+    # print('Compromised Nodes Probability %s'%(POMDPSettings.compromised_nodes_probability))
+    # print('Impact Nodes %s'%(POMDPSettings.impact_nodes))
+    for state in POMDPSettings.state_space:
+        if current_state in state.parent_states:
+            # print('\t Adv. Positions %s'%(POMDPSettings.state_space[state.primary_key].adversary_positions),end='')
+            # print(' Probability %s'%(POMDPSettings.adversary_state_to_state_probability[current_state][state.primary_key]))
+            for adv_position in state.adversary_positions:
+                if adv_position not in POMDPSettings.state_space[current_state].adversary_positions:
+                    POMDPSettings.compromised_nodes_probability[adv_position] = 1.0
+                    if adv_position in POMDPSettings.deployed_defense_assessment:
+                        POMDPSettings.compromised_nodes_probability[adv_position] = POMDPSettings.ADVERSARY_SCANNING_PROB*\
+                                                                                    (1-POMDPSettings.deployed_defense_assessment[adv_position][0]) ## Effectiveness with scan
+                        POMDPSettings.compromised_nodes_probability[adv_position] += (1-POMDPSettings.ADVERSARY_SCANNING_PROB)\
+                                                                                    *(1-POMDPSettings.deployed_defense_assessment[adv_position][1]) ## Effectiveness without scan
+                    POMDPSettings.compromised_nodes_probability[adv_position] *= POMDPSettings.adversary_state_to_state_probability[current_state][state.primary_key]
+    print('Compromised Nodes Probability %s' % (POMDPSettings.compromised_nodes_probability))
+
+def evaluation(time_sequence):
+    while (True):
+        dynamic_planning_initialization(time_sequence, calculate_compromised_nodes=True)
+        pomdp_engine()
+        time_sequence += 1
+        print('Deployed Defense %s\n\t%s'%(POMDPSettings.deployed_defense_nodes,POMDPSettings.deployed_defense_assessment))
+        continue_evaluation = input('Do you wish to continue? Press 1 if yes and 0 otherwise ')
+        if continue_evaluation == '0':
+            break
+        next_compromised_nodes()
+
 if __name__=='__main__':
     print("Start of the CyberMirror Dynamic Planning")
     initilization()
     time_sequence = 0
-    while(True):
-        dynamic_planning_initialization(time_sequence)
-        pomdp_engine()
-        time_sequence += 1
+    if POMDPSettings.EVALUATION_PROCESS:
+        evaluation(time_sequence)
+    else:
+        while (True):
+            dynamic_planning_initialization(time_sequence,calculate_compromised_nodes=True)
+            pomdp_engine()
+            time_sequence += 1
+            continue_evaluation = input('Do you wish to continue? Press 1 if yes and 0 otherwise ')
+            if continue_evaluation == '0':
+                break
+
 
 

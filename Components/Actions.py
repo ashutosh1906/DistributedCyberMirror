@@ -81,10 +81,10 @@ class Actions:
         prev_diversity = 0
         if self.node_id in POMDPSettings.deployed_defense_nodes:
             if POMDPSettings.ANONYMIZATION_ENABLED:
-                prev_anonymity += POMDPSettings.deployed_defense_nodes[self.node_id][POMDPSettings.ANONYMIZATION_INDEX]
+                prev_anonymity += POMDPSettings.deployed_defense_nodes[self.node_id][POMDPSettings.ANONYMIZATION_INDEX]-1
         #if self.node_id in POMDPSettings.deployed_defense_nodes:
             if POMDPSettings.DIVERSITY_ENABLED:
-                prev_diversity += POMDPSettings.deployed_defense_nodes[self.node_id][POMDPSettings.DIVERSITY_INDEX]
+                prev_diversity += POMDPSettings.deployed_defense_nodes[self.node_id][POMDPSettings.DIVERSITY_INDEX]-1
 
         effectiveness_anony_diversity = (1-1/((self.anonymization+prev_anonymity)*(self.diversity+prev_diversity)))
 

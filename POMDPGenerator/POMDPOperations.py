@@ -317,9 +317,9 @@ def implement_executed_action(recommended_action):
         if POMDPSettings.TEMPORAL_MUTATION_ENABLED:
             POMDPSettings.deployed_defense_nodes[node_id][POMDPSettings.TEMPORAL_MUTATION_INDEX] = 0.0
         if POMDPSettings.DIVERSITY_ENABLED:
-            POMDPSettings.deployed_defense_nodes[node_id][POMDPSettings.DIVERSITY_INDEX] = 0
+            POMDPSettings.deployed_defense_nodes[node_id][POMDPSettings.DIVERSITY_INDEX] = 1.0
         if POMDPSettings.ANONYMIZATION_ENABLED:
-            POMDPSettings.deployed_defense_nodes[node_id][POMDPSettings.ANONYMIZATION_INDEX] = 0
+            POMDPSettings.deployed_defense_nodes[node_id][POMDPSettings.ANONYMIZATION_INDEX] = 1.0
 
     ####################### Insert the values ##########################################
     if POMDPSettings.SPATIAL_MUTATION_ENABLED:
@@ -327,9 +327,9 @@ def implement_executed_action(recommended_action):
     if POMDPSettings.TEMPORAL_MUTATION_ENABLED:
         POMDPSettings.deployed_defense_nodes[node_id][POMDPSettings.TEMPORAL_MUTATION_INDEX] = recommended_action.temporal_mutation
     if POMDPSettings.DIVERSITY_ENABLED:
-        POMDPSettings.deployed_defense_nodes[node_id][POMDPSettings.DIVERSITY_INDEX] += recommended_action.diversity
+        POMDPSettings.deployed_defense_nodes[node_id][POMDPSettings.DIVERSITY_INDEX] += recommended_action.diversity-1
     if POMDPSettings.ANONYMIZATION_ENABLED:
-        POMDPSettings.deployed_defense_nodes[node_id][POMDPSettings.ANONYMIZATION_INDEX] += recommended_action.anonymization
+        POMDPSettings.deployed_defense_nodes[node_id][POMDPSettings.ANONYMIZATION_INDEX] += recommended_action.anonymization-1
 
     __update_defense_assessment(node_id,recommended_action)
 

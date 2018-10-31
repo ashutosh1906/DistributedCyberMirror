@@ -72,7 +72,7 @@ LOSS_COMPROMISED = -100000
 GAIN_HONEYPOT = 700
 BENEFIT_DISTANCE = 100
 DISTANCE_FACTOR = 10
-TAKE_MIRROR_COMPROMISED_NODES = True
+TAKE_MIRROR_COMPROMISED_NODES = False
 
 ############################################# Action Effectiveness #######################################
 CONCEALABILITY_MEASURE_ENABLED = 1

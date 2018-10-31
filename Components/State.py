@@ -49,11 +49,16 @@ class State:
                     if not mirror_node_exists:
                         ############## Check if the considered node is the only difference node from the old state ####################
                         difference_exists = False
-                        for check_if_difference_node in self.adversary_positions:
+                        union_of_nodes = set(self.adversary_positions) | set(state.adversary_positions)
+                        for check_if_difference_node in union_of_nodes:
                             if check_if_difference_node == node or check_if_difference_node == -node:
                                 continue
-                            if check_if_difference_node not in state.adversary_positions:
+                            if check_if_difference_node in parent_node:
+                                continue
+                            if check_if_difference_node not in state.adversary_positions or\
+                                    check_if_difference_node not in self.adversary_positions:
                                 difference_exists = True
+                                break
                         if not difference_exists:
                             self.parent_states.append(POMDPSettings.state_space_map[tuple(state.adversary_positions)])
 

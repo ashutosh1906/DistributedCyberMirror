@@ -29,8 +29,17 @@ def generate_initial_state_space(possible_nodes_for_state):
     if POMDPSettings.TAKE_MIRROR_COMPROMISED_NODES:
         POMDPSettings.possible_node_combinations = create_mirror_corresponding_nodes(possible_node_combinations)
     else:
-        POMDPSettings.possible_node_combinations = possible_node_combinations
-    # PrintLibrary.possible_combinations_print(POMDPSettings.possible_node_combinations, 'Nodes Positions')
+        POMDPSettings.possible_node_combinations = []
+        for comb in possible_node_combinations:
+            POMDPSettings.possible_node_combinations.append(comb)
+        length_adversary_positions = len(POMDPSettings.adversary_position_nodes)
+        ################ If the adversary initialyy doesn't exist in one position ######################
+        # for j in range(0,length_adversary_positions):
+        #     for i in range(j,length_adversary_positions):
+        #         possible_node_combinations = GraphTraversal.graph_traversal_concurrent(POMDPSettings.adversary_position_nodes[j:i+1])
+        #         for comb in possible_node_combinations:
+        #             POMDPSettings.possible_node_combinations.append(comb)
+    PrintLibrary.possible_combinations_print(POMDPSettings.possible_node_combinations, 'Nodes Positions')
     ######################### Generate States ####################################
     determine_parent_nodes()
     state_id = 0
@@ -39,9 +48,10 @@ def generate_initial_state_space(possible_nodes_for_state):
     for adv_positions in POMDPSettings.possible_node_combinations:
         if POMDPSettings.SORT_ADVERSARY_POSITION:
             adv_positions = sorted(adv_positions)
-        POMDPSettings.state_space.append(State.State(state_id,adv_positions))
-        POMDPSettings.state_space_map[tuple(adv_positions)] = state_id
-        state_id += 1
+        if tuple(adv_positions) not in POMDPSettings.state_space_map:
+            POMDPSettings.state_space.append(State.State(state_id,adv_positions))
+            POMDPSettings.state_space_map[tuple(adv_positions)] = state_id
+            state_id += 1
 
 def create_mirror_corresponding_nodes(possible_node_combinations):
     org_possible_node_combinations = []
@@ -106,11 +116,12 @@ def iterate_over_possible_belief(compromised_nodes_current_time,compromised_node
     iterate_over_possible_belief(compromised_nodes_current_time,compromised_nodes_probability,
                                  current_depth+1,chosen_node,state_space,state_space_map)
     del chosen_node[-1]
-    chosen_node.append(-first_adv_position)
-    iterate_over_possible_belief(compromised_nodes_current_time, compromised_nodes_probability,
-                                current_depth + 1,
-                                chosen_node,state_space,state_space_map)
-    del chosen_node[-1]
+    if POMDPSettings.TAKE_MIRROR_COMPROMISED_NODES:
+        chosen_node.append(-first_adv_position)
+        iterate_over_possible_belief(compromised_nodes_current_time, compromised_nodes_probability,
+                                    current_depth + 1,
+                                    chosen_node,state_space,state_space_map)
+        del chosen_node[-1]
 
 def generate_initial_belief(compromised_nodes_current_time,compromised_nodes_probability,state_space,state_space_map):
     print('***** Selectected Compromised Nodes %s'%(compromised_nodes_current_time))
@@ -343,9 +354,10 @@ def assign_state_transition_probability_with_adversary():
                     ########################################### If the adversary does not forward ##########################
                     elif adversary_action.forward:
                         if old_state.adversary_positions == new_state.adversary_positions:
-                            POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id][
-                                defense_action_id][adversary_action_id] = 0.0
-                            continue
+                            if adversary_action_id not in POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id][defense_action_id]:
+                                POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id][
+                                    defense_action_id][adversary_action_id] = 0.0
+                                continue
 
                         defense_node = defense_action.node_id
                         forward_probability = POMDPSettings.adversary_state_to_state_probability[old_state_id][new_state_id]
@@ -355,6 +367,15 @@ def assign_state_transition_probability_with_adversary():
                             if defense_node in new_state.adversary_positions:
                                 POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id][
                                     defense_action_id][adversary_action_id] = (1-defense_action.effeciveness_with_scan)*forward_probability
+                                if not POMDPSettings.TAKE_MIRROR_COMPROMISED_NODES:
+                                    if adversary_action_id not in \
+                                            POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id][
+                                                defense_action_id]:
+                                        POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id][
+                                            defense_action_id][adversary_action_id] = 0.0
+                                    POMDPSettings.state_transition_with_adversary[old_state_id][old_state_id][
+                                        defense_action_id][adversary_action_id] += 1-\
+                                                                                  POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id][defense_action_id][adversary_action_id]
                             elif -defense_node in new_state.adversary_positions:
                                 POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id][
                                     defense_action_id][adversary_action_id] = defense_action.effeciveness_with_scan*forward_probability
@@ -383,6 +404,15 @@ def assign_state_transition_probability_with_adversary():
                             if defense_node in new_state.adversary_positions:
                                 POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id][
                                     defense_action_id][adversary_action_id] = (1-defense_action.effeciveness_without_scan)*forward_probability
+                                if not POMDPSettings.TAKE_MIRROR_COMPROMISED_NODES:
+                                    if adversary_action_id not in \
+                                            POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id][
+                                                defense_action_id]:
+                                        POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id][
+                                            defense_action_id][adversary_action_id] = 0.0
+                                    POMDPSettings.state_transition_with_adversary[old_state_id][old_state_id][
+                                        defense_action_id][adversary_action_id] += 1-\
+                                                                                  POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id][defense_action_id][adversary_action_id]
                             elif -defense_node in new_state.adversary_positions:
                                 POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id][
                                     defense_action_id][adversary_action_id] = defense_action.effeciveness_without_scan*forward_probability

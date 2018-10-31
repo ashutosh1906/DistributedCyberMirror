@@ -14,9 +14,12 @@ def write_initial_informations(file_pointer):
     value_line = 'values: reward'
     state_line = 'states: '
     states = ''
-    for state in POMDPSettings.state_space:
-        states = '%ss%s '%(states,state.primary_key)
-    state_line = '%s%s'%(state_line,states)
+    if POMDPSettings.POMDP_FILE_FAST_PARSING:
+        state_line = '%s%s'%(state_line,len(POMDPSettings.state_space))
+    else:
+        for state in POMDPSettings.state_space:
+            states = '%ss%s '%(states,state.primary_key)
+        state_line = '%s%s'%(state_line,states)
 
     del POMDPSettings.pomdp_policy_action_index[:]
     action_line = 'actions: '
@@ -28,10 +31,10 @@ def write_initial_informations(file_pointer):
     action_line = '%s%s' % (action_line,actions)
 
     observation_line = 'observations: '
-    observations = ''
-    for state in POMDPSettings.state_space:
-        observations = '%so%s ' % (observations,state.primary_key)
-    observation_line = '%s%s' % (observation_line, states)
+    if POMDPSettings.POMDP_FILE_FAST_PARSING:
+        observation_line = '%s%s'%(observation_line,len(POMDPSettings.state_space))
+    else:
+        observation_line = '%s%s' % (observation_line,states)
 
     file_pointer.write('%s\n%s\n%s\n%s\n%s\n\n'%(discount_line,value_line,state_line,action_line,observation_line))
 

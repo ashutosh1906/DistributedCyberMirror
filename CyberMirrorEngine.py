@@ -149,7 +149,8 @@ def evaluation(time_sequence):
             break
     if POMDPSettings.target_node[0] in POMDPSettings.compromised_nodes_probability:
         print(' Success Probability to compromise Target=%s is %s'%(POMDPSettings.target_node[0],
-                                                                    POMDPSettings.compromised_nodes_probability[POMDPSettings.target_node[0]]*POMDPSettings.ADVERSARY_ADVANCE))
+                                                                    POMDPSettings.compromised_nodes_probability[POMDPSettings.target_node[0]]*POMDPSettings.ADVERSARY_ADVANCE
+                                                                    *POMDPSettings.compromised_nodes_probability[POMDPSettings.parent_nodes_of_each_node[POMDPSettings.target_node[0]]]))
 
 if __name__=='__main__':
     print("Start of the CyberMirror Dynamic Planning")

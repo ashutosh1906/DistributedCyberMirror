@@ -4,7 +4,7 @@ INPUT_FILES_DIRECTORY = 'InputFiles'
 CONFIGURATION_FILES_DIRECTORY = 'ConfigurationFiles'
 
 ####################################### Topology #####################################
-TOPOLOGY_FILE_NAME = '%s/Topology/Topology1.txt'%(INPUT_FILES_DIRECTORY)
+TOPOLOGY_FILE_NAME = '%s/Topology/Topology21.txt'%(INPUT_FILES_DIRECTORY)
 adjacent_matrix = []
 all_pair_shortest_path = {}
 

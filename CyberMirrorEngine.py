@@ -80,7 +80,10 @@ def pomdp_engine():
     PrintLibrary.generic_information()
     ################################ Generate Final Output Model ################################
     out_file = '%s/%s.pomdp'%(POMDPSettings.DIR_NAME,POMDPSettings.POMDP_MODEL_FILE_NAME)
-    POMDPModelGenerator.generate_model(out_file)
+    if POMDPSettings.POMDP_FILE_FAST_PARSING:
+        POMDPModelGenerator.generate_model_fast_parsing(out_file)
+    else:
+        POMDPModelGenerator.generate_model(out_file)
 
     ############################ Calculate the precision ################################
     POMDPOperations.calculate_precision()

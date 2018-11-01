@@ -37,27 +37,27 @@ def initilization():
     ############################################# Now we are assuming just one target for each POMDP agent #############################
     target_resource = POMDPSettings.target_node[0]
     POMDPSettings.all_pair_shortest_path[target_resource] = Dijkstra.Dijkstra_algorithm_unweighted(target_resource,POMDPSettings.adjacent_matrix)
-    PrintLibrary.all_pair_shortest_path_print(POMDPSettings.all_pair_shortest_path)  ######## Print the shortest path knowledge #############
+    # PrintLibrary.all_pair_shortest_path_print(POMDPSettings.all_pair_shortest_path)  ######## Print the shortest path knowledge #############
     print('******* End of static environment initialization ***************')
 
-def pomdp_engine():
+def pomdp_engine(time_sequence):
     ######################################### Create State Space ##############################################
     POMDPOperations.determine_State_Space()
     # PrintLibrary.state_space_print(POMDPSettings.state_space,True)
-    print('State Space Map %s'%(POMDPSettings.state_space_map))
+    # print('State Space Map %s'%(POMDPSettings.state_space_map))
     ######################################## Determine Discount factor #######################################
     POMDPOperations.determine_discount_factor()
 
     ######################################## Initial Belief ###################################################
     POMDPOperations.determine_Initial_Belief()
-    PrintLibrary.state_space_print(POMDPSettings.state_space,True)
+    # PrintLibrary.state_space_print(POMDPSettings.state_space,True)
 
     ####################################### Action Space ######################################################
     POMDPOperations.determine_Action_Space()
     # PrintLibrary.action_space_type_Print(POMDPSettings.action_space_by_type,POMDPSettings.action_space_group_index)
     # PrintLibrary.action_space_Print(POMDPSettings.action_space_all_values,
     #                                 POMDPSettings.compromised_nodes_current_time,POMDPSettings.next_adversary_nodes,print_each_action=False)
-    PrintLibrary.comprehensive_action_space_print(POMDPSettings.action_space_objects)
+    # PrintLibrary.comprehensive_action_space_print(POMDPSettings.action_space_objects)
 
     ################################# Adversary Action ######################################################
     POMDPOperations.determine_adversary_action_space()
@@ -149,7 +149,7 @@ def next_compromised_nodes():
 def evaluation(time_sequence):
     while (True):
         dynamic_planning_initialization(time_sequence, calculate_compromised_nodes=True)
-        pomdp_engine()
+        pomdp_engine(time_sequence)
         time_sequence += 1
         print('\n ****** Deployed Defense \n\t%s\n\t%s'%(POMDPSettings.deployed_defense_nodes,POMDPSettings.deployed_defense_assessment))
         next_compromised_nodes()

@@ -113,6 +113,7 @@ def shortest_route(source,target,adjacent_matrix,max_distance = 100000):
     explored_node[source] = 1
     while (len(min_priority_queue) > 0):
         current_node = heapq.heappop(min_priority_queue)
+        # print('Current Nodes %s'%(current_node))
         node_id = current_node[1]
         node_value = current_node[0]
         if node_value == max_distance:
@@ -130,11 +131,12 @@ def shortest_route(source,target,adjacent_matrix,max_distance = 100000):
                 if adjacent_node not in reachable_nodes:
                     reachable_nodes[adjacent_node] = [node_value + 1, adjacent_node]
                     heapq.heappush(min_priority_queue, reachable_nodes[adjacent_node])
+                    parent_node[adjacent_node] = node_id
                 else:
                     if node_value + 1 < reachable_nodes[adjacent_node][0]:
                         reachable_nodes[adjacent_node][0] = node_value + 1
                         heapq.heapify(min_priority_queue)
-                parent_node[adjacent_node] = node_id
+                        parent_node[adjacent_node] = node_id
         except:
             print("Error ---> Current Node :%s Edge %s" % (node_id, node_value))
 

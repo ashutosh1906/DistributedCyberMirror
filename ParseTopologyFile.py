@@ -44,7 +44,7 @@ def parse_aSHIIP_topology(topology_file_name, adjacent_matrix):
             adjacent_matrix.append(adjacent_nodes)
     topology_pointer.close()
 
-def parse_aSHIIP_topology_bi_directional(topology_file_name, adjacent_matrix):
+def parse_aSHIIP_topology_bi_directional(topology_file_name, adjacent_matrix,sort_node=False):
     '''Parse aSHIIP topology ::: arg1: Name of the topology file, arg2: adjacent_matrix'''
     topology_pointer = open(topology_file_name, 'r+')
     del adjacent_matrix[:]
@@ -57,10 +57,14 @@ def parse_aSHIIP_topology_bi_directional(topology_file_name, adjacent_matrix):
             adjacent_nodes = ast.literal_eval(line[line.index(')') + 1:])
             for node_index in range(len(adjacent_nodes)):
                 adjacent_nodes[node_index] -= 1
-            adjacent_matrix.append(adjacent_nodes)
+            adjacent_matrix.append(list(set(adjacent_nodes)))
     topology_pointer.close()
 
     for node_id in range(len(adjacent_matrix)):
         for adj_node in adjacent_matrix[node_id]:
             if node_id not in adjacent_matrix[adj_node]:
                 adjacent_matrix[adj_node].append(node_id)
+
+    if sort_node:
+        for node_id in range(len(adjacent_matrix)):
+            adjacent_matrix[node_id] = sorted(adjacent_matrix[node_id])

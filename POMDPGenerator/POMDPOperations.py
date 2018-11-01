@@ -305,7 +305,7 @@ def calculate_precision():
         current_value *= POMDPSettings.DISCOUNT_FACTOR
         if current_value <= 0.001:
             break
-        print(current_value)
+        # print(current_value)
         POMDPSettings.POMDP_PRECISION += current_value
     POMDPSettings.POMDP_PRECISION *= POMDPSettings.REGRET_PERCENTAGE
     print('********* Precision %s'%(POMDPSettings.POMDP_PRECISION))

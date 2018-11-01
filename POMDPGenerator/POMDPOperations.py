@@ -299,7 +299,15 @@ def calculate_precision():
     ########################### Find the action with maximum reward ################################
     max_reward = DataStructureFunctions.find_max_or_min_of_dictionary(POMDPSettings.rewards_pomdp,max_flag=True)
     print('Max Number of Steps %s'%(POMDPSettings.MAX_STEPS_TOPOLOGY))
-    POMDPSettings.POMDP_PRECISION = POMDPSettings.MAX_STEPS_TOPOLOGY*max_reward*POMDPSettings.REGRET_PERCENTAGE
+    POMDPSettings.POMDP_PRECISION = max_reward
+    current_value = max_reward
+    while True:
+        current_value *= POMDPSettings.DISCOUNT_FACTOR
+        if current_value <= 0.001:
+            break
+        print(current_value)
+        POMDPSettings.POMDP_PRECISION += current_value
+    POMDPSettings.POMDP_PRECISION *= POMDPSettings.REGRET_PERCENTAGE
     print('********* Precision %s'%(POMDPSettings.POMDP_PRECISION))
 
 def __update_defense_assessment(node_id,recommended_action):

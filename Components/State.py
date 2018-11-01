@@ -29,7 +29,37 @@ class State:
 
             self.state_value += POMDPSettings.node_values[node]
 
+    def __set_possible_parent_nodes_new(self):
+        del self.parent_states[:]
+        for node in self.adversary_positions:
+            parent_node = POMDPSettings.parent_nodes_considered_paths[node]
+            for state in POMDPSettings.state_space:
+                if state.primary_key == self.primary_key:
+                    continue
+                if len(set(parent_node) & set(state.adversary_positions)) > 0:
+                    parent_state = True
+                    for ref_state_node in state.adversary_positions:
+                        if ref_state_node in parent_node or ref_state_node==node:
+                            continue
+                        if ref_state_node in self.adversary_positions:
+                            continue
+                        parent_state = False
+                        for path_index in POMDPSettings.possible_nodes_for_state:
+                            path = POMDPSettings.possible_nodes_for_state[path_index]
+                            if ref_state_node in path and node in path:
+                                if path.index(node) > path.index(ref_state_node):
+                                    parent_state = True
+                                    break
+                    if parent_state:
+                        parent_state_id = POMDPSettings.state_space_map[tuple(state.adversary_positions)]
+                        if parent_state_id not in self.parent_states:
+                            self.parent_states.append(parent_state_id)
+
+
     def set_possible_parent_nodes(self):
+        if not POMDPSettings.TAKE_MIRROR_COMPROMISED_NODES:
+            self.__set_possible_parent_nodes_new()
+            return
         # print('********** Parent Nodes %s ***********' % (POMDPSettings.parent_nodes_considered_paths))
         # print('********** Current Adversary Positions %s ***********'%(self.adversary_positions))
         del self.parent_states[:]

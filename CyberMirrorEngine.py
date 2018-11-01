@@ -50,7 +50,7 @@ def pomdp_engine():
 
     ######################################## Initial Belief ###################################################
     POMDPOperations.determine_Initial_Belief()
-    # PrintLibrary.state_space_print(POMDPSettings.state_space)
+    PrintLibrary.state_space_print(POMDPSettings.state_space,True)
 
     ####################################### Action Space ######################################################
     POMDPOperations.determine_Action_Space()

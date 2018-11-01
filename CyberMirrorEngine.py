@@ -88,7 +88,7 @@ def pomdp_engine():
     ################## Solve the POMDP Model ##############################
     print("POMDP Model %s" % (out_file))
     print("Policy File Name %s"%(POMDPSettings.POMDP_POLICY_FILE_NAME))
-    generate_policy_cmd = '%s solve -o %s -p %s %s'%(POMDPSettings.ZMDP_EXECUTOR,
+    generate_policy_cmd = '%s solve -f -o %s -p %s %s'%(POMDPSettings.ZMDP_EXECUTOR,
                                                     POMDPSettings.POMDP_POLICY_FILE_NAME,POMDPSettings.POMDP_PRECISION,out_file)
     print(generate_policy_cmd)
     import os

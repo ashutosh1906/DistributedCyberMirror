@@ -15,11 +15,13 @@ def generate_model_fast_parsing(output_file_name):
     write_initial_informations_fast(file_pointer)
     write_initial_belief(file_pointer)
 
+    del POMDPSettings.pomdp_policy_action_index[:]
     defense_primary_key_to_id = {}
     defense_id_actual = 0
     for node_action_space in POMDPSettings.action_space_objects:
         for action in node_action_space:
             defense_primary_key_to_id[action.primary_key] = defense_id_actual
+            POMDPSettings.pomdp_policy_action_index.append(action.primary_key)
             defense_id_actual += 1
 
     write_state_transition_fast(file_pointer,defense_primary_key_to_id)
@@ -59,7 +61,6 @@ def write_initial_informations_fast(file_pointer):
     state_line = 'states: '
     state_line = '%s%s'%(state_line,len(POMDPSettings.state_space))
 
-    del POMDPSettings.pomdp_policy_action_index[:]
     number_of_actions = sum([len(node_action_space) for node_action_space in POMDPSettings.action_space_objects])
     action_line = 'actions: %s'%(number_of_actions)
 

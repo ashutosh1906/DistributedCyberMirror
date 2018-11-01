@@ -21,7 +21,7 @@ def find_optimal_action(policy,belief):
             if max_value is None or max_value < current_value:
                 max_value = current_value
                 action_index = action
-    # print("Recommended Action %s"%(action_index))
+    print("Recommended Action %s"%(action_index))
     return action_index
 
 def execute_action(belief):

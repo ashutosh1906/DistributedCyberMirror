@@ -91,11 +91,15 @@ def pomdp_engine(time_sequence):
     ################## Solve the POMDP Model ##############################
     print("POMDP Model %s" % (out_file))
     print("Policy File Name %s"%(POMDPSettings.POMDP_POLICY_FILE_NAME))
+    generate_policy_cmd = '%s solve'%(POMDPSettings.ZMDP_EXECUTOR,)
     if POMDPSettings.POMDP_FILE_FAST_PARSING:
-        generate_policy_cmd = '%s solve -f -o %s -p %s %s'%(POMDPSettings.ZMDP_EXECUTOR,
-                                                        POMDPSettings.POMDP_POLICY_FILE_NAME,POMDPSettings.POMDP_PRECISION,out_file)
-    else:
-        generate_policy_cmd = '%s solve -o %s -p %s %s' % (POMDPSettings.ZMDP_EXECUTOR,
+        generate_policy_cmd = '%s -f'%(generate_policy_cmd)
+    if POMDPSettings.POMDP_TIME_LIMIT_FLAG:
+        generate_policy_cmd = '%s -t %s'%(generate_policy_cmd,POMDPSettings.POMDP_TIME_LIMIT)
+    if POMDPSettings.POMDP_HSVI_SEARCH_STRATEGY:
+        generate_policy_cmd = '%s -s hsvi'%(generate_policy_cmd)
+
+    generate_policy_cmd = '%s -o %s -p %s %s' % (generate_policy_cmd,
                                                               POMDPSettings.POMDP_POLICY_FILE_NAME,
                                                               POMDPSettings.POMDP_PRECISION, out_file)
     print(generate_policy_cmd)

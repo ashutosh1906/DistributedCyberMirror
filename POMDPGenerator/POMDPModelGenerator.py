@@ -30,11 +30,15 @@ def write_initial_informations(file_pointer):
     del POMDPSettings.pomdp_policy_action_index[:]
     action_line = 'actions: '
     actions = ''
-    for action_type in POMDPSettings.action_space_objects:
-        for action in action_type:
-            actions = '%sd%s '%(actions,action.primary_key)
-            POMDPSettings.pomdp_policy_action_index.append(action.primary_key)
-    action_line = '%s%s' % (action_line,actions)
+    if POMDPSettings.POMDP_FILE_FAST_PARSING:
+        number_of_actions = sum([len(node_action_space) for node_action_space in POMDPSettings.action_space_objects])
+        action_line = 'actions: %s'%(number_of_actions)
+    else:
+        for action_type in POMDPSettings.action_space_objects:
+            for action in action_type:
+                actions = '%sd%s '%(actions,action.primary_key)
+                POMDPSettings.pomdp_policy_action_index.append(action.primary_key)
+        action_line = '%s%s' % (action_line,actions)
 
     observation_line = 'observations: '
     if POMDPSettings.POMDP_FILE_FAST_PARSING:

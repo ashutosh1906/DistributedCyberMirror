@@ -57,7 +57,7 @@ def pomdp_engine():
     # PrintLibrary.action_space_type_Print(POMDPSettings.action_space_by_type,POMDPSettings.action_space_group_index)
     # PrintLibrary.action_space_Print(POMDPSettings.action_space_all_values,
     #                                 POMDPSettings.compromised_nodes_current_time,POMDPSettings.next_adversary_nodes,print_each_action=False)
-    # PrintLibrary.comprehensive_action_space_print(POMDPSettings.action_space_objects)
+    PrintLibrary.comprehensive_action_space_print(POMDPSettings.action_space_objects)
 
     ################################# Adversary Action ######################################################
     POMDPOperations.determine_adversary_action_space()

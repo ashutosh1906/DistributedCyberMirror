@@ -357,7 +357,7 @@ def assign_state_transition_probability_with_adversary():
                             if adversary_action_id not in POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id][defense_action_id]:
                                 POMDPSettings.state_transition_with_adversary[old_state_id][new_state_id][
                                     defense_action_id][adversary_action_id] = 0.0
-                                continue
+                            continue
 
                         defense_node = defense_action.node_id
                         forward_probability = POMDPSettings.adversary_state_to_state_probability[old_state_id][new_state_id]

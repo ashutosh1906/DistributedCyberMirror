@@ -25,7 +25,7 @@ class Actions:
                 self.anonymization = action_component[action_type]
         self.effeciveness_with_scan = None
         self.effeciveness_without_scan = None
-        self.probable_parent_nodes = POMDPSettings.parent_nodes_of_each_node[self.node_id]
+        self.probable_ancestor_nodes = POMDPSettings.ancestor_nodes_of_each_node[self.node_id]
         self.__setCost()
 
     def __distance_from_target(self):
@@ -44,7 +44,7 @@ class Actions:
         ########################## Spatial Mutation Number of IP Address ##################
         ####################### t_i = (1-m)*(n-1) ########################################
         if self.spatial_mutation is not None:
-            spatial_ip = (1-self.spatial_mutation)*(len(self.probable_parent_nodes)-1)
+            spatial_ip = (1-self.spatial_mutation)*(len(self.probable_ancestor_nodes) - 1)
             if spatial_ip != int(spatial_ip):
                 spatial_ip = int(spatial_ip)+1
             self.cost += spatial_ip*POMDPSettings.SPATIAL_MUTATION_COST
@@ -55,7 +55,7 @@ class Actions:
         print('\n\tAction ID : %s'%(self.primary_key))
         print('\t\t Node ID : %s'%(self.node_id))
         print('\t\t\t <-----> Distance from the target %s'%(self.distance_from_target))
-        print('\t\t\t <-----> Probable Parent Nodes %s' % (self.probable_parent_nodes))
+        print('\t\t\t <-----> Probable Parent Nodes %s' % (self.probable_ancestor_nodes))
         if self.spatial_mutation is not None:
             print('\t\t Spatial Mutation : %s'%(self.spatial_mutation))
         if self.temporal_mutation is not None:

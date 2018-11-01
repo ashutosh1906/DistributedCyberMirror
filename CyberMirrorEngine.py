@@ -127,7 +127,7 @@ def next_compromised_nodes():
     print('Possible States %s'%(POMDPSettings.state_space_map))
     current_state = POMDPSettings.state_space_map[tuple(POMDPSettings.compromised_nodes_current_time)]
     # print('Defense at Nodes %s'%(POMDPSettings.deployed_defense_assessment))
-    # print('Parent Nodes %s'%(POMDPSettings.parent_nodes_of_each_node))
+    # print('Parent Nodes %s' % (POMDPSettings.ancestor_nodes_of_each_node))
     # print('Compromised Nodes Probability %s'%(POMDPSettings.compromised_nodes_probability))
     # print('Impact Nodes %s'%(POMDPSettings.impact_nodes))
     for state in POMDPSettings.state_space:
@@ -171,7 +171,7 @@ if __name__=='__main__':
     else:
         while (True):
             dynamic_planning_initialization(time_sequence,calculate_compromised_nodes=True)
-            pomdp_engine()
+            pomdp_engine(time_sequence)
             time_sequence += 1
             print('Deployed Defense %s\n\t%s' % (
             POMDPSettings.deployed_defense_nodes, POMDPSettings.deployed_defense_assessment))

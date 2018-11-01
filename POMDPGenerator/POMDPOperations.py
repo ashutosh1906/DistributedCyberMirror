@@ -278,7 +278,9 @@ def generate_reward():
                     ################################ Initialize such condition if does not exist #################
                     reward_without_adversary_cost = new_state.state_value - old_state.state_value - defense_action.cost
                     if new_state_id==old_state_id and new_state_id not in POMDPSettings.target_node:
-                        reward_without_adversary_cost += POMDPSettings.GAIN_HONEYPOT
+                        if len(set(POMDPSettings.parent_nodes_considered_paths[defense_action.node_id]) & set(old_state.adversary_positions)) > 0:
+                            # print('Add reward Defense Node %s:%s Current State %s'%(defense_action.node_id,defense_action.primary_key,old_state.adversary_positions))
+                            reward_without_adversary_cost += POMDPSettings.GAIN_HONEYPOT
                     defense_action_id = defense_action.primary_key
                     if defense_action_id not in POMDPSettings.rewards_pomdp[old_state_id][new_state_id]:
                         POMDPSettings.rewards_pomdp[old_state_id][new_state_id][defense_action_id] = {}

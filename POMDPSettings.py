@@ -18,7 +18,7 @@ compromised_nodes_probability = {}
 target_node = [] ############### Targets can be a list of probable targets #########################
                  ############### if only one target access with the index 0#######################
 possible_nodes_for_state = {}
-parent_nodes_of_each_node = {}
+ancestor_nodes_of_each_node = {}
 possible_node_combinations = {}
 parent_nodes_considered_paths = {}
 node_values = {}
@@ -149,7 +149,7 @@ rewards_pomdp = {}
 DIR_NAME = 'CyberMirrorPOMDPModels'
 POMDP_MODEL_FILE_NAME = 'CyberMirror_5'
 POMDP_PRECISION = 1
-REGRET_PERCENTAGE = 0.00001
+REGRET_PERCENTAGE = 0.00005
 
 POLICY_FILE_GENERATED = 'InputFiles/Policies/'
 

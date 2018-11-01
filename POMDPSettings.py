@@ -169,4 +169,4 @@ OUT_DEFENSE_PLAN_FILE = 'defense_configuration'
 POMDP_POLICY_FILE_NAME = '%s/mirror_automated.policy'%(POLICY_FILE_GENERATED)
 ZMDP_EXECUTOR = '../../zmdp/bin/linux3/zmdp'
 EVALUATION_PROCESS = True
-POMDP_FILE_FAST_PARSING = False
+POMDP_FILE_FAST_PARSING = True

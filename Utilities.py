@@ -259,6 +259,17 @@ def write_defense_planning_in_file(time_sequence,defense_plan,file_name):
         file_pointer.write('******** Finished Planning *************\n')
     file_pointer.close()
 
+def prepare_affordable_action_properties():
+    print('Available Spatial IP Address %s'%(POMDPSettings.MAX_AVAILABLE_IP_ADDRESS))
+    print('Available Anonymization %s'%(POMDPSettings.MAX_AVAILABLE_ANONYMITY))
+    i = len(POMDPSettings.anonymization)-1
+    while i >0 and POMDPSettings.anonymization[i] > POMDPSettings.MAX_AVAILABLE_ANONYMITY:
+        i = i - 1
+        if i == 0:
+            break
+    POMDPSettings.anonymization = POMDPSettings.anonymization[0:i+1]
+    print('Anonymization Option %s'%(POMDPSettings.anonymization))
+
 
 
 

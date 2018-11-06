@@ -336,12 +336,14 @@ def implement_executed_action(recommended_action):
     ####################### Insert the values ##########################################
     if POMDPSettings.SPATIAL_MUTATION_ENABLED:
         POMDPSettings.deployed_defense_nodes[node_id][POMDPSettings.SPATIAL_MUTATION_INDEX] = recommended_action.spatial_mutation
+        POMDPSettings.MAX_AVAILABLE_IP_ADDRESS -= recommended_action.spatial_ip_number
     if POMDPSettings.TEMPORAL_MUTATION_ENABLED:
         POMDPSettings.deployed_defense_nodes[node_id][POMDPSettings.TEMPORAL_MUTATION_INDEX] = recommended_action.temporal_mutation
     if POMDPSettings.DIVERSITY_ENABLED:
         POMDPSettings.deployed_defense_nodes[node_id][POMDPSettings.DIVERSITY_INDEX] += recommended_action.diversity-1
     if POMDPSettings.ANONYMIZATION_ENABLED:
         POMDPSettings.deployed_defense_nodes[node_id][POMDPSettings.ANONYMIZATION_INDEX] += recommended_action.anonymization-1
+        POMDPSettings.MAX_AVAILABLE_ANONYMITY -= recommended_action.anonymization - 1
 
     __update_defense_assessment(node_id,recommended_action)
 

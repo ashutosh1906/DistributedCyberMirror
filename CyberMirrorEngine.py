@@ -123,6 +123,7 @@ def pomdp_engine(time_sequence):
     # PrintLibrary.defense_planning(time_sequence,POMDPSettings.deployed_defense_nodes)
     Utilities.write_defense_planning_in_file(time_sequence,POMDPSettings.deployed_defense_nodes,
                                              file_name='%s/%s'%(POMDPSettings.OUT_DIR_CONCEAL,POMDPSettings.OUT_DEFENSE_PLAN_FILE))
+    Utilities.prepare_affordable_action_properties()
 
 
 def next_compromised_nodes():

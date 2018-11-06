@@ -14,6 +14,7 @@ class Actions:
         self.cost = None
         self.weighted_effectiveness = None
         self.weighted_cost_effectiveness = None
+        self.spatial_ip_number = None
         for action_type in range(len(action_component)):
             if POMDPSettings.action_space_group_index[action_type]==POMDPSettings.SPATIAL_MUTATION_INDEX:
                 self.spatial_mutation = action_component[action_type]
@@ -27,6 +28,7 @@ class Actions:
         self.effeciveness_without_scan = None
         self.probable_ancestor_nodes = POMDPSettings.ancestor_nodes_of_each_node[self.node_id]
         self.__setCost()
+
 
     def __distance_from_target(self):
         target_node = POMDPSettings.target_node[0]
@@ -48,6 +50,7 @@ class Actions:
             if spatial_ip != int(spatial_ip):
                 spatial_ip = int(spatial_ip)+1
             self.cost += spatial_ip*POMDPSettings.SPATIAL_MUTATION_COST
+            self.spatial_ip_number = spatial_ip
         # print('*** Required Cost is %s for Node %s*******'%(self.cost,self.node_id))
         # self.printProperties()
 
@@ -72,6 +75,8 @@ class Actions:
             print('\t\t Weighted Effectiveness %s'%(self.weighted_effectiveness))
         if self.weighted_cost_effectiveness is not None:
             print('\t\t Weighted Cost Effectiveness %s'%(self.weighted_cost_effectiveness))
+        if self.spatial_ip_number is not None:
+            print('\t\t Number of Spatial IP Address %s'%(self.spatial_ip_number))
 
 
     def set_effectiveness(self):

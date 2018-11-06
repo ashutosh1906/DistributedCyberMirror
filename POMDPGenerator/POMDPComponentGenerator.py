@@ -207,18 +207,18 @@ def set_weighted_cost_effectiveness_action_space():
 def marginal_prunning(action_space_objects):
     # print("***** Before Marginal Prunning Number of Actions ******")
     # PrintLibrary.number_action_available_each_node(action_space_objects)
-    list_of_remove = []
     for node_index in range(len(action_space_objects)):
+        list_of_remove = []
         for index in range(len(action_space_objects[node_index])):
             action = action_space_objects[node_index][index]
-            # action.printProperties()
+            action.printProperties()
             if action.effeciveness_with_scan < POMDPSettings.MINIMUM_EFFECTIVENESS_WITH_SCAN:
                 list_of_remove.append(index)
-                # print("Pruned Out : Action Effectiveness with Scan %s"%(action.effeciveness_with_scan))
+                # print("Pruned Out : Action Effectiveness with Scan %s ID %s"%(action.effeciveness_with_scan,action.primary_key))
                 continue
             if action.effeciveness_without_scan < POMDPSettings.MINIMUM_EFFECTIVENESS_WITHOUT_SCAN:
                 list_of_remove.append(index)
-                # print("Pruned Out : Action Effectiveness without Scan %s" % (action.effeciveness_without_scan))
+                # print("Pruned Out : Action Effectiveness without Scan %s ID %s" % (action.effeciveness_without_scan,action.primary_key))
                 continue
         DataStructureFunctions.delete_values_by_index_from_list(POMDPSettings.action_space_objects[node_index],list_of_remove)
     # print("***** After Marginal Prunning Number of Actions ******")

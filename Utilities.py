@@ -180,6 +180,93 @@ def create_clusters(weighted_effectiveness_action,weighted_cost_effectiveness_ac
     return best_action,distance
 
 
+def create_clusters_three_dimensional(effectiveness_action_scan,effectiveness_action_without_scan,weighted_cost_effectiveness_action,
+                                      weighted_effectiveness_action,number_of_cluster):
+    DataStructureFunctions.normalization_by_min(effectiveness_action_scan)
+    DataStructureFunctions.normalization_by_min(effectiveness_action_without_scan)
+    DataStructureFunctions.normalization_by_min(weighted_cost_effectiveness_action)
+    number_of_elements = len(effectiveness_action_scan)
+    # print(weighted_effectiveness_action)
+    # print(weighted_cost_effectiveness_action)
+    # print('Number of cluster %s for %s elements'%(number_of_cluster,number_of_elements))
+
+    ######################################### Pick 10 Random Poinrts for clustering #################################
+    centroid_list = []
+    mean_cluster = []
+    number_taken = 0
+    while(True):
+        random_num = random.randint(0,number_of_elements-1) ################# Return a random integer N such that a <= N <= b. ##################
+        if random_num in centroid_list:
+            continue
+        centroid_list.append(random_num)
+        mean_cluster.append([effectiveness_action_scan[random_num],effectiveness_action_without_scan[random_num],weighted_cost_effectiveness_action[random_num]])
+        number_taken += 1
+        if number_taken==number_of_cluster:
+            break
+    # print("mean cluster %s"%(mean_cluster))
+
+    difference_between_two_iteration = 1
+    iteration_index = 0
+    cluster_index = [0 for i in range(number_of_elements)]
+    distance_current_iteration = 0
+    distance_previous_iteration = 0
+    best_k_mean_cluster = None
+    best_mean_cluster = None
+    while difference_between_two_iteration > POMDPSettings.REDUNDANT_CLUSTERING_TOLERANCE_LEVEL:
+        k_means_cluster = [[] for i in range(number_of_cluster)]
+        for element_index in range(number_of_elements):
+            min_distance = -1
+            cluster_id = 0
+            for centroid in mean_cluster:
+                current_distance = pow((effectiveness_action_scan[element_index]-centroid[0]),2)\
+                                   +pow(effectiveness_action_without_scan[element_index]-centroid[1],2)\
+                                   +pow((weighted_cost_effectiveness_action[element_index]-centroid[2]),2)
+                current_distance = pow(current_distance,0.5) #### Sqrt #######
+                # print("Distance from Cluster %s is %s"%(cluster_id,current_distance))
+                if min_distance == -1:
+                    min_distance = current_distance
+                    cluster_index[element_index] = cluster_id
+                else:
+                    if min_distance > current_distance:
+                        min_distance = current_distance
+                        cluster_index[element_index] = cluster_id
+                cluster_id += 1
+            k_means_cluster[cluster_index[element_index]].append(element_index)
+            # print("Selected Cluster %s"%(cluster_index[element_index]))
+        ############################ Calculate the mean of the centroid again ##############################
+        calculate_mean_cluster_three_dimension(k_means_cluster, effectiveness_action_scan, effectiveness_action_without_scan,weighted_cost_effectiveness_action,
+                               mean_cluster)
+        # for j in range(len(k_means_cluster)):
+        #     print('Cluster %s --> %s'%(j,k_means_cluster[j]))
+        if iteration_index==0:
+            iteration_index += 1
+            distance_current_iteration = error_distance_three_dimensional(mean_cluster,k_means_cluster,
+                                                                          effectiveness_action_scan,effectiveness_action_without_scan,
+                                                                          weighted_cost_effectiveness_action)
+            best_k_mean_cluster = k_means_cluster
+            best_mean_cluster = mean_cluster
+        else:
+            ##################### Calculate the distance ######################################################
+            distance_previous_iteration = distance_current_iteration
+            distance_current_iteration = error_distance_three_dimensional(mean_cluster,k_means_cluster,effectiveness_action_scan,
+                                                                          effectiveness_action_without_scan,weighted_cost_effectiveness_action)
+            difference_between_two_iteration = distance_previous_iteration-distance_current_iteration
+            if difference_between_two_iteration > 0:
+                best_k_mean_cluster = k_means_cluster
+                best_mean_cluster = mean_cluster
+            # print("Difference between two iteration %s"%(difference_between_two_iteration))
+            iteration_index += 1
+        # print("Clustering : Current Iteration Distance %s"%(distance_current_iteration))
+        if iteration_index == POMDPSettings.REDUNDANT_MAX_ITERATION:
+            break
+    distance = error_distance_three_dimensional(best_mean_cluster,best_k_mean_cluster,effectiveness_action_scan,
+                                                effectiveness_action_without_scan,weighted_cost_effectiveness_action)
+    best_action = trade_off_based_best_action_from_cluster(best_k_mean_cluster,best_mean_cluster,
+                                        weighted_effectiveness_action,weighted_cost_effectiveness_action)
+    # print(distance)
+    DataStructureFunctions.delete_element_with_specific_value(best_action,-1)
+    return best_action,distance
+
 def select_the_best_action_from_cluster(k_means_cluster,mean_cluster,
                                         weighted_effectiveness_action,weighted_cost_effectiveness_action):
     best_action = [-1 for i in range(len(mean_cluster))]
@@ -231,12 +318,37 @@ def calculate_mean_cluster(k_means_cluster,weighted_effectiveness_action,weighte
     # for j in range(len(mean_cluster)):
     #     print('Mean %s --> %s'%(j,mean_cluster[j]))
 
+def calculate_mean_cluster_three_dimension(k_means_cluster,effectiveness_with_scan,effectiveness_without_scan,weighted_cost_effectiveness_action,mean_cluster):
+    delete_cluster = []
+    for i in range(len(mean_cluster)):
+        if len(k_means_cluster[i])==0:
+            delete_cluster.append(i)
+            continue
+        mean_cluster[i][0] = sum([effectiveness_with_scan[element] for element in k_means_cluster[i]])/len(mean_cluster[i])
+        mean_cluster[i][1] = sum([effectiveness_without_scan[element] for element in k_means_cluster[i]])/len(mean_cluster[i])
+        mean_cluster[i][2] = sum([weighted_cost_effectiveness_action[element] for element in k_means_cluster[i]]) / len(mean_cluster[i])
+    DataStructureFunctions.delete_values_by_index_from_list(mean_cluster,delete_cluster)
+    DataStructureFunctions.delete_values_by_index_from_list(k_means_cluster,delete_cluster)
+    # for j in range(len(mean_cluster)):
+    #     print('Mean %s --> %s'%(j,mean_cluster[j]))
+
 def error_distance(mean_cluster,k_means_cluster,weighted_effectiveness_action,weighted_cost_effectiveness_action):
     distance = 0.0
     for i in range(len(mean_cluster)):
         for element in k_means_cluster[i]:
             current_distance = pow((weighted_effectiveness_action[element] - mean_cluster[i][0]), 2) \
                                + pow((weighted_cost_effectiveness_action[element] - mean_cluster[i][1]), 2)
+            current_distance = pow(current_distance, 0.5)  #### Sqrt #######
+            distance += current_distance
+    return distance
+
+def error_distance_three_dimensional(mean_cluster,k_means_cluster,effectiveness_action_scan,effectiveness_action_without_scan,weighted_cost_effectiveness_action):
+    distance = 0.0
+    for i in range(len(mean_cluster)):
+        for element in k_means_cluster[i]:
+            current_distance = pow((effectiveness_action_scan[element] - mean_cluster[i][0]), 2) \
+                               + pow(effectiveness_action_without_scan[element] - mean_cluster[i][1],2) \
+                               + pow((weighted_cost_effectiveness_action[element] - mean_cluster[i][2]), 2)
             current_distance = pow(current_distance, 0.5)  #### Sqrt #######
             distance += current_distance
     return distance

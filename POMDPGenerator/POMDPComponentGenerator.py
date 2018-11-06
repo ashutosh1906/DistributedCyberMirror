@@ -228,8 +228,12 @@ def redundant_prunning(action_space_objects):
     # print("****** Before Redundant Prunning %s******"%(len(action_space_objects)))
     weighted_effectiveness_action = [] ###### Index of a value in this list is also representing the index in the action space
     weighted_cost_effectiveness_action = []
+    effectiveness_action_scan = []
+    effectiveness_action_without_scan = []
     for action in action_space_objects:
         weighted_effectiveness_action.append(action.weighted_effectiveness)
+        effectiveness_action_scan.append(action.effeciveness_with_scan)
+        effectiveness_action_without_scan.append(action.effeciveness_without_scan)
         if POMDPSettings.Y_AXIS_COST_EFFECTIVENESS:
             weighted_cost_effectiveness_action.append(action.weighted_cost_effectiveness)
         else:
@@ -246,7 +250,12 @@ def redundant_prunning(action_space_objects):
     best_selection_distance = None
     best_cluster_size = None
     for cluster_size in range(min_cluster,max_cluster):
-        selected_action,distance = Utilities.create_clusters(weighted_effectiveness_action,weighted_cost_effectiveness_action,cluster_size)
+        if POMDPSettings.THREE_DIMENSIONAL_CLUSTER:
+            selected_action, distance = Utilities.create_clusters_three_dimensional(effectiveness_action_scan,effectiveness_action_without_scan,
+                                                                                    weighted_cost_effectiveness_action,
+                                                                                    weighted_effectiveness_action,number_of_cluster)
+        else:
+            selected_action,distance = Utilities.create_clusters(weighted_effectiveness_action,weighted_cost_effectiveness_action,cluster_size)
         if best_selection is None \
                 or best_selection_distance > distance:
             best_selection = selected_action
@@ -280,7 +289,7 @@ def irrelevant_prunning(action_space_objects):
             else:
                 current_id = action_property[0]
                 current_effectiveness = action_property[1][1]
-                if current_effectiveness < seen_effectiveness[-1]:
+                if current_effectiveness <= seen_effectiveness[-1]:
                     delete_element.append(current_id)
                 else:
                     seen_effectiveness.append(current_effectiveness)

@@ -37,7 +37,7 @@ def Dijkstra_algorithm_unweighted(source, adjacent_matrix):
         except:
             print("Error ---> Current Node :%s Edge %s" % (node_id, node_value))
 
-    print("Dijkstra's Output for Source: %s --> %s"%(source,all_reachable_shortest_nodes))
+    # print("Dijkstra's Output for Source: %s --> %s"%(source,all_reachable_shortest_nodes))
     return all_reachable_shortest_nodes
 
 def Dijkstra_algorithm_unweighted_pair(source,target,adjacent_matrix,max_distance = 100000):

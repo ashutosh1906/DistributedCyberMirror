@@ -9,13 +9,13 @@ from CommonUtilities import DataStructureFunctions
 
 def determine_discount_factor():
     # print(' *** All exploitable paths to target %s ***'%(POMDPSettings.possible_nodes_for_state))
-    max_path = 0
+    max_path = 100000
     for path in POMDPSettings.possible_nodes_for_state:
         path_length = len(POMDPSettings.possible_nodes_for_state[path])
-        if max_path < path_length:
+        if max_path > path_length:
             max_path = path_length
     ##### log10(M) = N ==> M = 10^N ##########################
-    POMDPSettings.MAX_STEPS_TOPOLOGY = max_path
+    POMDPSettings.MAX_STEPS_TOPOLOGY = max_path-1
     N = math.log2(POMDPSettings.MINIMUM_FUTURE_WEIGHT)/max_path
     POMDPSettings.DISCOUNT_FACTOR = math.pow(2,N)
     print("**** Discount Factor %s ****"%(POMDPSettings.DISCOUNT_FACTOR))

@@ -129,6 +129,12 @@ def pomdp_engine(time_sequence):
                                              file_name='%s/%s'%(POMDPSettings.OUT_DIR_CONCEAL,POMDPSettings.OUT_DEFENSE_PLAN_FILE))
     Utilities.prepare_affordable_action_properties()
 
+    prepare_for_next_time_sequence()
+
+def prepare_for_next_time_sequence():
+    ############################ Tune POMDP Parameters ###############################
+    POMDPSettings.REGRET_PERCENTAGE /= POMDPSettings.DELTA_RATIO_REGRET
+    POMDPSettings.CLUSTER_DIFFERENCE -= POMDPSettings.DELTA_CLUSTER_DIFFERENCE
 
 def next_compromised_nodes():
     print('Check(2) :: Current Compromised %s'%(POMDPSettings.compromised_nodes_current_time))

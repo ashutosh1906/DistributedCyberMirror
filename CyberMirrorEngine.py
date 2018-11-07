@@ -17,6 +17,9 @@ def dynamic_planning_initialization(time_sequence,calculate_compromised_nodes=Tr
     POMDPSettings.compromised_nodes_current_time = sorted(POMDPSettings.compromised_nodes_current_time)
     print("***************** Selected Compromised Nodes %s*************************" % (
         POMDPSettings.compromised_nodes_current_time))
+    if time_sequence==0:
+        for node in POMDPSettings.compromised_nodes_probability:
+            POMDPSettings.initial_compromised_nodes[node] = POMDPSettings.compromised_nodes_probability[node]
 
 def initilization():
     print('Initialize the environment')
@@ -119,6 +122,7 @@ def pomdp_engine(time_sequence):
     did = POMDPSettings.defense_action_id_to_position[POMDPSettings.pomdp_policy_action_index[previous_action]][0]
     dpos = POMDPSettings.defense_action_id_to_position[POMDPSettings.pomdp_policy_action_index[previous_action]][1]
     POMDPSettings.action_space_objects[did][dpos].printProperties()
+    POMDPSettings.current_action = POMDPSettings.action_space_objects[did][dpos]
     POMDPOperations.implement_executed_action(POMDPSettings.action_space_objects[did][dpos])
     # PrintLibrary.defense_planning(time_sequence,POMDPSettings.deployed_defense_nodes)
     Utilities.write_defense_planning_in_file(time_sequence,POMDPSettings.deployed_defense_nodes,
@@ -132,24 +136,59 @@ def next_compromised_nodes():
     print('Possible States %s'%(POMDPSettings.state_space_map))
     current_state = POMDPSettings.state_space_map[tuple(POMDPSettings.compromised_nodes_current_time)]
     # print('Defense at Nodes %s'%(POMDPSettings.deployed_defense_assessment))
-    # print('Parent Nodes %s' % (POMDPSettings.ancestor_nodes_of_each_node))
-    # print('Compromised Nodes Probability %s'%(POMDPSettings.compromised_nodes_probability))
+    print('Parent Nodes %s' % (POMDPSettings.parent_nodes_considered_paths))
+    print('Compromised Nodes Probability %s' % (POMDPSettings.compromised_nodes_probability))
     # print('Impact Nodes %s'%(POMDPSettings.impact_nodes))
     for state in POMDPSettings.state_space:
         if current_state in state.parent_states:
             # print('\t Adv. Positions %s'%(POMDPSettings.state_space[state.primary_key].adversary_positions),end='')
             # print(' Probability %s'%(POMDPSettings.adversary_state_to_state_probability[current_state][state.primary_key]))
             for adv_position in state.adversary_positions:
+                if adv_position in POMDPSettings.compromised_nodes_current_time:
+                    continue
                 if adv_position not in POMDPSettings.state_space[current_state].adversary_positions:
                     POMDPSettings.compromised_nodes_probability[adv_position] = 1.0
-                    if adv_position in POMDPSettings.deployed_defense_assessment:
-                        POMDPSettings.compromised_nodes_probability[adv_position] = POMDPSettings.ADVERSARY_SCANNING_PROB*\
-                                                                                    (1-POMDPSettings.deployed_defense_assessment[adv_position][0]) ## Effectiveness with scan
-                        POMDPSettings.compromised_nodes_probability[adv_position] += (1-POMDPSettings.ADVERSARY_SCANNING_PROB)\
-                                                                                    *(1-POMDPSettings.deployed_defense_assessment[adv_position][1]) ## Effectiveness without scan
-                    POMDPSettings.compromised_nodes_probability[adv_position] *= POMDPSettings.adversary_state_to_state_probability[current_state][state.primary_key]\
-                                                                                 *POMDPSettings.state_space[current_state].belief
+                if adv_position in POMDPSettings.deployed_defense_assessment:
+                    POMDPSettings.compromised_nodes_probability[adv_position] = POMDPSettings.ADVERSARY_SCANNING_PROB*\
+                                                                                (1-POMDPSettings.deployed_defense_assessment[adv_position][0]) ## Effectiveness with scan
+                    POMDPSettings.compromised_nodes_probability[adv_position] += (1-POMDPSettings.ADVERSARY_SCANNING_PROB)\
+                                                                                *(1-POMDPSettings.deployed_defense_assessment[adv_position][1]) ## Effectiveness without scan
+                POMDPSettings.compromised_nodes_probability[adv_position] *= POMDPSettings.adversary_state_to_state_probability[current_state][state.primary_key]\
+                                                                             *POMDPSettings.state_space[current_state].belief
     print('Compromised Nodes Probability %s' % (POMDPSettings.compromised_nodes_probability))
+
+    for node in POMDPSettings.compromised_nodes_current_time:
+        if node not in POMDPSettings.expected_attack_progression:
+            POMDPSettings.expected_attack_progression[node] = POMDPSettings.compromised_nodes_probability[node]
+        else:
+            if node not in POMDPSettings.initial_compromised_nodes:
+                POMDPSettings.expected_attack_progression[node] *= POMDPSettings.compromised_nodes_probability[node]
+
+    for future_node in POMDPSettings.compromised_nodes_probability:
+        if future_node in POMDPSettings.compromised_nodes_current_time:
+            continue
+
+        if future_node not in POMDPSettings.expected_attack_progression:
+            POMDPSettings.expected_attack_progression[future_node] = 0.0
+            for parent in POMDPSettings.parent_nodes_considered_paths[future_node]:
+                if parent in POMDPSettings.expected_attack_progression:
+                    current_prob = 1.0
+                    if future_node in POMDPSettings.deployed_defense_assessment:
+                        current_prob= POMDPSettings.ADVERSARY_SCANNING_PROB*(1-POMDPSettings.deployed_defense_assessment[future_node][0])
+                        current_prob += (1-POMDPSettings.ADVERSARY_SCANNING_PROB) *(1 - POMDPSettings.deployed_defense_assessment[future_node][1])
+                    POMDPSettings.expected_attack_progression[future_node] += current_prob*POMDPSettings.expected_attack_progression[parent]
+        else:
+            if future_node == POMDPSettings.current_action.node_id:
+                POMDPSettings.expected_attack_progression[future_node] = 0.0
+                for parent in POMDPSettings.parent_nodes_considered_paths[future_node]:
+                    if parent in POMDPSettings.expected_attack_progression:
+                        current_prob = POMDPSettings.ADVERSARY_SCANNING_PROB * \
+                                            (1 - POMDPSettings.current_action.effeciveness_with_scan)
+                        current_prob += (1-POMDPSettings.ADVERSARY_SCANNING_PROB) * \
+                                            (1 - POMDPSettings.current_action.effeciveness_without_scan)
+                        POMDPSettings.expected_attack_progression[future_node] += current_prob*POMDPSettings.expected_attack_progression[parent]
+
+    print('All Compromised Nodes Expected Probability %s' % (POMDPSettings.expected_attack_progression))
 
 def evaluation(time_sequence):
     if POMDPSettings.ADVERSARY_PROGRESSION_FROM_FILE_FLAG:

@@ -43,6 +43,11 @@ def initilization():
     # PrintLibrary.all_pair_shortest_path_print(POMDPSettings.all_pair_shortest_path)  ######## Print the shortest path knowledge #############
     print('******* End of static environment initialization ***************')
 
+def initialize_for_start_sequence():
+    print("POMDP Max Depth %s"%(POMDPSettings.MAX_STEPS_TOPOLOGY))
+    POMDPSettings.REGRET_PERCENTAGE = POMDPSettings.REGRET_PERCENTAGE*POMDPSettings.MAX_STEPS_TOPOLOGY/5.0
+    POMDPSettings.CLUSTER_DIFFERENCE = POMDPSettings.CLUSTER_DIFFERENCE*POMDPSettings.MAX_STEPS_TOPOLOGY/5.0
+
 def pomdp_engine(time_sequence):
     ######################################### Create State Space ##############################################
     POMDPOperations.determine_State_Space()
@@ -50,6 +55,8 @@ def pomdp_engine(time_sequence):
     # print('State Space Map %s'%(POMDPSettings.state_space_map))
     ######################################## Determine Discount factor #######################################
     POMDPOperations.determine_discount_factor()
+    if time_sequence == 0:
+        initialize_for_start_sequence()
 
     ######################################## Initial Belief ###################################################
     POMDPOperations.determine_Initial_Belief()

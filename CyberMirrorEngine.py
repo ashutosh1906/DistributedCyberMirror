@@ -207,9 +207,9 @@ def evaluation(time_sequence):
             if time_sequence==len(POMDPSettings.attack_progression_path):
                 break
 
-    if POMDPSettings.target_node[0] in POMDPSettings.compromised_nodes_probability:
+    if POMDPSettings.target_node[0] in POMDPSettings.expected_attack_progression:
         print(' Success Probability to compromise Target=%s is %s'%(POMDPSettings.target_node[0],
-                                                                    POMDPSettings.compromised_nodes_probability[POMDPSettings.target_node[0]]*POMDPSettings.ADVERSARY_ADVANCE
+                                                                    POMDPSettings.expected_attack_progression[POMDPSettings.target_node[0]]
                                                                     ))
 
 if __name__=='__main__':

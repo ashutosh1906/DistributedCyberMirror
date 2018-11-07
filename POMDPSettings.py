@@ -97,8 +97,8 @@ DIVERSITY_COST = 100
 ################################## ACTION SPACE REDUCTION #############################################
 
 MARGINAL_PRUNNING = True
-MINIMUM_EFFECTIVENESS_WITH_SCAN = 0.55
-MINIMUM_EFFECTIVENESS_WITHOUT_SCAN = 0.75
+MINIMUM_EFFECTIVENESS_WITH_SCAN = 0.40
+MINIMUM_EFFECTIVENESS_WITHOUT_SCAN = 0.65
 
 REDUNDANT_PRUNNING = True
 CLUSTER_DIFFERENCE = 0.04
@@ -180,7 +180,7 @@ POMDP_HSVI_SEARCH_STRATEGY = False
 
 ######### Evaluation Variables ####################
 ADVERSARY_POSITION_FILE_NAME = '%s/adv_position_1'%(CONFIGURATION_FILES_DIRECTORY)
-ADVERSARY_PROGRESSION_FROM_FILE_FLAG = False
+ADVERSARY_PROGRESSION_FROM_FILE_FLAG = True
 attack_progression_path = []
 expected_attack_progression = {}
 current_action = None

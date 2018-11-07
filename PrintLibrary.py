@@ -211,5 +211,12 @@ def adversary_position_progression_by_time(adv_position):
         for pos in adv_position[i]:
             print('\t Position: %s Prob: %s Asset Value: %s'%(pos[0],pos[1],pos[2]))
 
+def POMDP_dynamic_parameters(time_seq):
+    import POMDPSettings
+    print('Dynamic Parameters for time %s'%(time_seq))
+    print('\t Regret Parameter %s'%(POMDPSettings.REGRET_PERCENTAGE))
+    print('\t Cluster Difference %s'%(POMDPSettings.CLUSTER_DIFFERENCE))
+    print('\t Min Effectiveness with Scan %s'%(POMDPSettings.MINIMUM_EFFECTIVENESS_WITH_SCAN))
+    print('\t Min Effectiveness without Scan %s'%(POMDPSettings.MINIMUM_EFFECTIVENESS_WITHOUT_SCAN))
 
 

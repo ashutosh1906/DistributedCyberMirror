@@ -47,9 +47,14 @@ def initilization():
 
 def initialize_for_start_sequence():
     print("POMDP Max Depth %s"%(POMDPSettings.MAX_STEPS_TOPOLOGY))
-    POMDPSettings.REGRET_PERCENTAGE = POMDPSettings.REGRET_PERCENTAGE*POMDPSettings.MAX_STEPS_TOPOLOGY/5.0
-    POMDPSettings.CLUSTER_DIFFERENCE = POMDPSettings.CLUSTER_DIFFERENCE*POMDPSettings.MAX_STEPS_TOPOLOGY/5.0
+    POMDPSettings.REGRET_PERCENTAGE = POMDPSettings.REGRET_PERCENTAGE*POMDPSettings.MAX_STEPS_TOPOLOGY/POMDPSettings.POMDP_DEFAULT_CONSIDERED_DEPTH
+    POMDPSettings.CLUSTER_DIFFERENCE = POMDPSettings.CLUSTER_DIFFERENCE + \
+                                       (POMDPSettings.MAX_STEPS_TOPOLOGY - POMDPSettings.POMDP_DEFAULT_CONSIDERED_DEPTH)*POMDPSettings.DELTA_CLUSTER_DIFFERENCE
     POMDPSettings.initial_paths = POMDPSettings.ancestor_nodes_of_each_node
+    POMDPSettings.MINIMUM_EFFECTIVENESS_WITH_SCAN = POMDPSettings.MINIMUM_EFFECTIVENESS_WITH_SCAN+\
+                                                    (POMDPSettings.MAX_STEPS_TOPOLOGY - POMDPSettings.POMDP_DEFAULT_CONSIDERED_DEPTH)*POMDPSettings.DELTA_MINIMUM_EFFECTIVENESS
+    POMDPSettings.MINIMUM_EFFECTIVENESS_WITHOUT_SCAN = POMDPSettings.MINIMUM_EFFECTIVENESS_WITHOUT_SCAN +\
+                                                       (POMDPSettings.MAX_STEPS_TOPOLOGY - POMDPSettings.POMDP_DEFAULT_CONSIDERED_DEPTH)*POMDPSettings.DELTA_MINIMUM_EFFECTIVENESS
 
 def pomdp_engine(time_sequence):
     ######################################### Create State Space ##############################################
@@ -222,6 +227,7 @@ def evaluation(time_sequence):
     if POMDPSettings.ADVERSARY_PROGRESSION_FROM_FILE_FLAG:
         Utilities.upload_attacker_progression()
     while (True):
+        PrintLibrary.POMDP_dynamic_parameters(time_sequence)
         dynamic_planning_initialization(time_sequence, calculate_compromised_nodes=True)
         pomdp_engine(time_sequence)
         time_sequence += 1

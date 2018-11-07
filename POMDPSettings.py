@@ -11,6 +11,7 @@ all_pair_shortest_path = {}
 #################################### Configurations ###################################
 ADVERSARY_LOGS = '%s/adv_initial_position'%(CONFIGURATION_FILES_DIRECTORY)
 READ_IMPACT_FROM_FILE = True
+POMDP_DEFAULT_CONSIDERED_DEPTH = 5.0
 
 ###################################### Environment ###################################
 impact_nodes = {}

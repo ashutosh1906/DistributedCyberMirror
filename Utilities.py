@@ -1,6 +1,7 @@
 import POMDPSettings
 import random
 from CommonUtilities import DataStructureFunctions
+import PrintLibrary
 
 def calculate_node_impact():
     ###################################### We will calculate the impact of the node here ###################
@@ -41,6 +42,13 @@ def get_compromised_nodes(time_sequence,compromised_nodes_probability):
             if POMDPSettings.READ_IMPACT_FROM_FILE:
                 POMDPSettings.impact_nodes[compromised_node] = float(line[2])
         file_pointer.close()
+    elif POMDPSettings.ADVERSARY_PROGRESSION_FROM_FILE_FLAG:
+        for adv_position in POMDPSettings.attack_progression_path[time_sequence]:
+            compromised_node = adv_position[0]
+            compromise_probability = adv_position[1]
+            compromised_nodes_probability[compromised_node] = compromise_probability
+            if POMDPSettings.READ_IMPACT_FROM_FILE:
+                POMDPSettings.impact_nodes[compromised_node] = adv_position[2]
     else:
         print('Enter The IDS Observations')
         while True:
@@ -381,6 +389,23 @@ def prepare_affordable_action_properties():
             break
     POMDPSettings.anonymization = POMDPSettings.anonymization[0:i+1]
     print('Anonymization Option %s'%(POMDPSettings.anonymization))
+
+def upload_attacker_progression():
+    del POMDPSettings.attack_progression_path[:]
+    file_pointer = open(POMDPSettings.ADVERSARY_POSITION_FILE_NAME,'r+')
+
+    POMDPSettings.attack_progression_path.append([])
+    time_sequence = 0
+    for line in file_pointer:
+        line = line.replace(' ','').replace('\n','').split(',')
+        if len(line) < 3:
+            time_sequence += 1
+            POMDPSettings.attack_progression_path.append([])
+            continue
+        POMDPSettings.attack_progression_path[time_sequence].append([int(line[0]),float(line[1]),float(line[2])])
+    del POMDPSettings.attack_progression_path[-1]
+
+    PrintLibrary.adversary_position_progression_by_time(POMDPSettings.attack_progression_path)
 
 
 

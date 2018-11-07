@@ -205,5 +205,11 @@ def defense_planning(time_sequence,defense_plan):
                 print('\t\t Anonymization %s'%(defense_plan[node][defense_type]))
     print('******** Finished Planning *************')
 
+def adversary_position_progression_by_time(adv_position):
+    for i in range(len(adv_position)):
+        print('Time Sequence --> %s'%(i))
+        for pos in adv_position[i]:
+            print('\t Position: %s Prob: %s Asset Value: %s'%(pos[0],pos[1],pos[2]))
+
 
 

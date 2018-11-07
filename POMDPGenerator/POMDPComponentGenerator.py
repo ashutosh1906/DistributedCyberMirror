@@ -211,7 +211,7 @@ def marginal_prunning(action_space_objects):
         list_of_remove = []
         for index in range(len(action_space_objects[node_index])):
             action = action_space_objects[node_index][index]
-            action.printProperties()
+            # action.printProperties()
             if action.effeciveness_with_scan < POMDPSettings.MINIMUM_EFFECTIVENESS_WITH_SCAN:
                 list_of_remove.append(index)
                 # print("Pruned Out : Action Effectiveness with Scan %s ID %s"%(action.effeciveness_with_scan,action.primary_key))

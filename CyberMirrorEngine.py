@@ -152,15 +152,21 @@ def next_compromised_nodes():
     print('Compromised Nodes Probability %s' % (POMDPSettings.compromised_nodes_probability))
 
 def evaluation(time_sequence):
+    if POMDPSettings.ADVERSARY_PROGRESSION_FROM_FILE_FLAG:
+        Utilities.upload_attacker_progression()
     while (True):
         dynamic_planning_initialization(time_sequence, calculate_compromised_nodes=True)
         pomdp_engine(time_sequence)
         time_sequence += 1
         print('\n ****** Deployed Defense \n\t%s\n\t%s'%(POMDPSettings.deployed_defense_nodes,POMDPSettings.deployed_defense_assessment))
         next_compromised_nodes()
-        continue_evaluation = input('\nDo you wish to continue? Press 1 if yes and 0 otherwise ')
-        if continue_evaluation == '0':
-            break
+        if not POMDPSettings.ADVERSARY_PROGRESSION_FROM_FILE_FLAG:
+            continue_evaluation = input('\nDo you wish to continue? Press 1 if yes and 0 otherwise ')
+            if continue_evaluation == '0':
+                break
+        else:
+            if time_sequence==len(POMDPSettings.attack_progression_path):
+                break
 
     if POMDPSettings.target_node[0] in POMDPSettings.compromised_nodes_probability:
         print(' Success Probability to compromise Target=%s is %s'%(POMDPSettings.target_node[0],

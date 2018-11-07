@@ -42,6 +42,8 @@ def determine_State_Space():
         state.set_possible_parent_nodes()
         state.determine_state_value()
 
+    Utilities.reachable_from_other_nodes()
+
 
 def determine_Initial_Belief():
     # print('************* Compromised Nodes :%s'%(POMDPSettings.compromised_nodes_current_time))
@@ -73,7 +75,7 @@ def determine_Action_Space():
     print('************ Possible Nodes for Actions %s********' % (POMDPSettings.next_adversary_nodes))
 
     ############################################# Create the action space first ###############################
-    Utilities.reachable_from_other_nodes()
+    # Utilities.reachable_from_other_nodes()
     POMDPComponentGenerator.initialize_action_space()
     POMDPComponentGenerator.generate_action_space()
     POMDPComponentGenerator.set_weighted_cost_effectiveness_action_space()

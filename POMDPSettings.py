@@ -97,8 +97,11 @@ DIVERSITY_COST = 100
 ################################## ACTION SPACE REDUCTION #############################################
 
 MARGINAL_PRUNNING = True
-MINIMUM_EFFECTIVENESS_WITH_SCAN = 0.37
-MINIMUM_EFFECTIVENESS_WITHOUT_SCAN = 0.60
+MINIMUM_EFFECTIVENESS_WITH_SCAN = 0.50
+MINIMUM_EFFECTIVENESS_WITH_SCAN_LTH = 0.37
+MINIMUM_EFFECTIVENESS_WITHOUT_SCAN = 0.70
+MINIMUM_EFFECTIVENESS_WITHOUT_SCAN_LTH = 0.60
+DELTA_MINIMUM_EFFECTIVENESS = 0.05
 
 REDUNDANT_PRUNNING = True
 CLUSTER_DIFFERENCE = 0.035
@@ -187,3 +190,5 @@ attack_progression_path = []
 expected_attack_progression = {}
 current_action = None
 initial_compromised_nodes = {}
+initial_paths = None
+total_implementation_cost = 0.0

@@ -19,7 +19,7 @@ def calculate_score_compromised_nodes(compromised_nodes_probability,compromised_
     '''Calculate the score of a compromised host based on the IDS score, distance and the impact'''
     '''Impact depepends on both the centrality and the utility value of the resource'''
     print('********** Calculating the score of the compromised hosts %s ************************'%(compromised_nodes_probability))
-    print('\t Selected nodes are less than the depth : %s'%(POMDPSettings.MAXIMUM_DEPTH))
+    # print('\t Selected nodes are less than the depth : %s'%(POMDPSettings.MAXIMUM_DEPTH))
     for node in compromised_nodes_probability:
         if node in all_pair_shortest_path[POMDPSettings.target_node[0]]:
             if POMDPSettings.MAXIMUM_DEPTH_CHECK:
@@ -405,9 +405,14 @@ def upload_attacker_progression():
         POMDPSettings.attack_progression_path[time_sequence].append([int(line[0]),float(line[1]),float(line[2])])
     del POMDPSettings.attack_progression_path[-1]
 
-    PrintLibrary.adversary_position_progression_by_time(POMDPSettings.attack_progression_path)
+    # PrintLibrary.adversary_position_progression_by_time(POMDPSettings.attack_progression_path)
 
-
+def estimate_implemented_cost():
+    print('Ancestor Nodes of all %s'%(POMDPSettings.initial_paths))
+    for node in POMDPSettings.deployed_defense_assessment:
+    ########################## Spatial Mutation Number of IP Address ##################
+    ####################### t_i = (1-m)*(n-1) ########################################
+        pass
 
 
 

@@ -39,7 +39,7 @@ def generate_initial_state_space(possible_nodes_for_state):
         #         possible_node_combinations = GraphTraversal.graph_traversal_concurrent(POMDPSettings.adversary_position_nodes[j:i+1])
         #         for comb in possible_node_combinations:
         #             POMDPSettings.possible_node_combinations.append(comb)
-    PrintLibrary.possible_combinations_print(POMDPSettings.possible_node_combinations, 'Nodes Positions')
+    # PrintLibrary.possible_combinations_print(POMDPSettings.possible_node_combinations, 'Nodes Positions')
     ######################### Generate States ####################################
     determine_parent_nodes()
     state_id = 0
@@ -82,7 +82,7 @@ def iterate_over_mirror_nodes(data_structure,chosen_node,possible_node_combinati
 
 def determine_parent_nodes():
     POMDPSettings.parent_nodes_considered_paths.clear()
-    print('Possible Nodes for State %s'%(POMDPSettings.possible_nodes_for_state))
+    # print('Possible Nodes for State %s'%(POMDPSettings.possible_nodes_for_state))
     for compromised_node in POMDPSettings.possible_nodes_for_state:
         node_index = 0
         for node in POMDPSettings.possible_nodes_for_state[compromised_node]:
@@ -93,7 +93,7 @@ def determine_parent_nodes():
                 if parent_node not in POMDPSettings.parent_nodes_considered_paths[node]:
                     POMDPSettings.parent_nodes_considered_paths[node].append(parent_node)
             node_index += 1
-    print('Parent %s'%(POMDPSettings.parent_nodes_considered_paths))
+    # print('Parent %s'%(POMDPSettings.parent_nodes_considered_paths))
 
 def iterate_over_possible_belief(compromised_nodes_current_time,compromised_nodes_probability,current_depth,
                                  chosen_node,state_space,state_space_map):
@@ -127,7 +127,7 @@ def generate_initial_belief(compromised_nodes_current_time,compromised_nodes_pro
     print('***** Selectected Compromised Nodes %s'%(compromised_nodes_current_time))
     print('***** Selectected Compromised Nodes Prob %s' % (compromised_nodes_probability))
     print('******* State Space ************** %s'%(len(state_space)))
-    print('******* State Space Map ************** %s' % (state_space_map))
+    # print('******* State Space Map ************** %s' % (state_space_map))
     iterate_over_possible_belief(compromised_nodes_current_time,compromised_nodes_probability,
                                  1,[],state_space,state_space_map)
 
@@ -319,8 +319,8 @@ def state_transition_initializations():
             POMDPSettings.state_transition_with_adversary[new_state_id] = {}
         POMDPSettings.state_transition_with_adversary[new_state_id][new_state_id] = {}
 
-    print('*************** Non Zero Transitions %s*****************'%(non_zero_transition))
-    print('*************** State Transitions %s*****************' % (POMDPSettings.state_transition_with_adversary))
+    # print('*************** Non Zero Transitions %s*****************'%(non_zero_transition))
+    # print('*************** State Transitions %s*****************' % (POMDPSettings.state_transition_with_adversary))
     adversary_probability_update()
 
     ###################################### Initialize the probability for state transition ######################################
@@ -499,7 +499,7 @@ def adversary_probability_update():
                         each_node_propagation_prob = 1.0 / number_available_positions
                     POMDPSettings.adversary_state_to_state_probability[old_state_id][new_state_id] += each_node_propagation_prob*number_ancestor
 
-    print('******** Probability of Forwarding from a state %s ******' % (POMDPSettings.adversary_state_to_state_probability))
+    # print('******** Probability of Forwarding from a state %s ******' % (POMDPSettings.adversary_state_to_state_probability))
 
 
 

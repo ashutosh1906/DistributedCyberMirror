@@ -6,7 +6,9 @@ from POMDPGenerator import POMDPOperations
 from POMDPGenerator import POMDPModelGenerator
 
 def dynamic_planning_initialization(time_sequence,calculate_compromised_nodes=True):
-    print('\n\n************************** Start Planning for time %s *********************************'%(time_sequence))
+    print('\t\t --------------<>---------------\n\t\t -------------<>--------------\n\n\n'
+          '(^_^) (^_^) (^_^) *********(^_^) (^_^) ***************** Start Planning for time %s ***********(^_^) (^_^) '
+          '********************** (^_^) (^_^) (^_^)\n'%(time_sequence))
     ######################################### Get the IDS score of the compromised nodes with non_zero probability ##############################
     if calculate_compromised_nodes:
         Utilities.get_compromised_nodes(time_sequence,POMDPSettings.compromised_nodes_probability)
@@ -47,6 +49,7 @@ def initialize_for_start_sequence():
     print("POMDP Max Depth %s"%(POMDPSettings.MAX_STEPS_TOPOLOGY))
     POMDPSettings.REGRET_PERCENTAGE = POMDPSettings.REGRET_PERCENTAGE*POMDPSettings.MAX_STEPS_TOPOLOGY/5.0
     POMDPSettings.CLUSTER_DIFFERENCE = POMDPSettings.CLUSTER_DIFFERENCE*POMDPSettings.MAX_STEPS_TOPOLOGY/5.0
+    POMDPSettings.initial_paths = POMDPSettings.ancestor_nodes_of_each_node
 
 def pomdp_engine(time_sequence):
     ######################################### Create State Space ##############################################
@@ -130,6 +133,7 @@ def pomdp_engine(time_sequence):
     dpos = POMDPSettings.defense_action_id_to_position[POMDPSettings.pomdp_policy_action_index[previous_action]][1]
     POMDPSettings.action_space_objects[did][dpos].printProperties()
     POMDPSettings.current_action = POMDPSettings.action_space_objects[did][dpos]
+    POMDPSettings.total_implementation_cost += POMDPSettings.current_action.cost
     POMDPOperations.implement_executed_action(POMDPSettings.action_space_objects[did][dpos])
     # PrintLibrary.defense_planning(time_sequence,POMDPSettings.deployed_defense_nodes)
     Utilities.write_defense_planning_in_file(time_sequence,POMDPSettings.deployed_defense_nodes,
@@ -142,15 +146,25 @@ def prepare_for_next_time_sequence():
     ############################ Tune POMDP Parameters ###############################
     POMDPSettings.REGRET_PERCENTAGE /= POMDPSettings.DELTA_RATIO_REGRET
     POMDPSettings.CLUSTER_DIFFERENCE -= POMDPSettings.DELTA_CLUSTER_DIFFERENCE
+    min_effect_with_scan = POMDPSettings.MINIMUM_EFFECTIVENESS_WITH_SCAN - POMDPSettings.DELTA_MINIMUM_EFFECTIVENESS
+    if min_effect_with_scan > POMDPSettings.MINIMUM_EFFECTIVENESS_WITH_SCAN_LTH:
+        POMDPSettings.MINIMUM_EFFECTIVENESS_WITH_SCAN = min_effect_with_scan
+    else:
+        POMDPSettings.MINIMUM_EFFECTIVENESS_WITH_SCAN = POMDPSettings.MINIMUM_EFFECTIVENESS_WITH_SCAN_LTH
+    min_effect_without_scan = POMDPSettings.MINIMUM_EFFECTIVENESS_WITHOUT_SCAN - POMDPSettings.DELTA_MINIMUM_EFFECTIVENESS
+    if min_effect_without_scan > POMDPSettings.MINIMUM_EFFECTIVENESS_WITHOUT_SCAN_LTH:
+        POMDPSettings.MINIMUM_EFFECTIVENESS_WITHOUT_SCAN = min_effect_without_scan
+    else:
+        POMDPSettings.MINIMUM_EFFECTIVENESS_WITHOUT_SCAN = POMDPSettings.MINIMUM_EFFECTIVENESS_WITHOUT_SCAN_LTH
 
 def next_compromised_nodes():
-    print('Check(2) :: Current Compromised %s'%(POMDPSettings.compromised_nodes_current_time))
-    print('Next Possible Nodes %s'%(POMDPSettings.possible_nodes_for_state))
-    print('Possible States %s'%(POMDPSettings.state_space_map))
+    # print('Check(2) :: Current Compromised %s'%(POMDPSettings.compromised_nodes_current_time))
+    # print('Next Possible Nodes %s'%(POMDPSettings.possible_nodes_for_state))
+    # print('Possible States %s'%(POMDPSettings.state_space_map))
     current_state = POMDPSettings.state_space_map[tuple(POMDPSettings.compromised_nodes_current_time)]
     # print('Defense at Nodes %s'%(POMDPSettings.deployed_defense_assessment))
-    print('Parent Nodes %s' % (POMDPSettings.parent_nodes_considered_paths))
-    print('Compromised Nodes Probability %s' % (POMDPSettings.compromised_nodes_probability))
+    # print('Parent Nodes %s' % (POMDPSettings.parent_nodes_considered_paths))
+    # print('Compromised Nodes Probability %s' % (POMDPSettings.compromised_nodes_probability))
     # print('Impact Nodes %s'%(POMDPSettings.impact_nodes))
     for state in POMDPSettings.state_space:
         if current_state in state.parent_states:
@@ -203,6 +217,7 @@ def next_compromised_nodes():
 
     print('All Compromised Nodes Expected Probability %s' % (POMDPSettings.expected_attack_progression))
 
+
 def evaluation(time_sequence):
     if POMDPSettings.ADVERSARY_PROGRESSION_FROM_FILE_FLAG:
         Utilities.upload_attacker_progression()
@@ -224,6 +239,7 @@ def evaluation(time_sequence):
         print(' Success Probability to compromise Target=%s is %s'%(POMDPSettings.target_node[0],
                                                                     POMDPSettings.expected_attack_progression[POMDPSettings.target_node[0]]
                                                                     ))
+    print('Total Defense Cost %s' % (POMDPSettings.total_implementation_cost))
 
 if __name__=='__main__':
     print("Start of the CyberMirror Dynamic Planning")

@@ -225,7 +225,7 @@ def marginal_prunning(action_space_objects):
     # PrintLibrary.number_action_available_each_node(action_space_objects)
 
 def redundant_prunning(action_space_objects):
-    print("****** Before Redundant Prunning %s******"%(len(action_space_objects)))
+    # print("****** Before Redundant Prunning %s******"%(len(action_space_objects)))
     weighted_effectiveness_action = [] ###### Index of a value in this list is also representing the index in the action space
     weighted_cost_effectiveness_action = []
     effectiveness_action_scan = []
@@ -265,7 +265,7 @@ def redundant_prunning(action_space_objects):
     # print('Cluster Size %s\n\tSelected Action : %s with distance %s'%(best_cluster_size,best_selection,best_selection_distance))
 
     action_space_objects = DataStructureFunctions.keep_value_by_index_in_list(action_space_objects,best_selection)
-    print("****** After Redundant Prunning %s******" % (len(action_space_objects)))
+    # print("****** After Redundant Prunning %s******" % (len(action_space_objects)))
     return action_space_objects
 
 def irrelevant_prunning(action_space_objects):

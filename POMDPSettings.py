@@ -1,7 +1,14 @@
 import math
+
+############################## Changing variable for output record or input files #############
+OUTPUT_FILE_INDEX = 1
+ADVERSARY_FILE_INDEX = 1
+
 ##################################### File Location System #####################
 INPUT_FILES_DIRECTORY = 'InputFiles'
 CONFIGURATION_FILES_DIRECTORY = 'ConfigurationFiles'
+OUTPUT_DIR = 'OutputDir'
+OUTPUT_FILE_NAME = '%s/success_vs_cost_%s'%(OUTPUT_DIR,OUTPUT_FILE_INDEX)
 
 ####################################### Topology #####################################
 TOPOLOGY_FILE_NAME = '%s/Topology/Topology21.txt'%(INPUT_FILES_DIRECTORY)
@@ -186,7 +193,7 @@ POMDP_TIME_LIMIT = 60 #IN SECONDS
 POMDP_HSVI_SEARCH_STRATEGY = False
 
 ######### Evaluation Variables ####################
-ADVERSARY_POSITION_FILE_NAME = '%s/%s/adv_position_1'%(CONFIGURATION_FILES_DIRECTORY,ADV_FILES_DIR)
+ADVERSARY_POSITION_FILE_NAME = '%s/%s/adv_position_%s'%(CONFIGURATION_FILES_DIRECTORY,ADV_FILES_DIR,ADVERSARY_FILE_INDEX)
 ADVERSARY_PROGRESSION_FROM_FILE_FLAG = True
 attack_progression_path = []
 expected_attack_progression = {}

@@ -246,6 +246,7 @@ def evaluation(time_sequence):
                                                                     POMDPSettings.expected_attack_progression[POMDPSettings.target_node[0]]
                                                                     ))
     print('Total Defense Cost %s' % (POMDPSettings.total_implementation_cost))
+    Utilities.write_result_files()
 
 if __name__=='__main__':
     print("Start of the CyberMirror Dynamic Planning")

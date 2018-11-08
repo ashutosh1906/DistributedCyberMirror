@@ -202,15 +202,19 @@ def create_clusters_three_dimensional(effectiveness_action_scan,effectiveness_ac
     centroid_list = []
     mean_cluster = []
     number_taken = 0
-    while(True):
-        random_num = random.randint(0,number_of_elements-1) ################# Return a random integer N such that a <= N <= b. ##################
-        if random_num in centroid_list:
-            continue
-        centroid_list.append(random_num)
-        mean_cluster.append([effectiveness_action_scan[random_num],effectiveness_action_without_scan[random_num],weighted_cost_effectiveness_action[random_num]])
-        number_taken += 1
-        if number_taken==number_of_cluster:
-            break
+    if number_of_cluster >= number_of_elements:
+        for random_num in range(number_of_elements):
+            mean_cluster.append([effectiveness_action_scan[random_num],effectiveness_action_without_scan[random_num],weighted_cost_effectiveness_action[random_num]])
+    else:
+        while(True):
+            random_num = random.randint(0,number_of_elements-1) ################# Return a random integer N such that a <= N <= b. ##################
+            if random_num in centroid_list:
+                continue
+            centroid_list.append(random_num)
+            mean_cluster.append([effectiveness_action_scan[random_num],effectiveness_action_without_scan[random_num],weighted_cost_effectiveness_action[random_num]])
+            number_taken += 1
+            if number_taken==number_of_cluster:
+                break
     # print("mean cluster %s"%(mean_cluster))
 
     difference_between_two_iteration = 1

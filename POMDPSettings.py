@@ -9,7 +9,8 @@ adjacent_matrix = []
 all_pair_shortest_path = {}
 
 #################################### Configurations ###################################
-ADVERSARY_LOGS = '%s/adv_initial_position'%(CONFIGURATION_FILES_DIRECTORY)
+ADV_FILES_DIR = 'Adversary_files'
+ADVERSARY_LOGS = '%s/%s/adv_initial_position'%(CONFIGURATION_FILES_DIRECTORY,ADV_FILES_DIR)
 READ_IMPACT_FROM_FILE = True
 POMDP_DEFAULT_CONSIDERED_DEPTH = 5.0
 
@@ -185,7 +186,7 @@ POMDP_TIME_LIMIT = 60 #IN SECONDS
 POMDP_HSVI_SEARCH_STRATEGY = False
 
 ######### Evaluation Variables ####################
-ADVERSARY_POSITION_FILE_NAME = '%s/adv_position_1'%(CONFIGURATION_FILES_DIRECTORY)
+ADVERSARY_POSITION_FILE_NAME = '%s/%s/adv_position_1'%(CONFIGURATION_FILES_DIRECTORY,ADV_FILES_DIR)
 ADVERSARY_PROGRESSION_FROM_FILE_FLAG = True
 attack_progression_path = []
 expected_attack_progression = {}

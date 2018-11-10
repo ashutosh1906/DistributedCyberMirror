@@ -1,7 +1,8 @@
 import random
 directory = 'ConfigurationFiles/Adversary_files'
 # path = [[689, 622, 556, 497, 6, 3], [995, 991, 911, 497, 6, 3]]
-path = [[723, 453, 8, 3],[979, 972, 336, 3]]
+# path = [[723, 453, 8, 3],[979, 972, 336, 3]]
+path = [[979, 972, 336, 3],[991, 911, 497, 6, 3]]
 adj_matrix = {}
 comp_prob = 1.0
 target = 3
@@ -12,7 +13,7 @@ def create_files(current_path,sort_desc = False):
         current_path = sorted(current_path)
     global num_file
     num_file += 1
-    file_pointer = open('%s/adv_position_%s_1'%(directory,num_file),'w')
+    file_pointer = open('%s/adv_position_%s_2'%(directory,num_file),'w')
     for position_index in range(len(current_path)-1):
         for node in current_path[position_index]:
             line = '%s,%s,%s'%(node,comp_prob,random.randint(1,10000))
@@ -135,6 +136,6 @@ if __name__=='__main__':
     create_adj_matrix_desc()
     print(adj_matrix)
     # dfs_traversal(initial_position,[])
-    dfs_traversal_desc([689,995],[])
+    dfs_traversal_desc(sorted([path[0][0],path[1][0]]),[])
 
 

@@ -243,6 +243,8 @@ def redundant_prunning(action_space_objects):
     number_of_cluster = (max(weighted_effectiveness_action)-min(weighted_effectiveness_action))/POMDPSettings.CLUSTER_DIFFERENCE
     if number_of_cluster != int(number_of_cluster):
         number_of_cluster = int(number_of_cluster)+1
+    else:
+        number_of_cluster = int(number_of_cluster)
 
     min_cluster = number_of_cluster
     max_cluster = min_cluster + POMDPSettings.MAX_CLUSTER_ITERATION + 1

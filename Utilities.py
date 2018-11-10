@@ -206,6 +206,7 @@ def create_clusters_three_dimensional(effectiveness_action_scan,effectiveness_ac
         for random_num in range(number_of_elements):
             mean_cluster.append([effectiveness_action_scan[random_num],effectiveness_action_without_scan[random_num],weighted_cost_effectiveness_action[random_num]])
     else:
+        # print(" Start (*_*) (*_*) mean cluster %s %s" % (mean_cluster,number_of_cluster))
         while(True):
             random_num = random.randint(0,number_of_elements-1) ################# Return a random integer N such that a <= N <= b. ##################
             if random_num in centroid_list:

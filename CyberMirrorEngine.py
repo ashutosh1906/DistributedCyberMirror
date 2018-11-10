@@ -150,7 +150,11 @@ def pomdp_engine(time_sequence):
 def prepare_for_next_time_sequence():
     ############################ Tune POMDP Parameters ###############################
     POMDPSettings.REGRET_PERCENTAGE /= POMDPSettings.DELTA_RATIO_REGRET
-    POMDPSettings.CLUSTER_DIFFERENCE -= POMDPSettings.DELTA_CLUSTER_DIFFERENCE
+    cluster_difference_value = POMDPSettings.CLUSTER_DIFFERENCE - POMDPSettings.DELTA_CLUSTER_DIFFERENCE
+    if cluster_difference_value > 0:
+        POMDPSettings.CLUSTER_DIFFERENCE = cluster_difference_value
+    else:
+        POMDPSettings.CLUSTER_DIFFERENCE /= 2
     min_effect_with_scan = POMDPSettings.MINIMUM_EFFECTIVENESS_WITH_SCAN - POMDPSettings.DELTA_MINIMUM_EFFECTIVENESS
     if min_effect_with_scan > POMDPSettings.MINIMUM_EFFECTIVENESS_WITH_SCAN_LTH:
         POMDPSettings.MINIMUM_EFFECTIVENESS_WITH_SCAN = min_effect_with_scan

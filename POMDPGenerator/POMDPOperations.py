@@ -109,6 +109,9 @@ def prune_action_space():
         # print("****** After Redundant Prunning ***************")
         # PrintLibrary.number_action_available_each_node(POMDPSettings.action_space_objects)
 
+    if POMDPSettings.ACTION_PRUNNING_BASED_BUDGET:
+        POMDPComponentGenerator.cost_based_prunning(POMDPSettings.action_space_objects)
+
 def create_defense_id_map():
     for i in range(len(POMDPSettings.action_space_objects)):
         index = 0

@@ -75,7 +75,7 @@ def pomdp_engine(time_sequence):
     # PrintLibrary.action_space_type_Print(POMDPSettings.action_space_by_type,POMDPSettings.action_space_group_index)
     # PrintLibrary.action_space_Print(POMDPSettings.action_space_all_values,
     #                                 POMDPSettings.compromised_nodes_current_time,POMDPSettings.next_adversary_nodes,print_each_action=False)
-    # PrintLibrary.comprehensive_action_space_print(POMDPSettings.action_space_objects)
+    PrintLibrary.comprehensive_action_space_print(POMDPSettings.action_space_objects)
 
     ################################# Adversary Action ######################################################
     POMDPOperations.determine_adversary_action_space()
@@ -140,6 +140,7 @@ def pomdp_engine(time_sequence):
     POMDPSettings.current_action = POMDPSettings.action_space_objects[did][dpos]
     POMDPSettings.total_implementation_cost += POMDPSettings.current_action.cost
     POMDPOperations.implement_executed_action(POMDPSettings.action_space_objects[did][dpos])
+    POMDPSettings.MAXIMUM_BUDGET -= POMDPSettings.total_implementation_cost
     # PrintLibrary.defense_planning(time_sequence,POMDPSettings.deployed_defense_nodes)
     Utilities.write_defense_planning_in_file(time_sequence,POMDPSettings.deployed_defense_nodes,
                                              file_name='%s/%s'%(POMDPSettings.OUT_DIR_CONCEAL,POMDPSettings.OUT_DEFENSE_PLAN_FILE))

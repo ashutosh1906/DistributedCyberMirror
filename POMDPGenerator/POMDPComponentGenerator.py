@@ -305,6 +305,17 @@ def irrelevant_prunning(action_space_objects):
     # print("****** After Irrelevant Prunning ******")
     # PrintLibrary.number_action_available_each_node(action_space_objects)
 
+################################################# Cost Based Prunning #######################################
+def cost_based_prunning(action_space_objects):
+    for node_type in range(len(action_space_objects)):
+        delete_element = []
+        index = 0
+        for action in action_space_objects[node_type]:
+            if action.cost > POMDPSettings.MAXIMUM_BUDGET:
+                delete_element.append(index)
+            index += 1
+        DataStructureFunctions.delete_values_by_index_from_list(action_space_objects[node_type],delete_element)
+
 ################################################# Related to State Transition ##################################################
 def state_transition_initializations():
     ######## Previous State (key)---> Next State (Value) ###########################

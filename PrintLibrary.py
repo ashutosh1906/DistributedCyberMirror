@@ -218,5 +218,6 @@ def POMDP_dynamic_parameters(time_seq):
     print('\t Cluster Difference %s'%(POMDPSettings.CLUSTER_DIFFERENCE))
     print('\t Min Effectiveness with Scan %s'%(POMDPSettings.MINIMUM_EFFECTIVENESS_WITH_SCAN))
     print('\t Min Effectiveness without Scan %s'%(POMDPSettings.MINIMUM_EFFECTIVENESS_WITHOUT_SCAN))
+    print('\t Available Budget %s'%(POMDPSettings.MAXIMUM_BUDGET))
 
 

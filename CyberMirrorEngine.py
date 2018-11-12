@@ -256,19 +256,31 @@ def evaluation(time_sequence):
 if __name__=='__main__':
     print("Start of the CyberMirror Dynamic Planning")
     initilization()
-    time_sequence = 0
-    if POMDPSettings.EVALUATION_PROCESS:
-        evaluation(time_sequence)
-    else:
-        while (True):
-            dynamic_planning_initialization(time_sequence,calculate_compromised_nodes=True)
-            pomdp_engine(time_sequence)
-            time_sequence += 1
-            print('Deployed Defense %s\n\t%s' % (
-            POMDPSettings.deployed_defense_nodes, POMDPSettings.deployed_defense_assessment))
-            continue_evaluation = input('Do you wish to continue? Press 1 if yes and 0 otherwise ')
-            if continue_evaluation == '0':
-                break
+    for running_iteration in range(1,POMDPSettings.MAXIMUM_ITERATION+1):
+        ################################ Prepare for Sequences ####################################
+        POMDPSettings.ADVERSARY_FILE_INDEX = running_iteration%POMDPSettings.MAXIMUM_POSSIBLE_PATHS
+        if POMDPSettings.NETWORK_ID != '':
+            POMDPSettings.ADVERSARY_POSITION_FILE_NAME = '%s/%s/adv_position_%s_%s' % (
+                POMDPSettings.CONFIGURATION_FILES_DIRECTORY, POMDPSettings.ADV_FILES_DIR, POMDPSettings.ADVERSARY_FILE_INDEX, POMDPSettings.NETWORK_ID)
+        else:
+            POMDPSettings.ADVERSARY_POSITION_FILE_NAME = '%s/%s/adv_position_%s' % (
+                POMDPSettings.CONFIGURATION_FILES_DIRECTORY, POMDPSettings.ADV_FILES_DIR, POMDPSettings.ADVERSARY_FILE_INDEX)
+
+        print('\n\n $$$$$$$ ----- $$$$$$$ File Iteration Index %s : %s $$$$$$$ ----- $$$$$$$' % (running_iteration,POMDPSettings.ADVERSARY_POSITION_FILE_NAME))
+
+        time_sequence = 0
+        if POMDPSettings.EVALUATION_PROCESS:
+            evaluation(time_sequence)
+        else:
+            while (True):
+                dynamic_planning_initialization(time_sequence,calculate_compromised_nodes=True)
+                pomdp_engine(time_sequence)
+                time_sequence += 1
+                print('Deployed Defense %s\n\t%s' % (
+                POMDPSettings.deployed_defense_nodes, POMDPSettings.deployed_defense_assessment))
+                continue_evaluation = input('Do you wish to continue? Press 1 if yes and 0 otherwise ')
+                if continue_evaluation == '0':
+                    break
 
 
 

@@ -1,4 +1,5 @@
 import random
+from CommonUtilities import DataStructureFunctions
 directory = 'ConfigurationFiles/Adversary_files'
 # path = [[689, 622, 556, 497, 6, 3], [995, 991, 911, 497, 6, 3]]
 # path = [[723, 453, 8, 3],[979, 972, 336, 3]]
@@ -8,13 +9,15 @@ adj_matrix = {}
 comp_prob = 1.0
 target = 3
 num_file = 0
+path_exist = {}
+
 
 def create_files(current_path,sort_desc = False):
     if sort_desc:
         current_path = sorted(current_path)
     global num_file
     num_file += 1
-    file_pointer = open('%s/adv_position_%s_2'%(directory,num_file),'w')
+    file_pointer = open('%s/adv_position_%s_3'%(directory,num_file),'w')
     for position_index in range(len(current_path)-1):
         for node in current_path[position_index]:
             line = '%s,%s,%s'%(node,comp_prob,random.randint(1,10000))
@@ -131,12 +134,68 @@ def create_adj_matrix_desc():
                 if path_ind[node_index+1] not in adj_matrix[node]:
                     adj_matrix[node].append(path_ind[node_index+1])
 
+def dfs_many_nodes(current_position,current_path):
+
+    current_position_temp = []
+    for node in current_position:
+        current_position_temp.append(node)
+    current_path.append(current_position_temp)
+    # print('S --> P %s %s ' % (current_position, current_path))
+
+    for node in current_position:
+        if node==target:
+            print("Path %s" % (current_path))
+            # create_files(current_path)
+            del current_path[-1]
+            return
+
+    node_index = 0
+    for node in current_position_temp:
+        # print('Current Node %s'%(node))
+        if node_index > 0:
+            if adj_matrix[node] == adj_matrix[current_position_temp[node_index - 1]]:
+                continue
+        path_index = 0
+        for path_ind in path:
+            if node in path_ind:
+                next_node = adj_matrix[node][0]
+                other_node_index = 0
+                other_node_delete = []
+                for other_nodes in current_position:
+                    if other_nodes==node:
+                        other_node_index += 1
+                        continue
+                    for path_ind_other in path:
+                        if other_nodes in path_ind_other:
+                            if next_node in path_ind_other:
+                                other_node_delete.append(other_node_index)
+                                break
+                    other_node_index += 1
+                # print('%s %s'%(current_position,other_node_delete))
+                del current_position[node_index]
+                current_position.insert(node_index, next_node)
+                DataStructureFunctions.delete_values_by_index_from_list(current_position,other_node_delete)
+
+                dfs_many_nodes(sorted(current_position),current_path)
+                del current_position[:]
+                for past_node in current_position_temp:
+                    current_position.append(past_node)
+                break
+
+            path_index += 1
+        node_index += 1
+    del current_path[-1]
+    # print('End S --> P %s %s ' % (current_position, current_path))
+
 if __name__=='__main__':
     initial_position = [target]
     # create_adj_matrix()
     create_adj_matrix_desc()
     print(adj_matrix)
     # dfs_traversal(initial_position,[])
-    dfs_traversal_desc(sorted([path[0][0],path[1][0]]),[])
+    current_position = []
+    for path_ind in path:
+        current_position.append(path_ind[0])
+    dfs_many_nodes(sorted(current_position),[])
 
 

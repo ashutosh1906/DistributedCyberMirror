@@ -145,20 +145,21 @@ def dfs_many_nodes(current_position,current_path):
     for node in current_position:
         if node==target:
             print("Path %s" % (current_path))
-            # create_files(current_path)
+            create_files(current_path)
             del current_path[-1]
             return
 
     node_index = 0
+    previously_explored = {}
     for node in current_position_temp:
         # print('Current Node %s'%(node))
-        if node_index > 0:
-            if adj_matrix[node] == adj_matrix[current_position_temp[node_index - 1]]:
-                continue
+        if adj_matrix[node][0] in previously_explored:
+            continue
         path_index = 0
         for path_ind in path:
             if node in path_ind:
                 next_node = adj_matrix[node][0]
+                previously_explored[next_node] = 1
                 other_node_index = 0
                 other_node_delete = []
                 for other_nodes in current_position:
@@ -197,5 +198,6 @@ if __name__=='__main__':
     for path_ind in path:
         current_position.append(path_ind[0])
     dfs_many_nodes(sorted(current_position),[])
+    print('Number of generated files %s'%(num_file))
 
 

@@ -48,6 +48,9 @@ def __iterative_normalization_keys(data_structure):
         else:
             sum_prob = sum([data_structure[value_key] for value_key in data_structure])
             # print(sum_prob)
+            if sum_prob == 0:
+                # print('Sum is 0 : '%(data_structure))
+                return
             if round(sum_prob,5) != 1.0:
                 for value_key in data_structure:
                     data_structure[value_key] /= sum_prob

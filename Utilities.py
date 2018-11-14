@@ -80,6 +80,7 @@ def normalize_state_probability(state_space):
     # print("******** Before Normalization : All Non Zero Probabilitites %s *******"%(non_zero_prob_sum))
     for state in state_space:
         state.set_belief(state.belief/non_zero_prob_sum)
+
     non_zero_prob_sum = sum([state.belief for state in state_space if state.belief > 0])
     # print("******** After Normalization : All Non Zero Probabilitites %s *******" % (non_zero_prob_sum))
     if non_zero_prob_sum != 1.0:

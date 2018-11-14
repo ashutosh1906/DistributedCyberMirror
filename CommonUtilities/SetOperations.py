@@ -60,3 +60,33 @@ def merge_lists(given_list,elements):
             merge_lists(value, elements)
         else:
             elements.append(value)
+
+def find_power_set(data_structure):
+    ''' If the list contains n elements, return power set (nC1+nC2+...+nCn)
+    arg: Data Structure is consider as set. Hence, if you send list, it will assumes
+    that the list has distinct values'''
+    power_set = [set()]
+    for node_index in range(len(data_structure)):
+        current_node = data_structure[node_index]
+        # print('Node %s at depth %s --> %s' % (current_node,0,power_set))
+        child_possible_combinations = __iterate_power_set(data_structure,node_index,power_set,{})
+        for combination in child_possible_combinations:
+            power_set.append(combination)
+    return power_set
+
+def __iterate_power_set(data_structure,current_depth,power_set,already_search):
+    if current_depth >= len(data_structure):
+        return [set()]
+    current_node = data_structure[current_depth]
+    if current_node in already_search:
+        # print('Node %s--> %s'%(current_node,already_search[current_node]))
+        return already_search[current_node]
+    already_search[current_node] = []
+    for node_index in range(current_depth+1,len(data_structure)+1):
+        child_possible_combinations = __iterate_power_set(data_structure, node_index, power_set, {})
+        for combination in child_possible_combinations:
+            already_search[current_node].append({current_node} | combination)
+    # print('Node %s after Ex --> %s' % (current_node, already_search[current_node]))
+    return already_search[current_node]
+
+

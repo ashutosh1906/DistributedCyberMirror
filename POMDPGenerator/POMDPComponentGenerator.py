@@ -39,10 +39,19 @@ def generate_initial_state_space(possible_nodes_for_state):
         #         possible_node_combinations = GraphTraversal.graph_traversal_concurrent(POMDPSettings.adversary_position_nodes[j:i+1])
         #         for comb in possible_node_combinations:
         #             POMDPSettings.possible_node_combinations.append(comb)
-    # PrintLibrary.possible_combinations_print(POMDPSettings.possible_node_combinations, 'Nodes Positions')
+    PrintLibrary.possible_combinations_print(POMDPSettings.possible_node_combinations, 'Nodes Positions')
     ######################### Generate States ####################################
     determine_parent_nodes()
-    state_id = 0
+    create_adjMatrix(POMDPSettings.possible_nodes_for_state)
+    initial_compromised_nodes_combinations()
+    initial_node_state_number = 0
+
+    # if POMDPSettings.INITIAL_STATE_COMPROMISED_NODES_ENABLED:
+    #     initial_node_state_number = create_state_from_initial()
+    if POMDPSettings.ADVERSARY_NOWHERE_ENABLED:
+        POMDPSettings.possible_node_combinations.append([])
+
+    state_id = initial_node_state_number
     # del POMDPSettings.state_space[:]
     # POMDPSettings.state_space_map.clear()
     for adv_positions in POMDPSettings.possible_node_combinations:
@@ -52,6 +61,52 @@ def generate_initial_state_space(possible_nodes_for_state):
             POMDPSettings.state_space.append(State.State(state_id,adv_positions))
             POMDPSettings.state_space_map[tuple(adv_positions)] = state_id
             state_id += 1
+
+def create_state_from_initial():
+    print('********** Create State for initial *************')
+    state_id = 0
+    return state_id
+
+def calculate_node_to_node_prob(current_target):
+    # print(' Construction : %s'%(POMDPSettings.parent_nodes_considered_paths[current_target]))
+    if len(POMDPSettings.parent_nodes_considered_paths[current_target])==0:
+        if current_target in POMDPSettings.compromised_nodes_probability:
+            POMDPSettings.node_probability_from_start_node[current_target] = POMDPSettings.compromised_nodes_probability[current_target]
+        else:
+            POMDPSettings.node_probability_from_start_node[current_target] = 0.0
+        return POMDPSettings.node_probability_from_start_node[current_target]
+    current_node_prob = 1.0
+    for ancestor in POMDPSettings.parent_nodes_considered_paths[current_target]: ##### There will be at least one ancestor
+        current_node_prob *= (1-calculate_node_to_node_prob(ancestor))
+    POMDPSettings.node_probability_from_start_node[current_target] = 1-current_node_prob
+    return POMDPSettings.node_probability_from_start_node[current_target]
+
+def create_adjMatrix(paths):
+    POMDPSettings.adjacent_matrix_towards_target.clear()
+    POMDPSettings.node_probability_from_start_node.clear()
+    current_target = POMDPSettings.target_node[0]
+    calculate_node_to_node_prob(current_target)
+    print(' ****** All Nodes Probability %s *************'%(POMDPSettings.node_probability_from_start_node))
+    for start_node in paths:
+        ind_path = paths[start_node]
+        for node_index in range(len(ind_path)-1):
+            node = ind_path[node_index]
+            if node not in POMDPSettings.adjacent_matrix_towards_target:
+                POMDPSettings.adjacent_matrix_towards_target[node] = {ind_path[node_index+1]:1.0}
+            else:
+                if ind_path[node_index+1] not in POMDPSettings.adjacent_matrix_towards_target[node]:
+                    POMDPSettings.adjacent_matrix_towards_target[node].append({ind_path[node_index + 1]:1.0})
+
+
+    print('Adjacent Matrix Towards Target %s'%(POMDPSettings.adjacent_matrix_towards_target))
+
+def initial_compromised_nodes_combinations():
+    del POMDPSettings.possible_initial_combinations[:]
+    print('Compromised Nodes Current Time %s'%(POMDPSettings.compromised_nodes_current_time))
+    possible_set = SetOperations.find_power_set(POMDPSettings.compromised_nodes_current_time)
+    for each_set in possible_set:
+        POMDPSettings.possible_initial_combinations.append(list(each_set))
+    print('Possible Initial Combinations %s'%(POMDPSettings.possible_initial_combinations))
 
 def create_mirror_corresponding_nodes(possible_node_combinations):
     org_possible_node_combinations = []
@@ -107,6 +162,8 @@ def iterate_over_possible_belief(compromised_nodes_current_time,compromised_node
                 prob *= (1-compromised_nodes_probability[-node])
         if POMDPSettings.SORT_ADVERSARY_POSITION:
             state_id = state_space_map[tuple(sorted(chosen_node))]
+        else:
+            state_id = state_space_map[tuple(chosen_node)]
         # print(
         #     '*** Assign and Update Belief of the States %s :: %s --> %s' % (chosen_node,state_id,prob))
         state_space[state_id].set_belief(prob)
@@ -130,6 +187,13 @@ def generate_initial_belief(compromised_nodes_current_time,compromised_nodes_pro
     # print('******* State Space Map ************** %s' % (state_space_map))
     iterate_over_possible_belief(compromised_nodes_current_time,compromised_nodes_probability,
                                  1,[],state_space,state_space_map)
+    if POMDPSettings.ADVERSARY_NOWHERE_ENABLED:
+        prob = 1.0
+        for node in POMDPSettings.compromised_nodes_current_time:
+            if node in POMDPSettings.compromised_nodes_probability:
+                prob *= (1-POMDPSettings.compromised_nodes_probability[node])
+        POMDPSettings.state_space[POMDPSettings.state_space_map[tuple([])]].set_belief(prob)
+        POMDPSettings.state_space[0].set_belief(1-prob)
 
 def initialize_action_space():
     index = 0
@@ -338,7 +402,8 @@ def state_transition_initializations():
     # print('*************** Non Zero Transitions %s*****************'%(non_zero_transition))
     # print('*************** State Transitions %s*****************' % (POMDPSettings.state_transition_with_adversary))
     adversary_probability_update()
-
+    # PrintLibrary.measure_state_state_probability(POMDPSettings.adversary_state_to_state_probability,
+    #                                              POMDPSettings.state_space)
     ###################################### Initialize the probability for state transition ######################################
     for old_state_id in POMDPSettings.state_transition_with_adversary:
         for new_state_id in POMDPSettings.state_transition_with_adversary[old_state_id]:
@@ -495,7 +560,8 @@ def recursive_child_value_upated(node,explored_node):
 def adversary_probability_update():
     '''Calculate the probability of forwarding from the nodes of the old states'''
     POMDPSettings.adversary_state_to_state_probability.clear()
-
+    # if POMDPSettings.ADVERSARY_NOWHERE_ENABLED:
+    #     print('************** Update Alarm : Update "adversary_probability_update" function***********************')
     for old_state_id in POMDPSettings.state_transition_with_adversary:
         old_state = POMDPSettings.state_space[old_state_id]
         number_available_positions = len(old_state.adversary_positions)
@@ -506,16 +572,26 @@ def adversary_probability_update():
             for node in new_state.adversary_positions:
                 if node <0:
                     node = -node
-                number_ancestor = len(set(POMDPSettings.parent_nodes_considered_paths[node]) & set(old_state.adversary_positions)) # Check how may parent matches
-                if number_ancestor > 0:
-                    mirror_node = len([1 for parent in old_state.adversary_positions if parent < 0])
-                    if mirror_node > 0: # Adversary will not forward from mirror Nodes
-                        each_node_propagation_prob = 1.0/(number_available_positions-mirror_node)
-                    else:
-                        each_node_propagation_prob = 1.0 / number_available_positions
-                    POMDPSettings.adversary_state_to_state_probability[old_state_id][new_state_id] += each_node_propagation_prob*number_ancestor
+                ancestor_old_state = set(POMDPSettings.parent_nodes_considered_paths[node]) & set(old_state.adversary_positions)
+                number_ancestor = len(ancestor_old_state) # Check how may parent matches
+                if POMDPSettings.ADVERSARY_NOWHERE_ENABLED:
+                    each_node_propagation_prob = 1.0 / number_available_positions
+                    propagation_prob = 1.0
+                    for ancestor_node in ancestor_old_state:
+                        propagation_prob *= (1-POMDPSettings.node_probability_from_start_node[ancestor_node])
+                    POMDPSettings.adversary_state_to_state_probability[old_state_id][new_state_id] += (1-propagation_prob)*each_node_propagation_prob
+                else:
+                    if number_ancestor > 0:
+                        mirror_node = len([1 for parent in old_state.adversary_positions if parent < 0])
+                        if mirror_node > 0: # Adversary will not forward from mirror Nodes
+                            each_node_propagation_prob = 1.0/(number_available_positions-mirror_node)
+                        else:
+                            each_node_propagation_prob = 1.0 / number_available_positions
+                        POMDPSettings.adversary_state_to_state_probability[old_state_id][new_state_id] += each_node_propagation_prob*number_ancestor
 
+    DataStructureFunctions.normalize_probability_by_keys(POMDPSettings.adversary_state_to_state_probability)
     # print('******** Probability of Forwarding from a state %s ******' % (POMDPSettings.adversary_state_to_state_probability))
+
 
 
 

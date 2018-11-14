@@ -220,4 +220,11 @@ def POMDP_dynamic_parameters(time_seq):
     print('\t Min Effectiveness without Scan %s'%(POMDPSettings.MINIMUM_EFFECTIVENESS_WITHOUT_SCAN))
     print('\t Available Budget %s'%(POMDPSettings.MAXIMUM_BUDGET))
 
+def measure_state_state_probability(state_state_prob,state_space_print):
+    print('*** (Checkk) State to State Probability *************')
+    for old_state in state_state_prob:
+        print('From ::: id %s : Adv %s'%(old_state,state_space_print[old_state].adversary_positions))
+        for new_state in state_state_prob[old_state]:
+            print('\t\t --> To : id %s : Adv %s == %s'%(new_state,state_space_print[new_state].adversary_positions,state_state_prob[old_state][new_state]))
+    print('*** The End (Checkk) State to State Probability *************')
 

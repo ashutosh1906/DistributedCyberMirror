@@ -269,6 +269,11 @@ if __name__=='__main__':
 
         print('\n\n $$$$$$$ ----- $$$$$$$ File Iteration Index %s : %s $$$$$$$ ----- $$$$$$$' % (running_iteration,POMDPSettings.ADVERSARY_POSITION_FILE_NAME))
 
+        ########### Initialization ####################################
+        POMDPSettings.expected_attack_progression.clear()
+        POMDPSettings.deployed_defense_assessment.clear()
+        POMDPSettings.total_implementation_cost = 0
+
         time_sequence = 0
         if POMDPSettings.EVALUATION_PROCESS:
             evaluation(time_sequence)

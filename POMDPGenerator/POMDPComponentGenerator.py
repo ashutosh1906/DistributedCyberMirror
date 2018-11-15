@@ -402,8 +402,8 @@ def state_transition_initializations():
     # print('*************** Non Zero Transitions %s*****************'%(non_zero_transition))
     # print('*************** State Transitions %s*****************' % (POMDPSettings.state_transition_with_adversary))
     adversary_probability_update()
-    # PrintLibrary.measure_state_state_probability(POMDPSettings.adversary_state_to_state_probability,
-    #                                              POMDPSettings.state_space)
+    PrintLibrary.measure_state_state_probability(POMDPSettings.adversary_state_to_state_probability,
+                                                 POMDPSettings.state_space)
     ###################################### Initialize the probability for state transition ######################################
     for old_state_id in POMDPSettings.state_transition_with_adversary:
         for new_state_id in POMDPSettings.state_transition_with_adversary[old_state_id]:
@@ -589,7 +589,7 @@ def adversary_probability_update():
                             each_node_propagation_prob = 1.0 / number_available_positions
                         POMDPSettings.adversary_state_to_state_probability[old_state_id][new_state_id] += each_node_propagation_prob*number_ancestor
 
-    DataStructureFunctions.normalize_probability_by_keys(POMDPSettings.adversary_state_to_state_probability)
+    # DataStructureFunctions.normalize_probability_by_keys(POMDPSettings.adversary_state_to_state_probability)
     # print('******** Probability of Forwarding from a state %s ******' % (POMDPSettings.adversary_state_to_state_probability))
 
 

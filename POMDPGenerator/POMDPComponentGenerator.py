@@ -402,8 +402,8 @@ def state_transition_initializations():
     # print('*************** Non Zero Transitions %s*****************'%(non_zero_transition))
     # print('*************** State Transitions %s*****************' % (POMDPSettings.state_transition_with_adversary))
     adversary_probability_update()
-    PrintLibrary.measure_state_state_probability(POMDPSettings.adversary_state_to_state_probability,
-                                                 POMDPSettings.state_space)
+    # PrintLibrary.measure_state_state_probability(POMDPSettings.adversary_state_to_state_probability,
+    #                                              POMDPSettings.state_space)
     ###################################### Initialize the probability for state transition ######################################
     for old_state_id in POMDPSettings.state_transition_with_adversary:
         for new_state_id in POMDPSettings.state_transition_with_adversary[old_state_id]:

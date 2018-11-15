@@ -139,9 +139,9 @@ def pomdp_engine(time_sequence):
     dpos = POMDPSettings.defense_action_id_to_position[POMDPSettings.pomdp_policy_action_index[previous_action]][1]
     POMDPSettings.action_space_objects[did][dpos].printProperties()
     POMDPSettings.current_action = POMDPSettings.action_space_objects[did][dpos]
-    print('implemention Cost %s'%(POMDPSettings.total_implementation_cost))
+    # print('implemention Cost %s'%(POMDPSettings.total_implementation_cost))
     POMDPSettings.total_implementation_cost += POMDPSettings.current_action.cost
-    print('implemention Cost %s' % (POMDPSettings.total_implementation_cost))
+    # print('implemention Cost %s' % (POMDPSettings.total_implementation_cost))
     POMDPOperations.implement_executed_action(POMDPSettings.action_space_objects[did][dpos])
     POMDPSettings.MAXIMUM_BUDGET -= POMDPSettings.total_implementation_cost
     # PrintLibrary.defense_planning(time_sequence,POMDPSettings.deployed_defense_nodes)
@@ -273,6 +273,7 @@ if __name__=='__main__':
 
         ########### Initialization ####################################
         POMDPSettings.expected_attack_progression.clear()
+        POMDPSettings.deployed_defense_nodes.clear()
         POMDPSettings.deployed_defense_assessment.clear()
         POMDPSettings.total_implementation_cost = 0.0
 

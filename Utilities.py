@@ -420,7 +420,7 @@ def estimate_implemented_cost():
     ####################### t_i = (1-m)*(n-1) ########################################
         pass
 
-def write_result_files(write_discount_factor=False):
+def write_result_files(write_discount_factor=False,write_time = False):
     file_pointer = open(POMDPSettings.OUTPUT_FILE_NAME,'a')
     if POMDPSettings.target_node[0] in POMDPSettings.expected_attack_progression:
         file_pointer.write('%s,'%(round(POMDPSettings.expected_attack_progression[POMDPSettings.target_node[0]],6)))
@@ -429,6 +429,9 @@ def write_result_files(write_discount_factor=False):
         if write_discount_factor:
             if len(POMDPSettings.INITIAL_DISCOUNT_FACTOR) > 0:
                 file_pointer.write('%s' % (POMDPSettings.INITIAL_DISCOUNT_FACTOR[0]))
+        if write_time:
+            if len(POMDPSettings.INITIAL_DISCOUNT_FACTOR) > 0:
+                file_pointer.write('%s' % (POMDPSettings.POMDP_REQUIRED_TIME/len(POMDPSettings.INITIAL_DISCOUNT_FACTOR)))
         file_pointer.write('\n')
     file_pointer.close()
 

@@ -4,6 +4,7 @@ import Dijkstra
 import PrintLibrary,Utilities
 from POMDPGenerator import POMDPOperations
 from POMDPGenerator import POMDPModelGenerator
+import time
 
 def dynamic_planning_initialization(time_sequence,calculate_compromised_nodes=True):
     print('\t\t --------------<>---------------\n\t\t -------------<>--------------\n\n\n'
@@ -123,8 +124,9 @@ def pomdp_engine(time_sequence):
                                                               POMDPSettings.POMDP_PRECISION, out_file)
     print(generate_policy_cmd)
     import os
+    start_time = time.time()
     os.system(generate_policy_cmd)
-
+    POMDPSettings.POMDP_REQUIRED_TIME += time.time()-start_time
     ################################ Execute Action ##############################
     from POMDPActionExecutor import POMDPActionPlanner
     # file_name = input("Enter the policy file location ")
@@ -281,6 +283,7 @@ if __name__=='__main__':
         POMDPSettings.deployed_defense_assessment.clear()
         POMDPSettings.total_implementation_cost = 0.0
         del POMDPSettings.INITIAL_DISCOUNT_FACTOR[:]
+        POMDPSettings.POMDP_REQUIRED_TIME = 0.0
 
         time_sequence = 0
         if POMDPSettings.BOOLEAN_INCREMENTAL_DISCOUNT_FACTOR:
@@ -297,6 +300,8 @@ if __name__=='__main__':
                 continue_evaluation = input('Do you wish to continue? Press 1 if yes and 0 otherwise ')
                 if continue_evaluation == '0':
                     break
+
+    POMDPSettings.LOG_FILE.close()
 
 
 

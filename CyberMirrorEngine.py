@@ -284,7 +284,7 @@ if __name__=='__main__':
 
         time_sequence = 0
         if POMDPSettings.BOOLEAN_INCREMENTAL_DISCOUNT_FACTOR:
-            POMDPSettings.DELTA_DISCOUNT_FACTOR *= running_iteration
+            POMDPSettings.DELTA_DISCOUNT_FACTOR = POMDPSettings.STEP_VALUE_DISCOUNT_FACTOR*running_iteration
         if POMDPSettings.EVALUATION_PROCESS:
             evaluation(time_sequence)
         else:

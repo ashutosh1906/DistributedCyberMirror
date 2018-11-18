@@ -425,13 +425,13 @@ def write_result_files(write_discount_factor=False,write_time = False):
     if POMDPSettings.target_node[0] in POMDPSettings.expected_attack_progression:
         file_pointer.write('%s,'%(round(POMDPSettings.expected_attack_progression[POMDPSettings.target_node[0]],6)))
         file_pointer.write('%s,' % (POMDPSettings.total_implementation_cost))
-        file_pointer.write('%s'%(POMDPSettings.ADVERSARY_FILE_INDEX))
+        file_pointer.write('%s,'%(POMDPSettings.ADVERSARY_FILE_INDEX))
         if write_discount_factor:
             if len(POMDPSettings.INITIAL_DISCOUNT_FACTOR) > 0:
-                file_pointer.write('%s' % (POMDPSettings.INITIAL_DISCOUNT_FACTOR[0]))
+                file_pointer.write('%s,' % (POMDPSettings.INITIAL_DISCOUNT_FACTOR[0]))
         if write_time:
             if len(POMDPSettings.INITIAL_DISCOUNT_FACTOR) > 0:
-                file_pointer.write('%s' % (POMDPSettings.POMDP_REQUIRED_TIME/len(POMDPSettings.INITIAL_DISCOUNT_FACTOR)))
+                file_pointer.write('%s,' % (POMDPSettings.POMDP_REQUIRED_TIME/len(POMDPSettings.INITIAL_DISCOUNT_FACTOR)))
         file_pointer.write('\n')
     file_pointer.close()
 

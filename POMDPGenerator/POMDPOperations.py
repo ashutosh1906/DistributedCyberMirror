@@ -17,7 +17,7 @@ def determine_discount_factor():
     ##### log10(M) = N ==> M = 10^N ##########################
     POMDPSettings.MAX_STEPS_TOPOLOGY = max_path-1
     N = math.log2(POMDPSettings.MINIMUM_FUTURE_WEIGHT)/max_path
-    POMDPSettings.DISCOUNT_FACTOR = math.pow(2,N)
+    POMDPSettings.DISCOUNT_FACTOR = math.pow(2,N)+POMDPSettings.DELTA_DISCOUNT_FACTOR
     print("**** Discount Factor %s ****"%(POMDPSettings.DISCOUNT_FACTOR))
 
 def initialize_state_space_data_structure():

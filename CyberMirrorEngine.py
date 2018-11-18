@@ -106,7 +106,7 @@ def pomdp_engine(time_sequence):
 
     ############################ Calculate the precision ################################
     POMDPOperations.calculate_precision()
-
+    POMDPSettings.INITIAL_DISCOUNT_FACTOR.append(POMDPSettings.DISCOUNT_FACTOR)
     ################## Solve the POMDP Model ##############################
     print("POMDP Model %s" % (out_file))
     print("Policy File Name %s"%(POMDPSettings.POMDP_POLICY_FILE_NAME))
@@ -254,7 +254,7 @@ def evaluation(time_sequence):
                                                                     POMDPSettings.expected_attack_progression[POMDPSettings.target_node[0]]
                                                                     ))
     print('Total Defense Cost %s' % (POMDPSettings.total_implementation_cost))
-    Utilities.write_result_files()
+    Utilities.write_result_files(write_discount_factor=POMDPSettings.BOOLEAN_INCREMENTAL_DISCOUNT_FACTOR)
 
 if __name__=='__main__':
     print("Start of the CyberMirror Dynamic Planning")
@@ -262,7 +262,11 @@ if __name__=='__main__':
     for running_iteration in range(0,POMDPSettings.MAXIMUM_ITERATION):
         ################################ Prepare for Sequences ####################################
         POMDPSettings.ADVERSARY_FILE_INDEX = (running_iteration%POMDPSettings.MAXIMUM_POSSIBLE_PATHS)+1
-        if POMDPSettings.NETWORK_ID != '':
+        if POMDPSettings.BOOLEAN_INCREMENTAL_DISCOUNT_FACTOR:
+            POMDPSettings.ADVERSARY_POSITION_FILE_NAME = '%s/%s/adv_position_%s' % (
+                POMDPSettings.CONFIGURATION_FILES_DIRECTORY, POMDPSettings.ADV_FILES_DIR,
+                POMDPSettings.ADVERSARY_FILE_INDEX)
+        elif POMDPSettings.NETWORK_ID != '':
             POMDPSettings.ADVERSARY_POSITION_FILE_NAME = '%s/%s/adv_position_%s_%s' % (
                 POMDPSettings.CONFIGURATION_FILES_DIRECTORY, POMDPSettings.ADV_FILES_DIR, POMDPSettings.ADVERSARY_FILE_INDEX, POMDPSettings.NETWORK_ID)
         else:
@@ -276,8 +280,11 @@ if __name__=='__main__':
         POMDPSettings.deployed_defense_nodes.clear()
         POMDPSettings.deployed_defense_assessment.clear()
         POMDPSettings.total_implementation_cost = 0.0
+        del POMDPSettings.INITIAL_DISCOUNT_FACTOR[:]
 
         time_sequence = 0
+        if POMDPSettings.BOOLEAN_INCREMENTAL_DISCOUNT_FACTOR:
+            POMDPSettings.DELTA_DISCOUNT_FACTOR *= running_iteration
         if POMDPSettings.EVALUATION_PROCESS:
             evaluation(time_sequence)
         else:

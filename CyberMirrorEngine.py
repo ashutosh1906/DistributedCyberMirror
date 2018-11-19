@@ -286,6 +286,8 @@ if __name__=='__main__':
         POMDPSettings.POMDP_REQUIRED_TIME = 0.0
 
         time_sequence = 0
+        if POMDPSettings.BOOLEAN_REGRET_PERCENTAGE and POMDPSettings.ADVERSARY_FILE_INDEX == 1:
+            POMDPSettings.INITIAL_REGRET_PERCENTAGE -= POMDPSettings.DELTA_REGRET
         if POMDPSettings.BOOLEAN_INCREMENTAL_DISCOUNT_FACTOR:
             POMDPSettings.DELTA_DISCOUNT_FACTOR += POMDPSettings.STEP_VALUE_DISCOUNT_FACTOR
         if POMDPSettings.EVALUATION_PROCESS:

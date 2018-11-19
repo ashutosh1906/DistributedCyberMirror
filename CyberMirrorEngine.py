@@ -256,7 +256,7 @@ def evaluation(time_sequence):
                                                                     POMDPSettings.expected_attack_progression[POMDPSettings.target_node[0]]
                                                                     ))
     print('Total Defense Cost %s' % (POMDPSettings.total_implementation_cost))
-    Utilities.write_result_files(write_discount_factor=POMDPSettings.BOOLEAN_INCREMENTAL_DISCOUNT_FACTOR)
+    Utilities.write_result_files(write_discount_factor=POMDPSettings.BOOLEAN_INCREMENTAL_DISCOUNT_FACTOR,write_time=True)
 
 if __name__=='__main__':
     print("Start of the CyberMirror Dynamic Planning")
@@ -287,7 +287,7 @@ if __name__=='__main__':
 
         time_sequence = 0
         if POMDPSettings.BOOLEAN_INCREMENTAL_DISCOUNT_FACTOR:
-            POMDPSettings.DELTA_DISCOUNT_FACTOR = POMDPSettings.STEP_VALUE_DISCOUNT_FACTOR*running_iteration
+            POMDPSettings.DELTA_DISCOUNT_FACTOR += POMDPSettings.STEP_VALUE_DISCOUNT_FACTOR
         if POMDPSettings.EVALUATION_PROCESS:
             evaluation(time_sequence)
         else:
@@ -301,7 +301,6 @@ if __name__=='__main__':
                 if continue_evaluation == '0':
                     break
 
-    POMDPSettings.LOG_FILE.close()
 
 
 

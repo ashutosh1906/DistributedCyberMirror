@@ -435,6 +435,10 @@ def write_result_files(write_discount_factor=False,write_time = False):
         file_pointer.write('\n')
     file_pointer.close()
 
+def write_log_files(write_line):
+    file_pointer = open(POMDPSettings.LOG_FILE,'a')
+    file_pointer.write('%s\n'%(write_line))
+    file_pointer.close()
 
 
 

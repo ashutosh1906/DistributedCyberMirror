@@ -19,7 +19,9 @@ def determine_discount_factor():
     N = math.log2(POMDPSettings.MINIMUM_FUTURE_WEIGHT)/max_path
     Utilities.write_log_files('Delta %s'%(POMDPSettings.DELTA_DISCOUNT_FACTOR))
     # POMDPSettings.LOG_FILE.write('Delta %s\n'%(POMDPSettings.DELTA_DISCOUNT_FACTOR))
-    POMDPSettings.DISCOUNT_FACTOR = math.pow(2,N)+POMDPSettings.DELTA_DISCOUNT_FACTOR
+    discount_value = math.pow(2,N)+POMDPSettings.DELTA_DISCOUNT_FACTOR
+    if discount_value >= 0.0:
+        POMDPSettings.DISCOUNT_FACTOR = discount_value
     Utilities.write_log_files("**** Discount Factor %s ****"%(POMDPSettings.DISCOUNT_FACTOR))
     # POMDPSettings.LOG_FILE.write("**** Discount Factor %s ****\n"%(POMDPSettings.DISCOUNT_FACTOR))
 

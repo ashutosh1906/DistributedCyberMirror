@@ -321,6 +321,7 @@ def calculate_precision():
         POMDPSettings.POMDP_PRECISION += current_value
     POMDPSettings.POMDP_PRECISION *= POMDPSettings.REGRET_PERCENTAGE
     print('********* Precision %s'%(POMDPSettings.POMDP_PRECISION))
+    Utilities.write_log_files('********* Precision %s'%(POMDPSettings.POMDP_PRECISION))
 
 def __update_defense_assessment(node_id,recommended_action):
     if node_id not in POMDPSettings.deployed_defense_assessment:

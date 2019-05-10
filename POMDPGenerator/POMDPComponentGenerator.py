@@ -304,7 +304,10 @@ def redundant_prunning(action_space_objects):
             weighted_cost_effectiveness_action.append(action.cost)
     # print(weighted_effectiveness_action)
     # print(weighted_cost_effectiveness_action)
-    number_of_cluster = (max(weighted_effectiveness_action)-min(weighted_effectiveness_action))/POMDPSettings.CLUSTER_DIFFERENCE
+    if len(weighted_cost_effectiveness_action)==0:
+        number_of_cluster = 0
+    else:
+        number_of_cluster = (max(weighted_effectiveness_action)-min(weighted_effectiveness_action))/POMDPSettings.CLUSTER_DIFFERENCE
     # print('Number Cluster %s'%(number_of_cluster))
     if number_of_cluster != int(number_of_cluster):
         number_of_cluster = int(number_of_cluster)+1

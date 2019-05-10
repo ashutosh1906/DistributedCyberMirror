@@ -1,13 +1,16 @@
 import random
 from CommonUtilities import DataStructureFunctions
-directory = 'ConfigurationFiles/Adversary_files'
+directory = 'ConfigurationFiles/Adversary_files_test'
+topology_dir = 'InputFiles/Topology'
 # path = [[689, 622, 556, 497, 6, 3], [995, 991, 911, 497, 6, 3]]
 # path = [[723, 453, 8, 3],[979, 972, 336, 3]]
 # path = [[979, 972, 336, 3],[991, 911, 497, 6, 3]]
-path = [[723, 453, 8, 3],[979, 972, 336, 3],[984, 982, 972, 336, 3]]
+#path = [[723, 453, 8, 3],[979, 972, 336, 3],[984, 982, 972, 336, 3]]
+#path = [[689, 622, 556, 497, 6, 3]]
+path = [[7,5,3,1,0],[8,6,4,2,0]]
 adj_matrix = {}
 comp_prob = 1.0
-target = 3
+target = 0
 num_file = 0
 path_exist = {}
 
@@ -17,7 +20,7 @@ def create_files(current_path,sort_desc = False):
         current_path = sorted(current_path)
     global num_file
     num_file += 1
-    file_pointer = open('%s/adv_position_%s_3'%(directory,num_file),'w')
+    file_pointer = open('%s/adv_position_9_2_%s'%(directory,num_file),'w')
     for position_index in range(len(current_path)-1):
         for node in current_path[position_index]:
             line = '%s,%s,%s'%(node,comp_prob,random.randint(1,10000))
@@ -188,6 +191,33 @@ def dfs_many_nodes(current_position,current_path):
     del current_path[-1]
     # print('End S --> P %s %s ' % (current_position, current_path))
 
+def generate_topology(tree_depth,degree=1):
+    number_of_nodes = 9
+    line_file = [None for i in range(number_of_nodes)]
+    file = open('%s/Topo_%s_%s'%(topology_dir,tree_depth,degree),'w')
+    node_index = 1
+    first_line = '1 (1) ['
+    child_index = node_index+1
+    for i in range(degree):
+        first_line = '%s%s'%(first_line,child_index)
+        child_index += 1
+        if i != (degree-1):
+            first_line = '%s,' % (first_line)
+    first_line = '%s]'%(first_line)
+    line_file[0] = first_line
+    for i in range(degree):
+        child_index = node_index+i+1
+        for depth in range(tree_depth-1):
+            current_node_index = child_index+depth*degree
+            first_line = '%s (%s) [%s]' % (current_node_index,current_node_index,child_index+(depth+1)*degree)
+            line_file[current_node_index-1] = first_line
+        current_node_index = child_index + (tree_depth-1)* degree
+        first_line = '%s (%s) []' % (current_node_index, current_node_index)
+        line_file[current_node_index - 1] = first_line
+    for i in range(number_of_nodes):
+        file.write('%s\n' % (line_file[i]))
+    file.close()
+
 if __name__=='__main__':
     initial_position = [target]
     # create_adj_matrix()
@@ -199,5 +229,6 @@ if __name__=='__main__':
         current_position.append(path_ind[0])
     dfs_many_nodes(sorted(current_position),[])
     print('Number of generated files %s'%(num_file))
+    # generate_topology(4,2)
 
 

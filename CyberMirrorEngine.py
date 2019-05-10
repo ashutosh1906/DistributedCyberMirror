@@ -258,6 +258,7 @@ def evaluation(time_sequence):
     print('Total Defense Cost %s' % (POMDPSettings.total_implementation_cost))
     Utilities.write_result_files(write_discount_factor=POMDPSettings.BOOLEAN_INCREMENTAL_DISCOUNT_FACTOR,write_time=True)
 
+
 if __name__=='__main__':
     print("Start of the CyberMirror Dynamic Planning")
     initilization()
@@ -268,6 +269,8 @@ if __name__=='__main__':
             POMDPSettings.ADVERSARY_POSITION_FILE_NAME = '%s/%s/adv_position_%s' % (
                 POMDPSettings.CONFIGURATION_FILES_DIRECTORY, POMDPSettings.ADV_FILES_DIR,
                 POMDPSettings.ADVERSARY_FILE_INDEX)
+        elif POMDPSettings.NETWORK_ID == 'test':
+            POMDPSettings.ADVERSARY_POSITION_FILE_NAME = '%s/%s/adv_position_test_4_2_240'%(POMDPSettings.CONFIGURATION_FILES_DIRECTORY, POMDPSettings.ADV_FILES_DIR)
         elif POMDPSettings.NETWORK_ID != '':
             POMDPSettings.ADVERSARY_POSITION_FILE_NAME = '%s/%s/adv_position_%s_%s' % (
                 POMDPSettings.CONFIGURATION_FILES_DIRECTORY, POMDPSettings.ADV_FILES_DIR, POMDPSettings.ADVERSARY_FILE_INDEX, POMDPSettings.NETWORK_ID)

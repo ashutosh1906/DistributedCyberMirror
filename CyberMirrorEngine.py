@@ -270,7 +270,9 @@ if __name__=='__main__':
                 POMDPSettings.CONFIGURATION_FILES_DIRECTORY, POMDPSettings.ADV_FILES_DIR,
                 POMDPSettings.ADVERSARY_FILE_INDEX)
         elif POMDPSettings.NETWORK_ID == 'test':
-            POMDPSettings.ADVERSARY_POSITION_FILE_NAME = '%s/%s/adv_position_test_4_2_240'%(POMDPSettings.CONFIGURATION_FILES_DIRECTORY, POMDPSettings.ADV_FILES_DIR)
+            POMDPSettings.ADVERSARY_POSITION_FILE_NAME = '%s/%s/adv_position_%s_%s_%s'%(POMDPSettings.CONFIGURATION_FILES_DIRECTORY, POMDPSettings.ADV_FILES_TEST_DIR,
+                                                                                            POMDPSettings.ATTACK_TREE_SIZE,POMDPSettings.NUMBER_START_NODES,
+                                                                                            POMDPSettings.ADVERSARY_FILE_INDEX)
         elif POMDPSettings.NETWORK_ID != '':
             POMDPSettings.ADVERSARY_POSITION_FILE_NAME = '%s/%s/adv_position_%s_%s' % (
                 POMDPSettings.CONFIGURATION_FILES_DIRECTORY, POMDPSettings.ADV_FILES_DIR, POMDPSettings.ADVERSARY_FILE_INDEX, POMDPSettings.NETWORK_ID)

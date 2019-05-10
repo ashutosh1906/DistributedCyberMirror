@@ -196,37 +196,59 @@ def dfs_many_nodes(current_position,current_path):
     # print('End S --> P %s %s ' % (current_position, current_path))
 
 def generate_topology(tree_depth,degree=1):
-    number_of_nodes = tree_depth*degree+1
+    number_of_nodes = tree_depth*degree
     line_file = [None for i in range(number_of_nodes)]
     file = open('%s/Topo_%s_%s'%(topology_dir,tree_depth,degree),'w')
-    node_index = 1
-    first_line = '1 (1) ['
+    node_index = 0
+    first_line = ''
     child_index = node_index+1
-    for i in range(degree):
-        first_line = '%s%s'%(first_line,child_index)
+    for i in range(int(tree_depth*degree/2)):
+        first_line = '%s (%s) [%s]'%(child_index,child_index,child_index)
         child_index += 1
-        if i != (degree-1):
-            first_line = '%s,' % (first_line)
-    first_line = '%s]'%(first_line)
-    line_file[0] = first_line
+        line_file[i] = first_line
+    print(child_index)
+
+    first_line = '%s (%s) [' % (child_index, child_index)
     for i in range(degree):
-        child_index = node_index+i+1
-        for depth in range(tree_depth-1):
+        first_line = '%s%s' % (first_line,child_index+i+1)
+        if i!=(degree-1):
+            first_line = '%s,' % (first_line)
+    first_line = '%s]' % (first_line)
+    # print(first_line)
+    line_file[child_index-1] = first_line
+    child_index += 1
+    node_index = child_index
+    print(node_index)
+
+    left_over_depth = int((number_of_nodes-node_index+1)/2)
+    print(left_over_depth)
+    for i in range(degree):
+        child_index = node_index+i
+
+        for depth in range(left_over_depth):
             current_node_index = child_index+depth*degree
             first_line = '%s (%s) [%s]' % (current_node_index,current_node_index,child_index+(depth+1)*degree)
+            print(first_line)
             line_file[current_node_index-1] = first_line
-        current_node_index = child_index + (tree_depth-1)* degree
+        current_node_index = child_index + (left_over_depth-1)* degree
         first_line = '%s (%s) []' % (current_node_index, current_node_index)
+        print(first_line)
         line_file[current_node_index - 1] = first_line
     for i in range(number_of_nodes):
         file.write('%s\n' % (line_file[i]))
     file.close()
 
 def generate_path(depth,degree=1):
+    number_of_nodes = depth*degree
+    first_node = depth
     global path
-    path = [[i+1,0] for i in range(degree)]
+    path = [[j for j in range(depth,-1,-1)] for i in range(degree)]
+    for i in range(degree):
+        path[i].insert(0, path[i][0] + i + 1)
+    print(path)
+    left_over_depth = int((number_of_nodes - path[0][0] + 1) / 2)
     for path_index in range(degree):
-        for i in range(depth-1):
+        for i in range(left_over_depth-1):
             path[path_index].insert(0,path[path_index][0]+degree)
     print(path)
 
@@ -245,7 +267,7 @@ if __name__=='__main__':
     dfs_many_nodes(sorted(current_position),[])
     print('Number of generated files %s'%(num_file))
 
-    # generate_topology(15,2)
+    # generate_topology(7,2)
 
 
 

@@ -22,7 +22,7 @@ def create_files(current_path,sort_desc = False):
         current_path = sorted(current_path)
     global num_file
     num_file += 1
-    file_pointer = open('%s/adv_position_15_2_%s'%(directory,num_file),'w')
+    file_pointer = open('%s/adv_position_19_2_%s'%(directory,num_file),'w')
     for position_index in range(len(current_path)-1):
         for node in current_path[position_index]:
             line = '%s,%s,%s'%(node,comp_prob,random.randint(1,10000))
@@ -203,7 +203,7 @@ def generate_topology(tree_depth,degree=1):
     first_line = ''
     child_index = node_index+1
     for i in range(int(tree_depth*degree/2)):
-        first_line = '%s (%s) [%s]'%(child_index,child_index,child_index)
+        first_line = '%s (%s) [%s]'%(child_index,child_index,child_index+1)
         child_index += 1
         line_file[i] = first_line
     print(child_index)
@@ -257,7 +257,7 @@ def generate_path(depth,degree=1):
 if __name__=='__main__':
     initial_position = [target]
     # create_adj_matrix()
-    generate_path(7, 2)
+    generate_path(9, 2)
     create_adj_matrix_desc()
     print(adj_matrix)
     # dfs_traversal(initial_position,[])
@@ -267,7 +267,7 @@ if __name__=='__main__':
     dfs_many_nodes(sorted(current_position),[])
     print('Number of generated files %s'%(num_file))
 
-    # generate_topology(7,2)
+    # generate_topology(9,2)
 
 
 

@@ -297,8 +297,8 @@ def generate_adversary_files():
     print('Number of generated files %s' % (num_file))
 
 if __name__=='__main__':
+    geanerate_topology_3(NUMBER_OF_NODES,DEPTH_BRANCH,DEGREE)
     generate_adversary_files()
-    # geanerate_topology_3(18,3,3)
 
 
 

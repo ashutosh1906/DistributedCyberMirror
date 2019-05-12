@@ -17,7 +17,7 @@ path_exist = {}
 files_created = 0
 NUMBER_OF_NODES = 14
 DEGREE = 3
-DEPTH_BRANCH = 2
+DEPTH_BRANCH = 3
 
 
 def create_files(current_path,sort_desc = False):
@@ -164,6 +164,7 @@ def dfs_many_nodes(current_position,current_path):
     for node in current_position_temp:
         # print('Current Node %s'%(node))
         if adj_matrix[node][0] in previously_explored:
+            node_index += 1
             continue
         path_index = 0
         for path_ind in path:
@@ -182,11 +183,11 @@ def dfs_many_nodes(current_position,current_path):
                                 other_node_delete.append(other_node_index)
                                 break
                     other_node_index += 1
-                # print('%s %s'%(current_position,other_node_delete))
+                # print('%s %s --> %s of %s'%(current_position,other_node_delete,next_node,node_index))
                 del current_position[node_index]
                 current_position.insert(node_index, next_node)
                 DataStructureFunctions.delete_values_by_index_from_list(current_position,other_node_delete)
-
+                # print('%s %s' % (current_position, other_node_delete))
                 dfs_many_nodes(sorted(current_position),current_path)
                 del current_position[:]
                 for past_node in current_position_temp:
@@ -299,7 +300,7 @@ def generate_adversary_files():
 
 if __name__=='__main__':
     geanerate_topology_3(NUMBER_OF_NODES,DEPTH_BRANCH,DEGREE)
-    # generate_adversary_files()
+    generate_adversary_files()
 
 
 

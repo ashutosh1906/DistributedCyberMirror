@@ -262,7 +262,7 @@ def evaluation(time_sequence):
 if __name__=='__main__':
     print("Start of the CyberMirror Dynamic Planning")
     initilization()
-    for running_iteration in range(0,POMDPSettings.MAXIMUM_ITERATION):
+    for running_iteration in range(2,POMDPSettings.MAXIMUM_ITERATION):
         ################################ Prepare for Sequences ####################################
         POMDPSettings.ADVERSARY_FILE_INDEX = (running_iteration%POMDPSettings.MAXIMUM_POSSIBLE_PATHS)+1
         if POMDPSettings.BOOLEAN_INCREMENTAL_DISCOUNT_FACTOR:

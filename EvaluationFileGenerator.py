@@ -15,6 +15,9 @@ target = 0
 num_file = 0
 path_exist = {}
 files_created = 0
+NUMBER_OF_NODES = 14
+DEGREE = 3
+DEPTH_BRANCH = 2
 
 
 def create_files(current_path,sort_desc = False):
@@ -22,14 +25,14 @@ def create_files(current_path,sort_desc = False):
         current_path = sorted(current_path)
     global num_file
     num_file += 1
-    file_pointer = open('%s/adv_position_19_2_%s'%(directory,num_file),'w')
+    file_pointer = open('%s/adv_position_%s_%s_%s'%(directory,NUMBER_OF_NODES,DEGREE,num_file),'w')
     for position_index in range(len(current_path)-1):
         for node in current_path[position_index]:
             line = '%s,%s,%s'%(node,comp_prob,random.randint(1,10000))
             file_pointer.write('%s\n'%(line))
         file_pointer.write('-1\n')
     file_pointer.close()
-    if num_file==10:
+    if num_file==3:
         sys.exit()
 
 def dfs_traversal(current_position,current_path):
@@ -238,36 +241,64 @@ def generate_topology(tree_depth,degree=1):
         file.write('%s\n' % (line_file[i]))
     file.close()
 
-def generate_path(depth,degree=1):
-    number_of_nodes = depth*degree
-    first_node = depth
+def generate_path(number_of_nodes,one_degree_node, degree=1):
     global path
-    path = [[j for j in range(depth,-1,-1)] for i in range(degree)]
+    path = [[j for j in range(one_degree_node, -1, -1)] for i in range(degree)]
     for i in range(degree):
         path[i].insert(0, path[i][0] + i + 1)
-    print(path)
-    left_over_depth = int((number_of_nodes - path[0][0] + 1) / 2)
+    left_over_depth = int((number_of_nodes - path[0][0] + 1) / degree)
+    # print('%s -- %s'%(path,left_over_depth))
+
     for path_index in range(degree):
         for i in range(left_over_depth-1):
             path[path_index].insert(0,path[path_index][0]+degree)
     print(path)
 
 
+def geanerate_topology_3(number_of_nodes,degree_depth,degree):
+    one_node_length = number_of_nodes-degree_depth*degree
+    line_file = [None for i in range(number_of_nodes)]
+    file = open('%s/Topo_%s_%s' % (topology_dir,number_of_nodes,degree), 'w')
+    for i in range(one_node_length-1):
+        first_line = '%s (%s) [%s]' % (i, i, i + 1)
+        line_file[i] = first_line
 
-if __name__=='__main__':
+    node_index = one_node_length-1
+    first_line = '%s (%s) ['%(node_index,node_index)
+    for i in range(degree-1):
+        first_line = '%s%s,'%(first_line,node_index+i+1)
+    first_line = '%s%s]' % (first_line,node_index+degree)
+    line_file[node_index] = first_line
+
+    for i in range(degree):
+        for j in range(degree_depth):
+            child_index = node_index + i + 1 + j*degree
+            print(child_index)
+            if j==degree_depth-1:
+                first_line = '%s (%s) []' % (child_index, child_index)
+            else:
+                first_line = '%s (%s) [%s]' %(child_index,child_index,child_index+degree)
+            line_file[child_index] = first_line
+
+    for i in range(number_of_nodes):
+        file.write('%s\n'%(line_file[i]))
+    file.close()
+
+def generate_adversary_files():
+    generate_path(NUMBER_OF_NODES,NUMBER_OF_NODES-DEPTH_BRANCH*DEGREE-1,DEGREE)
     initial_position = [target]
-    # create_adj_matrix()
-    generate_path(9, 2)
     create_adj_matrix_desc()
     print(adj_matrix)
-    # dfs_traversal(initial_position,[])
     current_position = []
+    global path
     for path_ind in path:
         current_position.append(path_ind[0])
-    dfs_many_nodes(sorted(current_position),[])
-    print('Number of generated files %s'%(num_file))
+    dfs_many_nodes(sorted(current_position), [])
+    print('Number of generated files %s' % (num_file))
 
-    # generate_topology(9,2)
+if __name__=='__main__':
+    generate_adversary_files()
+    # geanerate_topology_3(18,3,3)
 
 
 

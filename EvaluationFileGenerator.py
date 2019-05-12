@@ -260,25 +260,26 @@ def geanerate_topology_3(number_of_nodes,degree_depth,degree):
     line_file = [None for i in range(number_of_nodes)]
     file = open('%s/Topo_%s_%s' % (topology_dir,number_of_nodes,degree), 'w')
     for i in range(one_node_length-1):
-        first_line = '%s (%s) [%s]' % (i, i, i + 1)
+        first_line = '%s (%s) [%s]' % (i+1, i+1, i + 2)
         line_file[i] = first_line
 
-    node_index = one_node_length-1
+    node_index = one_node_length
     first_line = '%s (%s) ['%(node_index,node_index)
+
     for i in range(degree-1):
         first_line = '%s%s,'%(first_line,node_index+i+1)
     first_line = '%s%s]' % (first_line,node_index+degree)
-    line_file[node_index] = first_line
+    line_file[node_index-1] = first_line
 
     for i in range(degree):
         for j in range(degree_depth):
             child_index = node_index + i + 1 + j*degree
-            print(child_index)
+            # print(child_index)
             if j==degree_depth-1:
                 first_line = '%s (%s) []' % (child_index, child_index)
             else:
                 first_line = '%s (%s) [%s]' %(child_index,child_index,child_index+degree)
-            line_file[child_index] = first_line
+            line_file[child_index-1] = first_line
 
     for i in range(number_of_nodes):
         file.write('%s\n'%(line_file[i]))
@@ -298,7 +299,7 @@ def generate_adversary_files():
 
 if __name__=='__main__':
     geanerate_topology_3(NUMBER_OF_NODES,DEPTH_BRANCH,DEGREE)
-    generate_adversary_files()
+    # generate_adversary_files()
 
 
 

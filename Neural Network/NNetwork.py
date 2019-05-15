@@ -149,8 +149,8 @@ def __run_neural_network(knowledge_dataset,cross_validation_enabled=False,
     num_label_size = len(attack_list)
 
     #################### Neural Network Model Parameters##########################
-    learning_rate = 0.01
-    epochs = 200
+    learning_rate = 0.001
+    epochs = 400
     batch_size = 30
     #################### End Neural Network Model Parameters##########################
 

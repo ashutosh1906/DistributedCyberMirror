@@ -16,8 +16,8 @@ num_file = 0
 path_exist = {}
 files_created = 0
 NUMBER_OF_NODES = 14
-DEGREE = 3
-DEPTH_BRANCH = 3
+DEGREE = 4
+DEPTH_BRANCH = 2
 
 
 def create_files(current_path,sort_desc = False):

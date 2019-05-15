@@ -4,6 +4,143 @@ import numpy as np
 
 knowledge_database = []
 attack_list = {0:'nnr',1:'nr',2:'f',3:'fs'}
+
+previous_condition = [100.0,0.0,0.0,0.0,0.0]
+previous_action = 0
+past_previous_advance = 0
+previous_failure = 0.0
+
+reduce_length = 10
+
+
+def error_calculation(actual_value,predicted_value):
+    # print("Error : ",)
+    # print(actual_value)
+    # print(predicted_value)
+    prob_scan_actual = sum([actual_value[i] if (i%2) else 0.0 for i in range(4)])
+    prob_forward_actual = sum([actual_value[i] for i in range(2,4,1)])
+    prob_scan_predicted = sum([predicted_value[i] if (i % 2) else 0.0 for i in range(4)])
+    prob_forward_predicted = sum([predicted_value[i] for i in range(2, 4, 1)])
+    # print('%s - %s'%(prob_scan_actual,prob_scan_predicted))
+    # print('%s - %s' % (prob_forward_actual,prob_forward_predicted))
+    scan_error = abs(prob_scan_actual-prob_scan_predicted)
+    forward_error = abs(prob_forward_actual-prob_forward_predicted)
+    print('Scan Error %s' % (scan_error))
+    print('Forward Error %s' % (forward_error))
+    do_nothing_error = []
+    do_nothing_error.append(abs(sum([actual_value[i] for i in range(2)])
+                           -sum([predicted_value[i] for i in range(2)])))
+    for i in range(2,4,1):
+        do_nothing_error.append(abs(actual_value[i]-predicted_value[i]))
+    error_real = sum(do_nothing_error)/len(do_nothing_error)
+
+
+    error_file_pointer = open(FILE_NAME_ERROR, 'a')
+    error_file_pointer.write('%s,%s,%s,%s\n'%(scan_error,forward_error,
+                                              ((scan_error+forward_error)/2),error_real))
+    error_file_pointer.close()
+
+def generate_adversary_action_plan(iteration_index):
+    print("Adversary 1")
+    global past_previous_advance
+    global previous_action
+    global previous_condition
+    global reduce_length
+
+    if previous_action <= 1 or reduce_length != 0:
+        ben_path = previous_condition[0]
+        if previous_action > 1 and previous_condition[3] <= 0.5:
+            reduce_length -= 1
+    else:
+        ben_path = previous_condition[0]-1
+        reduce_length = 10%(previous_condition[0]/5)
+        if reduce_length==0:
+            reduce_length = previous_condition[0]/5 - 1
+
+    scanning_iterval = previous_condition[1]+1
+    advance_interval = previous_condition[2]+1
+    if (previous_action%2):
+        scanning_iterval = 0
+    if previous_action>1:
+        advance_interval = 0
+    if previous_action < 2:
+        failure_prob = 0.0
+    else:
+        failure_prob = random.randint(0,100)/100.0
+
+    scanning_flag = 0
+    advance_flag = 1
+    if failure_prob > 0.6 or scanning_iterval>=(ben_path)/10:
+        scanning_flag = 1
+
+    if previous_action > 1 and past_previous_advance > 1:
+        advance_flag = 0
+
+    selected_action = (advance_flag<<1) | scanning_flag
+
+    past_previous_advance = previous_action
+    previous_action = selected_action
+
+    previous_condition = [ben_path,scanning_iterval,advance_interval,failure_prob,iteration_index]
+    attack_prob = [0.0 for i in range(4)]
+    attack_prob[previous_action] = 1
+    # print('%s --> %s'%(previous_condition,previous_action))
+    previous_condition.append(attack_prob)
+
+    return previous_condition
+
+def generate_adversary_action_plan_2(iteration_index):
+    print("Adversary 2")
+    global past_previous_advance
+    global previous_action
+    global previous_condition
+    global reduce_length
+    global previous_failure
+
+    if previous_action <= 1 or reduce_length != 0:
+        ben_path = previous_condition[0]
+        if previous_action > 1 and previous_condition[3] <= 0.5:
+            reduce_length -= 1
+    else:
+        ben_path = previous_condition[0]-1
+        reduce_length = 10%(previous_condition[0]/5)
+        if reduce_length==0:
+            reduce_length = previous_condition[0]/5 - 1
+
+    scanning_iterval = previous_condition[1]+1
+    advance_interval = previous_condition[2]+1
+    if (previous_action%2):
+        scanning_iterval = 0
+    if previous_action>1:
+        advance_interval = 0
+    if previous_action < 2:
+        failure_prob = 0.0
+    else:
+        failure_prob = random.randint(0,100)/100.0
+
+    scanning_flag = 0
+    advance_flag = 1
+    if (failure_prob > 0.6 and previous_failure > 0.6) or scanning_iterval>=(ben_path)/5:
+        scanning_flag = 1
+
+    if previous_action > 1:
+        advance_flag = 0
+
+    selected_action = (advance_flag<<1) | scanning_flag
+
+    past_previous_advance = previous_action
+    previous_action = selected_action
+
+    previous_condition = [ben_path,scanning_iterval,advance_interval,failure_prob,iteration_index]
+    previous_failure = failure_prob
+    attack_prob = [0.0 for i in range(4)]
+    attack_prob[previous_action] = 1
+    # print('%s --> %s'%(previous_condition,previous_action))
+    previous_condition.append(attack_prob)
+
+    return previous_condition
+
+
 def __run_neural_network(knowledge_dataset,cross_validation_enabled=False,
                        num_cv_interation = 1,
                          cv_train_ratio=1):
@@ -75,7 +212,7 @@ def __run_neural_network(knowledge_dataset,cross_validation_enabled=False,
                 for j in range(NUMBER_ATTRIBUTE - 1):
                     train_data[i][j] = knowledge_dataset[i][j]
                     # print('%s %s'%(train_data[i][j],Properties.knowledge_database[i][j]))
-                print('Test Label %s' % (knowledge_dataset[i][NUMBER_ATTRIBUTE - 1]))
+                # print('Test Label %s' % (knowledge_dataset[i][NUMBER_ATTRIBUTE - 1]))
                 for k in range(num_label_size):
                     train_data_label[i][k] = knowledge_dataset[i][NUMBER_ATTRIBUTE - 1][k]
 
@@ -143,8 +280,9 @@ def __run_neural_network(knowledge_dataset,cross_validation_enabled=False,
                 if (cv_index == 0 and epoch ==0) or best_model_based_entropy > avg_cost:
                     # print("Save the model of epoch index %s"%(epoch))
                     best_model_based_entropy = avg_cost
-            print(sess.run(predicted_prob_clipped,
-                           feed_dict={input_conditions: np.reshape(cv_test_data[-1], (1, num_data_row_size))}))
+            all_prob = sess.run(predicted_prob_clipped,
+                           feed_dict={input_conditions: np.reshape(cv_test_data[-1], (1, num_data_row_size))})
+            error_calculation(knowledge_database[-1][NUMBER_ATTRIBUTE-1],all_prob[0])
             # if not cross_validation_enabled:
             #     save_path = best_model_Saver.save(sess,ConfigurationPOMDPGenerator.NEURAL_NETWORK_MODEL_SAVER_PATH)
             #     # print("Saved the model in %s" % (save_path))
@@ -153,6 +291,8 @@ def knowledge_database_print():
     print('$$$$$$ Knowledge Database $$$$$$$$$$$$$$$$$$')
     for i in range(len(knowledge_database)):
         print(knowledge_database[i])
+
+
 
 def write_database():
     file_pointer = open('knowledge_database','w')
@@ -167,11 +307,16 @@ def write_database():
     file_pointer.close()
 
 if __name__=='__main__':
+    global FILE_NAME_ERROR
     print('Attack Prediction Model using Neural Network')
 
     file_pointer = open('knowledge_database','r+')
+
     for line in file_pointer:
-        attr_list = line.replace('\n','').split(';')
+        line = line.replace('\n','')
+        if line=='':
+            continue
+        attr_list = line.split(';')
         datarow = []
         # print(attr_list)
         for i in range(len(attr_list)-1):
@@ -185,34 +330,56 @@ if __name__=='__main__':
         knowledge_database.append(datarow)
     file_pointer.close()
 
+    con_flag = int(input("Press 0 to exit  "))
+
+    FILE_NAME_ERROR = 'ERROR_%s' % (con_flag)
+    error_file_pointer = open(FILE_NAME_ERROR, 'w')
+    error_file_pointer.close()
+
     knowledge_database_print()
+    index = int(input("Enter the itervals "))
+    iteration_index = 0
+
     while(True):
-        con_flag = int(input("Press 0 to exit  "))
+        print("Iteration Index %s"%(iteration_index))
         if con_flag:
-            print("Input current condition:")
-            proximity_value = int(input("Proximity Value = "))
-            scanning_interval = float(input("Scannin Interval = "))
-            advancing_interval = float(input("Advancing Interval = "))
-            failure_probability = float(input("Failure Probability = "))
-            current_data_row = [proximity_value, scanning_interval, advancing_interval, failure_probability,
-                                []]
+            # print("Input current condition:")
+            # proximity_value = int(input("Proximity Value = "))
+            # scanning_interval = float(input("Scannin Interval = "))
+            # advancing_interval = float(input("Advancing Interval = "))
+            # failure_probability = float(input("Failure Probability = "))
+            # current_data_row = [proximity_value, scanning_interval, advancing_interval, failure_probability,
+            #                     []]
+
+            if con_flag < 2:
+                current_data_row = generate_adversary_action_plan(iteration_index)
+            else:
+                current_data_row = generate_adversary_action_plan_2(iteration_index)
+            # current_data_row.append([])
             knowledge_database.append(current_data_row)
             print("Current Data %s" % (current_data_row))
-
+            if current_data_row[0] < 1:
+                break
             __run_neural_network(knowledge_database)
 
-            print("Input the Previous Observations:")
-            adv_action_prob = [0.0 for i in range(len(attack_list))]
-            adv_action = int(input("Adversary Action ID = "))
-            adv_action_prob[adv_action] = 1.0
+            # print("Input the Previous Observations:")
+            # adv_action_prob = [0.0 for i in range(len(attack_list))]
+            # adv_action = int(input("Adversary Action ID = "))
+            # adv_action_prob[adv_action] = 1.0
 
             # print("Current Data %s"% (current_data_row))
-            knowledge_database[-1][len(knowledge_database[-1])-1] = adv_action_prob
+            # knowledge_database[-1][len(knowledge_database[-1])-1] = adv_action_prob
             # print_kd()
         else:
             break
 
-    write_database()
+        iteration_index += 1
+        if iteration_index > index:
+            print('Given %s Current %s'%(index,iteration_index))
+            break
+
+
+    # write_database()
 
 
 

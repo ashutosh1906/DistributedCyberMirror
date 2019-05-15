@@ -1,0 +1,85 @@
+import random
+
+current_action = []
+previous_condition = [100.0,0.0,0.0,0.0,0.0]
+previous_action = 0
+past_previous_advance = 0
+FILE_NAME_ERROR = 'ERROR_1'
+
+def generate_adversary_action_plan():
+    global past_previous_advance
+    global previous_action
+    global previous_condition
+    if previous_action < 1:
+        ben_path = previous_condition[0]
+    else:
+        ben_path = previous_condition[0]-random.randint(0,1)
+    scanning_iterval = previous_condition[1]+1
+    advance_interval = previous_condition[2]+1
+    if (previous_action%2):
+        scanning_iterval = 0
+    if previous_action>1:
+        advance_interval = 0
+    if previous_action < 2:
+        failure_prob = 0.0
+    else:
+        failure_prob = random.randint(0,100)/100.0
+
+    scanning_flag = 0
+    advance_flag = 1
+    if failure_prob > 0.6 or scanning_iterval>=(ben_path)/2:
+        scanning_flag = 1
+
+    if previous_action > 1 and past_previous_advance > 1:
+        advance_flag = 0
+
+    selected_action = (advance_flag<<1) | scanning_flag
+
+    past_previous_advance = previous_action
+    previous_action = selected_action
+
+    previous_condition = [ben_path,scanning_iterval,advance_interval,failure_prob]
+    print('%s --> %s'%(previous_condition,previous_action))
+
+
+def generate_adversary_action_plan_2():
+    global past_previous_advance
+    global previous_action
+    global previous_condition
+    if previous_action < 1:
+        ben_path = previous_condition[0]
+    else:
+        ben_path = previous_condition[0]-random.randint(0,1)
+    scanning_iterval = previous_condition[1]+1
+    advance_interval = previous_condition[2]+1
+    if (previous_action%2):
+        scanning_iterval = 0
+    if previous_action>1:
+        advance_interval = 0
+    if previous_action < 2:
+        failure_prob = 0.0
+    else:
+        failure_prob = random.randint(0,100)/100.0
+
+    scanning_flag = 0
+    advance_flag = 1
+    if failure_prob > 0.6 or scanning_iterval>=(ben_path)/2:
+        scanning_flag = 1
+
+    if previous_action > 1 and past_previous_advance > 1:
+        advance_flag = 0
+
+    selected_action = (advance_flag<<1) | scanning_flag
+
+    past_previous_advance = previous_action
+    previous_action = selected_action
+
+    previous_condition = [ben_path,scanning_iterval,advance_interval,failure_prob]
+    print('%s --> %s'%(previous_condition,previous_action))
+
+
+if __name__=='__main__':
+    while(True):
+        generate_adversary_action_plan()
+        if previous_condition[0] < 1:
+            break

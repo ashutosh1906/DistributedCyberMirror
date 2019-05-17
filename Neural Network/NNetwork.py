@@ -73,7 +73,8 @@ def generate_adversary_action_plan(iteration_index):
     if failure_prob > 0.6 or scanning_iterval>=(ben_path)/10:
         scanning_flag = 1
 
-    if previous_action > 1 and past_previous_advance > 1:
+    #if previous_action > 1 and past_previous_advance > 1:
+    if previous_action > 1:
         advance_flag = 0
 
     selected_action = (advance_flag<<1) | scanning_flag
@@ -81,7 +82,7 @@ def generate_adversary_action_plan(iteration_index):
     past_previous_advance = previous_action
     previous_action = selected_action
 
-    previous_condition = [ben_path,scanning_iterval,advance_interval,failure_prob,iteration_index,past_previous_advance]
+    previous_condition = [ben_path,scanning_iterval,advance_interval,failure_prob,past_previous_advance]
     attack_prob = [0.0 for i in range(4)]
     attack_prob[previous_action] = 1
     # print('%s --> %s'%(previous_condition,previous_action))
@@ -131,7 +132,7 @@ def generate_adversary_action_plan_2(iteration_index):
     past_previous_advance = previous_action
     previous_action = selected_action
 
-    previous_condition = [ben_path,scanning_iterval,advance_interval,failure_prob,iteration_index,past_previous_advance]
+    previous_condition = [ben_path,scanning_iterval,advance_interval,failure_prob,past_previous_advance]
     previous_failure = failure_prob
     attack_prob = [0.0 for i in range(4)]
     attack_prob[previous_action] = 1
@@ -149,8 +150,8 @@ def __run_neural_network(knowledge_dataset,cross_validation_enabled=False,
     num_label_size = len(attack_list)
 
     #################### Neural Network Model Parameters##########################
-    learning_rate = 0.004
-    epochs = 600
+    learning_rate = 0.005
+    epochs = 400
     batch_size = 60
     #################### End Neural Network Model Parameters##########################
 
